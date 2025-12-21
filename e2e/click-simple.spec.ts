@@ -2,15 +2,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Click Bug Test - Simplified', () => {
   test('Verify editor shows and selection updates on first click after manual setup', async ({ page }) => {
-    // Handle the namespace prompt used by EditorView.addNamespace()
-    page.on('dialog', async (dialog) => {
-      if (dialog.type() === 'prompt') {
-        await dialog.accept('main');
-      } else {
-        await dialog.accept();
-      }
-    });
-
     // Go to app
     await page.goto('/');
     await page.waitForSelector('text=Prompt Generator - Web Edition');
@@ -18,11 +9,26 @@ test.describe('Click Bug Test - Simplified', () => {
     // Create a new package
     await page.click('button:has-text("Create Package")');
 
-    // Should be in editor
+    // Should be in editor - wait for the editor to be fully loaded
     await page.waitForSelector('text=Package Editor', { timeout: 10000 });
 
-    // Add a namespace (will trigger prompt)
+    // Wait for the "+ Add Namespace" button to be available
+    await page.waitForSelector('button:has-text("+ Add Namespace")', { timeout: 10000 });
+
+    // Add a namespace (will open a modal, not a browser prompt)
     await page.click('button:has-text("+ Add Namespace")');
+
+    // Wait for the modal to appear
+    await page.waitForSelector('.modal-overlay', { timeout: 10000 });
+
+    // Fill in the namespace ID in the modal
+    await page.fill('input[placeholder="e.g., core or my_namespace"]', 'main');
+
+    // Click the Add button in the modal
+    await page.click('.modal button.btn-primary:has-text("Add")');
+
+    // Wait for modal to close
+    await page.waitForSelector('.modal-overlay', { state: 'hidden', timeout: 10000 });
 
     // Wait until the namespace button exists
     await page.waitForSelector('button.namespace-button:has-text("main")', { timeout: 10000 });
