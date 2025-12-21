@@ -12,11 +12,11 @@ The **Random Prompt Generator** is a powerful authoring tool for creating and ma
 ### What Can You Do?
 
 - **📝 Author Packages**: Create and edit prompt generation packages with an intuitive visual editor
-- **🎲 Generate Prompts**: Render dynamic prompts based on your rules, datatypes, and templates
+- **🎲 Generate Prompts**: Live preview mode lets you generate single or batch prompts using rulebooks or prompt sections with seed-based deterministic generation
 - **💾 Local Storage**: All your work is saved locally in your browser - no accounts, no uploads
 - **📦 Import/Export**: Work with YAML package files compatible with the Random Prompt Generator specification
 - **🔍 Validation**: Real-time validation ensures your packages follow the correct structure
-- **🎯 Preview Mode**: Test your packages and see generated prompts instantly
+- **🎯 Test & Iterate**: Instantly preview generated prompts to test your package configurations
 
 ### Key Features
 
@@ -32,6 +32,13 @@ The **Random Prompt Generator** is a powerful authoring tool for creating and ma
 Just visit [https://signatur3-git.github.io/prompt-gen-web/](https://signatur3-git.github.io/prompt-gen-web/) and start creating!
 
 For detailed instructions, see the [User Guide](./USER_GUIDE.md).
+
+### Quick Workflow
+
+1. **Create or Import** a package from the home page
+2. **Edit** your package in the visual editor (namespaces, datatypes, prompt sections, rulebooks)
+3. **Preview** your work - generate prompts with different seeds to test your configurations
+4. **Export** your finished package as YAML for sharing or version control
 
 ## Development
 
