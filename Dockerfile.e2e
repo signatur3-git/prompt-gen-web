@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/playwright:v1.48.0-jammy
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy application code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Install Playwright browsers (Chromium)
+RUN npx playwright install chromium
+
+# Expose port for dev server
+EXPOSE 5173
+
+# Run E2E tests
+CMD ["npm", "run", "test:e2e"]
+
