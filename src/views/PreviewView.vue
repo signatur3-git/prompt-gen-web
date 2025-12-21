@@ -1,9 +1,10 @@
 <template>
   <div class="preview-view">
     <header class="preview-header">
-      <h1>Live Preview</h1>
+      <h1>Prompt Generator</h1>
       <div class="header-actions">
         <button
+          v-if="packageStore.currentPackage"
           class="btn-secondary"
           @click="router.push('/editor')"
         >
@@ -18,142 +19,114 @@
       </div>
     </header>
 
-    <div
-      v-if="!currentPackage"
-      class="empty-state"
-    >
-      <p>No package loaded. Please create or load a package.</p>
-      <button
-        class="btn-primary"
-        @click="router.push('/')"
-      >
-        Go to Home
-      </button>
-    </div>
-
-    <div
-      v-else
-      class="preview-container"
-    >
+    <div class="preview-container">
       <aside class="preview-sidebar">
         <div class="controls">
-          <h2>Render Settings</h2>
+          <h2>Select Rulebook</h2>
 
+          <!-- Search box -->
           <div class="form-group">
-            <label>Namespace:</label>
-            <select v-model="selectedNamespace">
-              <option value="">
-                Select namespace...
-              </option>
-              <option
-                v-for="(_ns, id) in currentPackage.namespaces"
-                :key="id"
-                :value="id"
-              >
-                {{ id }}
-              </option>
-            </select>
-          </div>
-
-          <div
-            v-if="selectedNamespace"
-            class="form-group"
-          >
-            <label>Target Type:</label>
-            <select v-model="targetType">
-              <option value="promptsection">
-                Prompt Section
-              </option>
-              <option value="rulebook">
-                Rulebook
-              </option>
-            </select>
-          </div>
-
-          <div
-            v-if="selectedNamespace && targetType === 'promptsection'"
-            class="form-group"
-          >
-            <label>Prompt Section:</label>
-            <select v-model="selectedPromptSection">
-              <option value="">
-                Select prompt section...
-              </option>
-              <option
-                v-for="(_ps, name) in namespace?.prompt_sections"
-                :key="name"
-                :value="name"
-              >
-                {{ name }}
-              </option>
-            </select>
-          </div>
-
-          <div
-            v-if="selectedNamespace && targetType === 'rulebook'"
-            class="form-group"
-          >
-            <label>Rulebook:</label>
-            <select v-model="selectedRulebook">
-              <option value="">
-                Select rulebook...
-              </option>
-              <option
-                v-for="(_rb, name) in namespace?.rulebooks"
-                :key="name"
-                :value="name"
-              >
-                {{ name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Seed:</label>
             <input
-              v-model.number="seed"
-              type="number"
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search rulebooks..."
+              class="search-input"
             >
+          </div>
+
+          <!-- Rulebook list -->
+          <div
+            v-if="filteredRulebooks.length === 0"
+            class="empty-state-small"
+          >
+            <p v-if="allRulebooks.length === 0">
+              No rulebooks found in local storage. Create packages with rulebooks first.
+            </p>
+            <p v-else>
+              No rulebooks match your search.
+            </p>
+          </div>
+
+          <div
+            v-else
+            class="rulebook-list"
+          >
+            <div
+              v-for="rb in filteredRulebooks"
+              :key="`${rb.packageId}:${rb.namespaceId}:${rb.rulebookId}`"
+              class="rulebook-item"
+              :class="{ active: isSelected(rb) }"
+              @click="selectRulebook(rb)"
+            >
+              <div class="rulebook-name">
+                {{ rb.rulebookId }}
+              </div>
+              <div class="rulebook-meta">
+                <span class="package-badge">{{ rb.packageName }}</span>
+                <span class="namespace-badge">{{ rb.namespaceId }}</span>
+              </div>
+              <div class="entry-points-info">
+                {{ rb.entryPointCount }} entry point{{ rb.entryPointCount !== 1 ? 's' : '' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Generation settings -->
+          <div
+            v-if="selectedRulebook"
+            class="generation-settings"
+          >
+            <h3>Generation Settings</h3>
+
+            <div class="form-group">
+              <label>Seed:</label>
+              <div class="seed-input-group">
+                <input
+                  v-model.number="seed"
+                  type="number"
+                  class="seed-input"
+                >
+                <button
+                  class="btn-small"
+                  @click="randomSeed"
+                >
+                  Random
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Count:</label>
+              <input
+                v-model.number="batchCount"
+                type="number"
+                min="1"
+                max="50"
+              >
+            </div>
+
             <button
-              class="btn-small"
-              @click="randomSeed"
+              class="btn-primary"
+              @click="generate"
             >
-              Random
+              Generate
             </button>
           </div>
-
-          <div class="form-group">
-            <label>Count:</label>
-            <input
-              v-model.number="batchCount"
-              type="number"
-              min="1"
-              max="50"
-            >
-          </div>
-
-          <button
-            class="btn-primary"
-            :disabled="!canRender"
-            @click="render"
-          >
-            Generate
-          </button>
         </div>
       </aside>
 
       <main class="preview-main">
-        <h2>Output</h2>
+        <h2>Generated Prompts</h2>
 
         <div
-          v-if="results.length === 0"
+          v-if="results.length === 0 && !error"
           class="empty-results"
         >
-          <p>Configure settings and click Generate to see results</p>
+          <p>Select a rulebook and click Generate to see results</p>
         </div>
 
         <div
-          v-else
+          v-else-if="results.length > 0"
           class="results"
         >
           <div
@@ -168,12 +141,27 @@
                 class="btn-copy"
                 @click="copyResult(result.text)"
               >
-                Copy
+                📋 Copy
               </button>
             </div>
             <div class="result-text">
               {{ result.text }}
             </div>
+          </div>
+
+          <div class="results-actions">
+            <button
+              class="btn-secondary"
+              @click="copyAllResults"
+            >
+              Copy All Results
+            </button>
+            <button
+              class="btn-secondary"
+              @click="exportResults"
+            >
+              Export as Text
+            </button>
           </div>
         </div>
 
@@ -189,45 +177,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePackageStore } from '../stores/packageStore';
+import { platformService } from '../services/localStorage';
 import { renderingService } from '../services/rendering';
 import type { RenderResult } from '../services/platform';
+import type { Package } from '../models/package';
 
 const router = useRouter();
 const packageStore = usePackageStore();
 
-const currentPackage = computed(() => packageStore.currentPackage);
-const selectedNamespace = ref('');
-const targetType = ref<'promptsection' | 'rulebook'>('promptsection');
-const selectedPromptSection = ref('');
-const selectedRulebook = ref('');
+interface RulebookInfo {
+  packageId: string;
+  packageName: string;
+  namespaceId: string;
+  rulebookId: string;
+  entryPointCount: number;
+  pkg: Package;
+}
+
+const allRulebooks = ref<RulebookInfo[]>([]);
+const searchQuery = ref('');
+const selectedRulebook = ref<RulebookInfo | null>(null);
 const seed = ref(Math.floor(Math.random() * 1000000));
 const batchCount = ref(1);
 const results = ref<RenderResult[]>([]);
 const error = ref('');
 
-const namespace = computed(() => {
-  if (!currentPackage.value || !selectedNamespace.value) return null;
-  return currentPackage.value.namespaces[selectedNamespace.value];
+const filteredRulebooks = computed(() => {
+  if (!searchQuery.value) return allRulebooks.value;
+
+  const query = searchQuery.value.toLowerCase();
+  return allRulebooks.value.filter(rb =>
+    rb.rulebookId.toLowerCase().includes(query) ||
+    rb.packageName.toLowerCase().includes(query) ||
+    rb.namespaceId.toLowerCase().includes(query)
+  );
 });
 
-const canRender = computed(() => {
-  if (!selectedNamespace.value) return false;
-  if (targetType.value === 'promptsection') {
-    return !!selectedPromptSection.value;
-  } else {
-    return !!selectedRulebook.value;
-  }
-});
+function isSelected(rb: RulebookInfo): boolean {
+  if (!selectedRulebook.value) return false;
+  return selectedRulebook.value.packageId === rb.packageId &&
+         selectedRulebook.value.namespaceId === rb.namespaceId &&
+         selectedRulebook.value.rulebookId === rb.rulebookId;
+}
+
+function selectRulebook(rb: RulebookInfo) {
+  selectedRulebook.value = rb;
+  results.value = [];
+  error.value = '';
+}
 
 function randomSeed() {
   seed.value = Math.floor(Math.random() * 1000000);
 }
 
-async function render() {
-  if (!currentPackage.value || !canRender.value) return;
+async function generate() {
+  if (!selectedRulebook.value) return;
 
   try {
     error.value = '';
@@ -235,23 +242,13 @@ async function render() {
 
     for (let i = 0; i < batchCount.value; i++) {
       const currentSeed = seed.value + i;
-      let result: RenderResult;
 
-      if (targetType.value === 'promptsection') {
-        result = await renderingService.render(
-          currentPackage.value,
-          selectedNamespace.value,
-          selectedPromptSection.value,
-          currentSeed
-        );
-      } else {
-        result = await renderingService.renderRulebook(
-          currentPackage.value,
-          selectedNamespace.value,
-          selectedRulebook.value,
-          currentSeed
-        );
-      }
+      const result = await renderingService.renderRulebook(
+        selectedRulebook.value.pkg,
+        selectedRulebook.value.namespaceId,
+        selectedRulebook.value.rulebookId,
+        currentSeed
+      );
 
       results.value.push(result);
     }
@@ -262,8 +259,68 @@ async function render() {
 
 function copyResult(text: string) {
   navigator.clipboard.writeText(text);
-  // Could add a toast notification here
 }
+
+function copyAllResults() {
+  const allText = results.value.map((r, i) => `#${i + 1} (Seed: ${r.seed})\n${r.text}`).join('\n\n---\n\n');
+  navigator.clipboard.writeText(allText);
+}
+
+function exportResults() {
+  const allText = results.value.map((r, i) => `#${i + 1} (Seed: ${r.seed})\n${r.text}`).join('\n\n---\n\n');
+  const blob = new Blob([allText], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prompts-${selectedRulebook.value?.rulebookId || 'export'}-${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function loadAllRulebooks() {
+  try {
+    // Load all packages from localStorage
+    await packageStore.loadPackageList();
+    const packageList = packageStore.packages;
+
+    const rulebooks: RulebookInfo[] = [];
+
+    for (const pkgMeta of packageList) {
+      try {
+        const pkg = await platformService.loadPackage(pkgMeta.id);
+
+        // Iterate through all namespaces
+        for (const [namespaceId, namespace] of Object.entries(pkg.namespaces)) {
+          // Iterate through all rulebooks in this namespace
+          if (namespace.rulebooks) {
+            for (const [rulebookId, rulebook] of Object.entries(namespace.rulebooks)) {
+              rulebooks.push({
+                packageId: pkg.id,
+                packageName: pkg.metadata.name || pkg.id,
+                namespaceId,
+                rulebookId,
+                entryPointCount: rulebook.entry_points?.length || 0,
+                pkg,
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.error(`Failed to load package ${pkgMeta.id}:`, err);
+      }
+    }
+
+    allRulebooks.value = rulebooks;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load rulebooks';
+  }
+}
+
+onMounted(() => {
+  loadAllRulebooks();
+});
 </script>
 
 <style scoped>
@@ -280,6 +337,7 @@ function copyResult(text: string) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .preview-header h1 {
@@ -299,49 +357,161 @@ function copyResult(text: string) {
 }
 
 .preview-sidebar {
-  width: 350px;
+  width: 400px;
   background: #f5f5f5;
   border-right: 1px solid #ddd;
   padding: 1rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .controls h2 {
-  margin: 0 0 1rem 0;
+  margin: 0;
   font-size: 1.2rem;
 }
 
+.controls h3 {
+  margin: 1rem 0 0.5rem 0;
+  font-size: 1rem;
+  color: #666;
+}
+
 .form-group {
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
-.form-group select,
-.form-group input {
-  width: 100%;
+.form-group input,
+.form-group select {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-family: inherit;
+  font-size: 1rem;
+}
+
+.search-input {
+  width: 100%;
+}
+
+.seed-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.seed-input {
+  flex: 1;
 }
 
 .btn-small {
-  margin-top: 0.5rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
   background: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .btn-small:hover {
   background: #e0e0e0;
+}
+
+.empty-state-small {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.empty-state-small p {
+  margin: 0;
+}
+
+.rulebook-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.25rem;
+}
+
+.rulebook-item {
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rulebook-item:hover {
+  border-color: #42b983;
+  background: #f8f9fa;
+}
+
+.rulebook-item.active {
+  border-color: #42b983;
+  background: #e8f5f0;
+}
+
+.rulebook-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.rulebook-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.package-badge,
+.namespace-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.package-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.namespace-badge {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.entry-points-info {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.generation-settings {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #ddd;
 }
 
 .preview-main {
@@ -351,10 +521,9 @@ function copyResult(text: string) {
 }
 
 .preview-main h2 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 1.5rem 0;
 }
 
-.empty-state,
 .empty-results {
   text-align: center;
   padding: 4rem 2rem;
@@ -371,21 +540,23 @@ function copyResult(text: string) {
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .result-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid #eee;
 }
 
 .result-number {
   font-weight: bold;
   color: #42b983;
+  font-size: 1.1rem;
 }
 
 .result-seed {
@@ -394,12 +565,13 @@ function copyResult(text: string) {
 }
 
 .btn-copy {
-  padding: 0.25rem 0.75rem;
+  padding: 0.4rem 0.75rem;
   background: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
+  transition: all 0.2s;
 }
 
 .btn-copy:hover {
@@ -410,24 +582,33 @@ function copyResult(text: string) {
 
 .result-text {
   font-size: 1.1rem;
-  line-height: 1.6;
-  color: #333;
+  line-height: 1.7;
+  color: #2c3e50;
+  white-space: pre-wrap;
+}
+
+.results-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #eee;
 }
 
 .btn-primary,
 .btn-secondary {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
-  width: 100%;
+  transition: all 0.2s;
 }
 
 .btn-primary {
   background: #42b983;
   color: white;
-  margin-top: 1rem;
+  width: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -442,6 +623,7 @@ function copyResult(text: string) {
 .btn-secondary {
   background: #f0f0f0;
   color: #333;
+  flex: 1;
 }
 
 .btn-secondary:hover {

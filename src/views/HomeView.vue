@@ -29,6 +29,17 @@
       </div>
 
       <div class="action-card">
+        <h2>Generate Prompts</h2>
+        <p>Generate prompts from any rulebook in your local storage</p>
+        <button
+          class="btn-secondary"
+          @click="router.push('/preview')"
+        >
+          Preview & Generate
+        </button>
+      </div>
+
+      <div class="action-card">
         <h2>Import Package(s)</h2>
         <p>Import packages from files with automatic dependency resolution</p>
         <button
