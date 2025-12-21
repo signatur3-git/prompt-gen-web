@@ -1,7 +1,7 @@
 // Tests for cross-package references (dependencies)
 // Ensures normalization and dependency resolution work correctly
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { RenderingEngineV2 } from './rendering-v2';
 import { normalizePackageReferences } from './packageNormalizer';
 import type { Package } from '../models/package';
@@ -128,31 +128,38 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       const provider = createProviderPackage();
 
       // Before normalization
-      const itemNameBefore = provider.namespaces.provider.prompt_sections.item_name;
-      expect(itemNameBefore.references.size.target).toBe('sizes');
-      expect(itemNameBefore.references.color.target).toBe('colors');
+      const namespace = provider.namespaces.provider;
+      expect(namespace).toBeDefined();
+      const itemNameBefore = namespace?.prompt_sections.item_name;
+      expect(itemNameBefore).toBeDefined();
+      expect(itemNameBefore?.references.size.target).toBe('sizes');
+      expect(itemNameBefore?.references.color.target).toBe('colors');
 
       // Normalize
       normalizePackageReferences(provider);
 
       // After normalization
-      const itemNameAfter = provider.namespaces.provider.prompt_sections.item_name;
-      expect(itemNameAfter.references.size.target).toBe('provider:sizes');
-      expect(itemNameAfter.references.color.target).toBe('provider:colors');
+      const itemNameAfter = provider.namespaces.provider?.prompt_sections.item_name;
+      expect(itemNameAfter).toBeDefined();
+      expect(itemNameAfter?.references.size.target).toBe('provider:sizes');
+      expect(itemNameAfter?.references.color.target).toBe('provider:colors');
     });
 
     it('should not modify already-absolute references', () => {
       const consumer = createConsumerPackage();
 
       // Already absolute
-      const coloredItem = consumer.namespaces.consumer.prompt_sections.colored_item;
-      expect(coloredItem.references.color.target).toBe('provider:colors');
+      const namespace = consumer.namespaces.consumer;
+      expect(namespace).toBeDefined();
+      const coloredItem = namespace?.prompt_sections.colored_item;
+      expect(coloredItem).toBeDefined();
+      expect(coloredItem?.references.color.target).toBe('provider:colors');
 
       // Normalize
       normalizePackageReferences(consumer);
 
       // Should remain absolute
-      expect(coloredItem.references.color.target).toBe('provider:colors');
+      expect(coloredItem?.references.color.target).toBe('provider:colors');
     });
 
     it('should not modify context references', () => {
@@ -184,7 +191,9 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       normalizePackageReferences(pkg);
 
       // Context ref should not be modified
-      expect(pkg.namespaces.test.prompt_sections.section.references.ctx.target).toBe('context:article');
+      const section = pkg.namespaces.test?.prompt_sections.section;
+      expect(section).toBeDefined();
+      expect(section?.references.ctx.target).toBe('context:article');
     });
   });
 
@@ -347,8 +356,8 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
 
       // Uses 'package' field
       expect(consumer.dependencies).toBeDefined();
-      expect(consumer.dependencies![0]).toHaveProperty('package');
-      expect(consumer.dependencies![0].package).toBe('test.provider');
+      expect(consumer.dependencies?.[0]).toHaveProperty('package');
+      expect(consumer.dependencies?.[0]?.package).toBe('test.provider');
     });
 
     it('should handle "package_id" field name (TypeScript format)', () => {
@@ -363,8 +372,8 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       };
 
       expect(consumer.dependencies).toBeDefined();
-      expect(consumer.dependencies![0]).toHaveProperty('package_id');
-      expect(consumer.dependencies![0].package_id).toBe('test.provider');
+      expect(consumer.dependencies?.[0]).toHaveProperty('package_id');
+      expect(consumer.dependencies?.[0]?.package_id).toBe('test.provider');
     });
   });
 });

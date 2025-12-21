@@ -78,22 +78,26 @@ export class DependencyResolver {
       if (!pkg.dependencies) return;
 
       for (const dep of pkg.dependencies) {
-        const depKey = `${dep.package_id}@${dep.version}`;
+        // Handle both 'package' and 'package_id' field names
+        const pkgId = dep.package_id || (dep as any).package;
+        if (!pkgId) continue; // Skip if no package ID
+
+        const depKey = `${pkgId}@${dep.version}`;
         if (visited.has(depKey)) continue;
         visited.add(depKey);
 
         // Check if already installed
-        if (installedMap.has(dep.package_id)) {
-          alreadyInstalled.push(dep.package_id);
+        if (installedMap.has(pkgId)) {
+          alreadyInstalled.push(pkgId);
 
           // Load and check transitive dependencies
           try {
-            const installedPkg = await this.platformService.loadPackage(dep.package_id);
-            await resolveDeps(installedPkg, dep.package_id);
+            const installedPkg = await this.platformService.loadPackage(pkgId);
+            await resolveDeps(installedPkg, pkgId);
           } catch (e) {
             // Package in list but can't load - treat as missing
             missing.push({
-              packageId: dep.package_id,
+              packageId: pkgId,
               version: dep.version,
               requiredBy,
             });
@@ -105,30 +109,29 @@ export class DependencyResolver {
         let found = false;
         for (const source of this.sources) {
           try {
-            const available = await source.checkAvailable(dep.package_id, dep.version);
+            const available = await source.checkAvailable(pkgId, dep.version);
             if (available) {
               toInstall.push({
-                packageId: dep.package_id,
+                packageId: pkgId,
                 version: dep.version,
                 source: source.name,
               });
 
               // Fetch and check transitive dependencies
-              const depPkg = await source.fetchPackage(dep.package_id, dep.version);
-              await resolveDeps(depPkg, dep.package_id);
+              const depPkg = await source.fetchPackage(pkgId, dep.version);
+              await resolveDeps(depPkg, pkgId);
 
               found = true;
               break;
             }
           } catch (e) {
             // Source failed, try next
-            continue;
           }
         }
 
         if (!found) {
           missing.push({
-            packageId: dep.package_id,
+            packageId: pkgId,
             version: dep.version,
             requiredBy,
           });

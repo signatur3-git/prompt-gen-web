@@ -397,6 +397,10 @@ export class RenderingEngineV2 {
     const parts = ref.includes(':') ? ref.split(':') : [defaultNs, ref];
     const [nsName, psName] = parts;
 
+    if (!nsName || !psName) {
+      throw new Error(`Invalid reference format: ${ref}`);
+    }
+
     console.log(`[findPromptSection] Looking for ${nsName}:${psName}`);
     console.log(`[findPromptSection] Main package namespaces:`, Object.keys(this.pkg.namespaces));
     console.log(`[findPromptSection] Dependencies count:`, this.dependencies.size);
@@ -441,6 +445,10 @@ export class RenderingEngineV2 {
     const defaultNs = namespaceKeys.length > 0 ? namespaceKeys[0] : '';
     const parts = ref.includes(':') ? ref.split(':') : [defaultNs, ref];
     const [nsName, dtName] = parts;
+
+    if (!nsName || !dtName) {
+      throw new Error(`Invalid reference format: ${ref}`);
+    }
 
     console.log(`[findDatatype] Looking for ${nsName}:${dtName}`);
     console.log(`[findDatatype] Main package namespaces:`, Object.keys(this.pkg.namespaces));

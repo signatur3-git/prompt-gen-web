@@ -19,7 +19,6 @@ describe('RenderingService', () => {
         namespaces: {
           test: {
             id: 'test',
-            name: 'Test',
             datatypes: {
               creatures: {
                 name: 'Creatures',

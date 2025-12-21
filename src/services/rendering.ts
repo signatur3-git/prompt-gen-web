@@ -239,7 +239,7 @@ export class RenderingService implements IRenderingService {
 
         const count = rng.genRange(token.min || ref.min || 1, token.max || ref.max || 1);
         const values: SelectedValue[] = [];
-        const excludeTexts = token.unique ? [] : undefined;
+        const excludeTexts: string[] | undefined = token.unique ? [] : undefined;
 
         for (let i = 0; i < count; i++) {
           const value = await this.selectValue(pkg, namespace, ref, rng, context, excludeTexts);

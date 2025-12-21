@@ -411,14 +411,12 @@ const canApplyRename = computed(() => {
   if (!nextId) return false;
   if (!/^[a-z0-9_]+$/.test(nextId)) return false;
   if (nextId === renameModalCurrentId.value) return false;
-  if (props.rulebooks[nextId]) return false;
-  return true;
+  return !props.rulebooks[nextId];
+
 });
 
 function selectRulebook(id: string) {
-  if (isDirty.value && !confirm('You have unsaved changes. Discard them?')) {
-    return;
-  }
+  if (isDirty.value && !confirm('You have unsaved changes. Discard them?')) return;
 
   selectedRulebookId.value = id;
   const rulebook = props.rulebooks[id];
@@ -570,7 +568,7 @@ function saveRulebook() {
   for (let i = 0; i < editingRulebook.value.entry_points.length; i++) {
     const ep = editingRulebook.value.entry_points[i];
     if (!ep) continue;
-    if (!ep.target.trim()) {
+    if (!ep.target || !ep.target.trim()) {
       validationError.value = `Entry point ${i + 1}: Target is required`;
       return;
     }
@@ -594,9 +592,9 @@ function saveRulebook() {
   const rulebook: Rulebook = {
     name: editingRulebook.value.name.trim(),
     entry_points: editingRulebook.value.entry_points
-      .filter((ep): ep is NonNullable<typeof ep> => !!ep)
+      .filter((ep): ep is NonNullable<typeof ep> => !!ep && !!ep.target)
       .map(ep => ({
-        target: ep.target.trim(),
+        target: ep.target!.trim(),
         weight: ep.weight || 1.0,
       })),
     context,

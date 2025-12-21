@@ -2,8 +2,8 @@
 // Catches CSS parse errors that would break the dev server
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 describe('CSS Syntax Validation', () => {
   it('should not have orphaned CSS properties in HomeView', () => {
@@ -77,7 +77,7 @@ describe('CSS Syntax Validation', () => {
       const openBraces = (css.match(/{/g) || []).length;
       const closeBraces = (css.match(/}/g) || []).length;
 
-      expect(openBraces).withContext(`${filePath} should have matching braces`).toBe(closeBraces);
+      expect(openBraces).toBe(closeBraces);
     });
   });
 
@@ -103,12 +103,12 @@ describe('CSS Syntax Validation', () => {
 
     // Check for selectors with only comments or empty
     // Example: header { /* Old styles removed */ }
-    const emptyBlockPattern = /[a-zA-Z#.][a-zA-Z0-9#.\-_:\s]*\{[\s]*(?:\/\*[\s\S]*?\*\/[\s]*)?\}/g;
+    const emptyBlockPattern = /[a-zA-Z#.][a-zA-Z0-9#.\-_:\s]*\{[\s]*(?:\/\*[\s\S]*?\*\/[\s]*)?}/g;
     const matches = css.match(emptyBlockPattern);
 
     if (matches) {
       // Allow certain patterns like media queries
-      const problematic = matches.filter(m =>
+      const problematic = matches.filter((m: string) =>
         !m.includes('@media') &&
         !m.includes('@keyframes') &&
         m.length < 100 // Avoid false positives with long valid blocks
