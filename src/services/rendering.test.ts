@@ -11,11 +11,8 @@ describe('RenderingService', () => {
       const pkg: Package = {
         id: 'test-pkg',
         version: '1.0.0',
-        name: 'Test Package',
-        author: 'Test',
-        description: 'Test',
-        license: 'MIT',
-        dependencies: [],
+
+        metadata: { name: 'Test', authors: ['Test'] },
         namespaces: {
           test: {
             id: 'test',
@@ -48,6 +45,7 @@ describe('RenderingService', () => {
             },
             separator_sets: {},
             rulebooks: {},
+            decisions: [],
           },
         },
       };
@@ -71,15 +69,11 @@ describe('RenderingService', () => {
       const pkg: Package = {
         id: 'test-pkg',
         version: '1.0.0',
-        name: 'Test Package',
-        author: 'Test',
-        description: 'Test',
-        license: 'MIT',
-        dependencies: [],
+
+        metadata: { name: 'Test', authors: ['Test'] },
         namespaces: {
           test: {
             id: 'test',
-            name: 'Test',
             datatypes: {
               colors: {
                 name: 'Colors',
@@ -114,6 +108,7 @@ describe('RenderingService', () => {
             },
             separator_sets: {},
             rulebooks: {},
+            decisions: [],
           },
         },
       };
@@ -128,15 +123,11 @@ describe('RenderingService', () => {
       const pkg: Package = {
         id: 'test-pkg',
         version: '1.0.0',
-        name: 'Test Package',
-        author: 'Test',
-        description: 'Test',
-        license: 'MIT',
-        dependencies: [],
+
+        metadata: { name: 'Test', authors: ['Test'] },
         namespaces: {
           test: {
             id: 'test',
-            name: 'Test',
             datatypes: {
               things: {
                 name: 'Things',
@@ -156,6 +147,7 @@ describe('RenderingService', () => {
             rules: {},
             separator_sets: {},
             rulebooks: {},
+            decisions: [],
           },
         },
       };
@@ -171,15 +163,11 @@ describe('RenderingService', () => {
       const pkg: Package = {
         id: 'test-pkg',
         version: '1.0.0',
-        name: 'Test Package',
-        author: 'Test',
-        description: 'Test',
-        license: 'MIT',
-        dependencies: [],
+
+        metadata: { name: 'Test', authors: ['Test'] },
         namespaces: {
           test: {
             id: 'test',
-            name: 'Test',
             datatypes: {
               animals: {
                 name: 'Animals',
@@ -201,13 +189,16 @@ describe('RenderingService', () => {
             rules: {},
             separator_sets: {},
             rulebooks: {},
+            decisions: [],
           },
         },
       };
 
-      const result = await service.render(pkg, 'test', 'simple', 11111);
+      const result = await service.render(pkg, 'test', 'simple', 12345);
       expect(result.text).toMatch(/A (cat|dog) is running\./);
     });
   });
 });
+
+
 

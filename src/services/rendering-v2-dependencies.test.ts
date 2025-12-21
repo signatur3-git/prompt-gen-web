@@ -132,8 +132,8 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       expect(namespace).toBeDefined();
       const itemNameBefore = namespace?.prompt_sections.item_name;
       expect(itemNameBefore).toBeDefined();
-      expect(itemNameBefore?.references.size.target).toBe('sizes');
-      expect(itemNameBefore?.references.color.target).toBe('colors');
+      expect(itemNameBefore?.references.size?.target).toBe('sizes');
+      expect(itemNameBefore?.references.color?.target).toBe('colors');
 
       // Normalize
       normalizePackageReferences(provider);
@@ -141,8 +141,8 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       // After normalization
       const itemNameAfter = provider.namespaces.provider?.prompt_sections.item_name;
       expect(itemNameAfter).toBeDefined();
-      expect(itemNameAfter?.references.size.target).toBe('provider:sizes');
-      expect(itemNameAfter?.references.color.target).toBe('provider:colors');
+      expect(itemNameAfter?.references.size?.target).toBe('provider:sizes');
+      expect(itemNameAfter?.references.color?.target).toBe('provider:colors');
     });
 
     it('should not modify already-absolute references', () => {
@@ -153,13 +153,13 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       expect(namespace).toBeDefined();
       const coloredItem = namespace?.prompt_sections.colored_item;
       expect(coloredItem).toBeDefined();
-      expect(coloredItem?.references.color.target).toBe('provider:colors');
+      expect(coloredItem?.references.color?.target).toBe('provider:colors');
 
       // Normalize
       normalizePackageReferences(consumer);
 
       // Should remain absolute
-      expect(coloredItem?.references.color.target).toBe('provider:colors');
+      expect(coloredItem?.references.color?.target).toBe('provider:colors');
     });
 
     it('should not modify context references', () => {
@@ -193,7 +193,7 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       // Context ref should not be modified
       const section = pkg.namespaces.test?.prompt_sections.section;
       expect(section).toBeDefined();
-      expect(section?.references.ctx.target).toBe('context:article');
+      expect(section?.references.ctx?.target).toBe('context:article');
     });
   });
 
