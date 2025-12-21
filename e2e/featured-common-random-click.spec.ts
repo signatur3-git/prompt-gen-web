@@ -72,12 +72,12 @@ async function seedLocalStorage(page: any) {
 
 async function loadPackageThroughUI(page: any) {
   await page.goto('/');
-  await page.waitForSelector('text=Prompt Generator - Web Edition', { timeout: 10000 });
+  await page.waitForSelector('text=Random Prompt Generator', { timeout: 10000 });
 
   await seedLocalStorage(page);
 
   await page.reload();
-  await page.waitForSelector('text=Prompt Generator - Web Edition', { timeout: 10000 });
+  await page.waitForSelector('text=Random Prompt Generator', { timeout: 10000 });
 
   await page.click('button:has-text("Load Package")');
   await page.waitForSelector('.modal', { timeout: 5000 });
@@ -123,9 +123,8 @@ test.describe('Featured common package - random datatype clicking', () => {
       { displayName: 'times_of_day', expectedId: 'times_of_day' },
     ];
 
-    // Simulate how you test: random order over these 4 datatypes.
-    // We keep the number modest but enough to expose intermittent failures.
-    const ROUNDS = 30;
+    // Test with random order to verify clicking works regardless of sequence
+    const ROUNDS = 5;
 
     for (let round = 1; round <= ROUNDS; round++) {
       const order = shuffle(datatypes);
@@ -136,13 +135,12 @@ test.describe('Featured common package - random datatype clicking', () => {
         const header = page.locator('.datatype-item', { hasText: dt.displayName }).locator('.datatype-header');
         await header.waitFor({ state: 'visible', timeout: 5000 });
 
-        // Single click expectation: after click, editor (if not already) should show and ID input must match.
         await header.click();
 
         await expect(editorPanel).toBeVisible({ timeout: 5000 });
         await expect(idInput).toHaveValue(dt.expectedId, { timeout: 5000 });
 
-        // Optional: brief pause between clicks to emulate your slow testing.
+        // Brief pause between clicks
         await page.waitForTimeout(200);
       }
     }

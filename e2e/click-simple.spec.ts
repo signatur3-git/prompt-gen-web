@@ -4,7 +4,7 @@ test.describe('Click Bug Test - Simplified', () => {
   test('Verify editor shows and selection updates on first click after manual setup', async ({ page }) => {
     // Go to app
     await page.goto('/');
-    await page.waitForSelector('text=Prompt Generator - Web Edition');
+    await page.waitForSelector('text=Random Prompt Generator');
 
     // Create a new package
     await page.click('button:has-text("Create Package")');

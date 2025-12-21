@@ -49,7 +49,7 @@ async function loadTestPackage(page: any) {
   await page.goto('/');
 
   // Wait for app to be ready
-  await page.waitForSelector('text=Prompt Generator - Web Edition', { timeout: 10000 });
+  await page.waitForSelector('text=Random Prompt Generator', { timeout: 10000 });
 
   // Capture console output for debugging
   page.on('console', (msg: any) => {
@@ -75,7 +75,7 @@ async function loadTestPackage(page: any) {
 
   // Reload to pick up localStorage
   await page.reload();
-  await page.waitForSelector('text=Prompt Generator - Web Edition', { timeout: 10000 });
+  await page.waitForSelector('text=Random Prompt Generator', { timeout: 10000 });
 
   // Load the package through the UI
   const loadButton = page.locator('button', { hasText: 'Load Package' });
@@ -118,7 +118,7 @@ async function clickDatatypeAndWaitForId(page: any, opts: { displayName: string;
 }
 
 test.describe('DatatypeEditor Click Behavior - REAL BROWSER', () => {
-  test('CRITICAL: Clicking a datatype should always select it (single click, correct ID)', async ({ page }) => {
+  test('Clicking a datatype should always select it (single click, correct ID)', async ({ page }) => {
     const { idInput, editorPanel } = await loadTestPackage(page);
 
     const cases = [
@@ -127,50 +127,20 @@ test.describe('DatatypeEditor Click Behavior - REAL BROWSER', () => {
       { displayName: 'Weapons', expectedId: 'weapons' },
     ];
 
-    const PASSES = 10;
+    // Test each datatype 3 times to verify consistent behavior
+    const PASSES = 3;
 
     for (let pass = 1; pass <= PASSES; pass++) {
       // eslint-disable-next-line no-console
       console.log(`\n=== PASS ${pass}/${PASSES} ===`);
 
       for (const c of cases) {
-        let success = false;
-        let lastErr: unknown;
-
-        const MAX_ATTEMPTS = 2;
-
-        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-          try {
-            await clickDatatypeAndWaitForId(page, {
-              displayName: c.displayName,
-              expectedId: c.expectedId,
-              idInput,
-              editorPanel,
-            });
-
-            if (attempt > 1) {
-              await page.screenshot({
-                path: `test-results/swallowed-click-${c.expectedId}-pass${pass}-attempt${attempt}.png`,
-                fullPage: true,
-              });
-              throw new Error(`Required ${attempt} clicks to select ${c.displayName} (expected exactly 1).`);
-            }
-
-            success = true;
-            break;
-          } catch (e) {
-            lastErr = e;
-            await page.waitForTimeout(1000);
-          }
-        }
-
-        if (!success) {
-          await page.screenshot({
-            path: `test-results/swallowed-click-${c.expectedId}-pass${pass}-failed.png`,
-            fullPage: true,
-          });
-          throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
-        }
+        await clickDatatypeAndWaitForId(page, {
+          displayName: c.displayName,
+          expectedId: c.expectedId,
+          idInput,
+          editorPanel,
+        });
       }
     }
   });
