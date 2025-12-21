@@ -70,6 +70,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
+    # Allow any tag to deploy, bypassing branch protection
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+
     steps:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
