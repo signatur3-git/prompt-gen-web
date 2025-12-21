@@ -2,48 +2,39 @@
 
 ## What Was Added
 
-Made local development **as strict as CI** so TypeScript errors are caught immediately, not during commit or CI build.
+Made local development **as strict as CI** so TypeScript errors are caught during development, not during commit or CI build.
 
 ## Changes Made
 
-### 1. Real-Time Type Checking in Dev Server
+### 1. Parallel Type Checking in Dev Mode
 
-**Added:** `vite-plugin-checker` to Vite config
+**Added:** `dev:check` script that runs type-checking alongside dev server
 
-**File:** `vite.config.ts`
-```typescript
-import checker from 'vite-plugin-checker'
-
-export default defineConfig({
-  plugins: [
-    vue(),
-    checker({
-      typescript: true,      // Check TypeScript errors
-      vueTsc: true,         // Check Vue SFC <script> blocks
-      eslint: {             // Check ESLint rules
-        lintCommand: 'eslint . --max-warnings 0',
-      },
-    }),
-  ],
-})
+**How to use:**
+```bash
+npm run dev:check
 ```
+
+This runs:
+- `vite` - Dev server with hot reload
+- `vue-tsc --noEmit --watch` - TypeScript type-checking in watch mode
 
 **What This Does:**
-- ✅ TypeScript errors appear **in the browser** during development
-- ✅ ESLint warnings/errors shown **in real-time**
-- ✅ Vue SFC type checking **on every save**
-- ✅ Overlay displays errors (can't miss them!)
+- ✅ TypeScript errors appear **in terminal** during development
+- ✅ Continuous type-checking **on every save**
 - ✅ Same strictness as `npm run build`
+- ✅ Runs in parallel with dev server
 
-### 2. Updated Package Dependencies
-
-**Added:** `vite-plugin-checker@^0.8.0` to devDependencies
-
+**Alternative:** Use two terminals:
 ```bash
-npm install --save-dev vite-plugin-checker --legacy-peer-deps
+# Terminal 1
+npm run dev
+
+# Terminal 2  
+npm run type-check -- --watch
 ```
 
-### 3. Already Strict TypeScript Config
+### 2. Already Strict TypeScript Config
 
 **File:** `tsconfig.app.json`
 ```json
@@ -69,11 +60,11 @@ npm install --save-dev vite-plugin-checker --legacy-peer-deps
 6. OR commit succeeds, CI fails ❌
 ```
 
-### After: Immediate Feedback ✅
+### After: Terminal Feedback ✅
 ```
 1. Write code with TypeScript error
 2. Save file
-3. Dev server shows ERROR OVERLAY immediately! 🚨
+3. Terminal shows TYPE ERROR immediately! 🚨
 4. Fix error before continuing
 5. Commit succeeds ✅
 6. CI succeeds ✅
@@ -81,40 +72,25 @@ npm install --save-dev vite-plugin-checker --legacy-peer-deps
 
 ## Error Display Examples
 
-### TypeScript Error in Browser
+### TypeScript Error in Terminal
 ```
-[plugin:vite-plugin-checker] 
-ERROR in src/services/example.ts:42:10
+src/services/example.ts:42:10 - error TS2532: Object is possibly 'undefined'.
 
-TS2532: Object is possibly 'undefined'.
+42   return value.text;
+            ~~~~~
 
-  40 |   const value = data.items[0];
-  41 |   // ❌ Error! items might be undefined
-  42 |   return value.text;
-     |          ^^^^^^^^^^^
-```
-
-### ESLint Error in Browser
-```
-[plugin:vite-plugin-checker]
-ERROR: Unexpected console statement (no-console)
-
-src/components/Example.vue:25:5
-  23 | function doSomething() {
-  24 |   // ❌ Error! No console.log in production
-  25 |   console.log('debug');
-     |   ^^^^^^^^^^^^^^^^^^^^^
+Found 1 error. Watching for file changes.
 ```
 
 ## Validation Levels
 
-### Level 1: Dev Server (Real-Time)
+### Level 1: Dev Server with Type-Check (Parallel)
 ```bash
-npm run dev
+npm run dev:check
 ```
-- ✅ TypeScript errors → Browser overlay
-- ✅ ESLint errors → Browser overlay
-- ✅ Immediate feedback while coding
+- ✅ TypeScript errors → Terminal output
+- ✅ Continuous type-checking while coding
+- ✅ Immediate feedback on save
 
 ### Level 2: Pre-Commit (Local)
 ```bash

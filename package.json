@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:check": "vite & vue-tsc --noEmit --watch",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings 0",
@@ -42,7 +43,6 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.50.0",
     "vite": "npm:rolldown-vite@7.2.5",
-    "vite-plugin-checker": "^0.8.0",
     "vitest": "^4.0.16",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.1.4"
