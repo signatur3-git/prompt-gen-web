@@ -1,55 +1,119 @@
 <template>
   <div class="home">
-    <header>
-      <h1>Prompt Generator - Web Edition</h1>
-      <p>Create and edit prompt generation packages in your browser</p>
-    </header>
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1>Random Prompt Generator</h1>
+      <p class="hero-subtitle">
+        Create dynamic, randomized prompts for AI image generation
+      </p>
+      <p class="hero-description">
+        Build complex prompt templates with datatypes, rules, and dependencies.
+        Generate deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art tools.
+      </p>
+      <button
+        class="btn-hero"
+        @click="router.push('/preview')"
+      >
+        ⚡ Start Generating Prompts
+      </button>
+    </div>
 
-    <div class="actions">
-      <div class="action-card">
-        <h2>Create New Package</h2>
-        <p>Start building a new prompt generation package from scratch</p>
+    <!-- Getting Started Section -->
+    <section class="getting-started">
+      <h2>✨ Getting Started</h2>
+      <p class="section-intro">
+        New here? Try the sample package to see what this tool can do!
+      </p>
+
+      <div class="action-card action-card-hero">
+        <div class="card-icon">
+          🎁
+        </div>
+        <h3>Load Sample Package</h3>
+        <p>Explore featured.common with ready-to-use rulebooks for fantasy scenes, lighting, characters, and more</p>
+        <button
+          class="btn-primary btn-large"
+          :disabled="isLoadingSample"
+          @click="loadSamplePackage"
+        >
+          {{ isLoadingSample ? 'Loading...' : 'Load Sample & Start Generating' }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions">
+      <h2>🚀 Generate Prompts</h2>
+      <p class="section-intro">
+        Use your packages to create randomized prompts
+      </p>
+
+      <div class="action-card action-card-primary">
+        <div class="card-icon">
+          ⚡
+        </div>
+        <h3>Preview & Generate</h3>
+        <p>Generate prompts from any rulebook in your collection</p>
         <button
           class="btn-primary"
-          @click="createNew"
-        >
-          Create Package
-        </button>
-      </div>
-
-      <div class="action-card">
-        <h2>Load Existing Package</h2>
-        <p>Open and edit a package from your browser storage</p>
-        <button
-          class="btn-secondary"
-          @click="openLoadDialog"
-        >
-          Load Package
-        </button>
-      </div>
-
-      <div class="action-card">
-        <h2>Generate Prompts</h2>
-        <p>Generate prompts from any rulebook in your local storage</p>
-        <button
-          class="btn-secondary"
           @click="router.push('/preview')"
         >
-          Preview & Generate
+          Open Generator
         </button>
       </div>
+    </section>
 
-      <div class="action-card">
-        <h2>Import Package(s)</h2>
-        <p>Import packages from files with automatic dependency resolution</p>
-        <button
-          class="btn-secondary"
-          @click="showImportDialog = true"
-        >
-          Import Package
-        </button>
+    <!-- Package Management Section -->
+    <section class="package-management">
+      <h2>📦 Package Management</h2>
+      <p class="section-intro">
+        Create, import, and edit your prompt generation packages
+      </p>
+
+      <div class="actions-grid">
+        <div class="action-card">
+          <div class="card-icon">
+            ➕
+          </div>
+          <h3>Create New Package</h3>
+          <p>Start building a package from scratch</p>
+          <button
+            class="btn-secondary"
+            @click="createNew"
+          >
+            Create Package
+          </button>
+        </div>
+
+        <div class="action-card">
+          <div class="card-icon">
+            📂
+          </div>
+          <h3>Load Existing Package</h3>
+          <p>Edit packages from your storage</p>
+          <button
+            class="btn-secondary"
+            @click="openLoadDialog"
+          >
+            Load Package
+          </button>
+        </div>
+
+        <div class="action-card">
+          <div class="card-icon">
+            📥
+          </div>
+          <h3>Import Package(s)</h3>
+          <p>Import YAML/JSON files with dependencies</p>
+          <button
+            class="btn-secondary"
+            @click="showImportDialog = true"
+          >
+            Import Files
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
 
     <!-- Load Dialog -->
     <div
@@ -342,6 +406,7 @@ const showLoadDialog = ref(false);
 const showImportDialog = ref(false);
 const showDeleteConfirm = ref(false);
 const packageToDelete = ref<{ id: string; name: string } | null>(null);
+const isLoadingSample = ref(false);
 const packages = ref<Array<{
   id: string;
   name: string;
@@ -448,6 +513,39 @@ async function loadPackage(id: string) {
     router.push('/editor');
   } catch (error) {
     alert(error instanceof Error ? error.message : 'Failed to load package');
+  }
+}
+
+async function loadSamplePackage() {
+  isLoadingSample.value = true;
+  try {
+    // Fetch the featured.common.yaml from the desktop app repo
+    const response = await fetch('https://raw.githubusercontent.com/signatur3-git/prompt-gen-desktop/main/packages/featured.common/featured.common.yaml');
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch sample package: ${response.statusText}`);
+    }
+
+    const yamlContent = await response.text();
+
+    // Import the package
+    await packageStore.importPackageFromString(yamlContent, 'yaml');
+
+    // Save it to localStorage
+    await packageStore.savePackage();
+
+    // Refresh the package list
+    await packageStore.loadPackageList();
+    await loadPackageMetadata();
+
+    // Show success message
+    alert('✅ Sample package "featured.common" loaded successfully!\n\nThis package includes:\n• Fantasy scenes & characters\n• Lighting & atmosphere\n• Landscape & nature\n• Style variations\n\nGo to Preview to generate prompts!');
+
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Failed to load sample package';
+    alert(`❌ ${errorMsg}\n\nYou can manually download featured.common.yaml from:\nhttps://github.com/signatur3-git/prompt-gen-desktop`);
+  } finally {
+    isLoadingSample.value = false;
   }
 }
 
@@ -643,43 +741,186 @@ function closeImportDialog() {
   padding: 2rem;
 }
 
-header {
+/* Hero Section */
+.hero {
   text-align: center;
-  margin-bottom: 3rem;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+  margin-bottom: 4rem;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
 }
 
-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-header p {
-  color: #666;
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+}
+
+.btn-hero {
+  background: white;
+  color: #667eea;
+  padding: 1rem 2.5rem;
   font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.actions {
+.btn-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Sections */
+section {
+  margin-bottom: 4rem;
+}
+
+section h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-intro {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* Getting Started - Hero Card */
+.getting-started .action-card {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.action-card-hero {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  padding: 3rem;
+  box-shadow: 0 12px 48px rgba(245, 87, 108, 0.3);
+  transform: scale(1.02);
+}
+
+.action-card-hero h3 {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.action-card-hero p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Quick Actions - Primary Card */
+.quick-actions .action-card {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.action-card-primary {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border: none;
+  padding: 2.5rem;
+  box-shadow: 0 8px 32px rgba(168, 237, 234, 0.3);
+}
+
+.action-card-primary h3 {
+  color: #2c3e50;
+  font-size: 1.6rem;
+}
+
+.action-card-primary p {
+  color: #555;
+  font-size: 1.05rem;
+}
+
+/* Actions Grid */
+.actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .action-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
   padding: 2rem;
   text-align: center;
   background: white;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.action-card h2 {
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #667eea;
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.action-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+  color: #2c3e50;
 }
 
 .action-card p {
   color: #666;
+  line-height: 1.5;
   margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+.btn-large {
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn-large {
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  font-weight: 600;
 }
 
 .btn-primary, .btn-secondary, .btn-cancel {
@@ -1183,41 +1424,60 @@ header p {
 /* Responsive Design */
 @media (max-width: 1024px) {
   /* Tablet */
-  .package-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  .actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 
-  .actions {
-    flex-wrap: wrap;
+  .hero h1 {
+    font-size: 2.5rem;
   }
 }
 
 @media (max-width: 768px) {
   /* Mobile */
-  .home-header {
-    padding: 1.5rem 1rem;
+  .home {
+    padding: 1rem;
   }
 
-  .home-header h1 {
+  .hero {
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  section {
+    margin-bottom: 2.5rem;
+  }
+
+  section h2 {
     font-size: 1.5rem;
   }
 
-  .package-grid {
+  .section-intro {
+    font-size: 1rem;
+  }
+
+  .actions-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
 
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
+  .action-card {
+    padding: 1.5rem;
   }
 
-  .actions button {
-    width: 100%;
-  }
-
-  .package-card {
-    padding: 1rem;
+  .action-card-hero {
+    padding: 2rem;
   }
 
   .modal-content {
