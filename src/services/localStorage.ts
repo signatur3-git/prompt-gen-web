@@ -7,6 +7,7 @@ import type {
 } from './platform';
 import type { Package } from '../models/package';
 import * as yaml from 'js-yaml';
+import { normalizePackageReferences } from './packageNormalizer';
 
 const STORAGE_KEY = 'rpg-packages';
 const STORAGE_VERSION = '1.0.0';
@@ -52,6 +53,10 @@ export class LocalStoragePlatformService implements IPlatformService {
       throw new Error(`Package not found: ${id}`);
     }
 
+    // Normalize references (convert relative to absolute)
+    // This is critical for packages loaded as dependencies
+    normalizePackageReferences(pkg);
+
     return pkg;
   }
 
@@ -91,6 +96,9 @@ export class LocalStoragePlatformService implements IPlatformService {
       if (!pkg.id || !pkg.version || !pkg.metadata) {
         throw new Error('Invalid package structure');
       }
+
+      // Normalize references (convert relative to absolute)
+      normalizePackageReferences(pkg);
 
       return pkg;
     } catch (error) {

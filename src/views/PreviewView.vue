@@ -181,7 +181,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePackageStore } from '../stores/packageStore';
 import { platformService } from '../services/localStorage';
-import { renderingService } from '../services/rendering';
+import { RenderingEngineV2 } from '../services/rendering-v2';
 import type { RenderResult } from '../services/platform';
 import type { Package } from '../models/package';
 
@@ -240,14 +240,43 @@ async function generate() {
     error.value = '';
     results.value = [];
 
+    // Load dependencies for this package
+    console.log('[generate] Loading dependencies for package:', selectedRulebook.value.pkg.id);
+    console.log('[generate] Package has dependencies:', selectedRulebook.value.pkg.dependencies);
+
+    const dependencies: Package[] = [];
+    if (selectedRulebook.value.pkg.dependencies) {
+      for (const dep of selectedRulebook.value.pkg.dependencies) {
+        try {
+          // Handle both 'package_id' (TypeScript) and 'package' (YAML) field names
+          const depId = dep.package_id || (dep as any).package;
+          console.log('[generate] Loading dependency:', depId);
+          const depPkg = await platformService.loadPackage(depId);
+          console.log('[generate] Loaded dependency:', depId, 'with namespaces:', Object.keys(depPkg.namespaces));
+          dependencies.push(depPkg);
+        } catch (err) {
+          const depId = dep.package_id || (dep as any).package;
+          console.warn(`Failed to load dependency ${depId}:`, err);
+          // Continue anyway - renderer will throw specific error if needed
+        }
+      }
+    }
+
+    console.log('[generate] Total dependencies loaded:', dependencies.length);
+    console.log('[generate] Dependency package IDs:', dependencies.map(d => d.id));
+
     for (let i = 0; i < batchCount.value; i++) {
       const currentSeed = seed.value + i;
 
-      const result = await renderingService.renderRulebook(
+      // Use new V2 renderer with dependencies
+      const engine = new RenderingEngineV2(
         selectedRulebook.value.pkg,
+        currentSeed,
+        dependencies
+      );
+      const result = await engine.renderRulebook(
         selectedRulebook.value.namespaceId,
-        selectedRulebook.value.rulebookId,
-        currentSeed
+        selectedRulebook.value.rulebookId
       );
 
       results.value.push(result);

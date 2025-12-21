@@ -13,10 +13,8 @@ class Context {
   private data: Map<string, unknown> = new Map();
 
   set(key: string, value: unknown): void {
-    if (!this.data.has(key)) {
-      // First contribution wins
-      this.data.set(key, value);
-    }
+    // Allow overwriting - last write wins (important for rule-computed values)
+    this.data.set(key, value);
   }
 
   get(key: string): unknown {
@@ -25,6 +23,13 @@ class Context {
 
   has(key: string): boolean {
     return this.data.has(key);
+  }
+
+  getOrThrow(key: string, context: string): unknown {
+    if (!this.data.has(key)) {
+      throw new Error(`Context variable '${key}' not found. ${context}`);
+    }
+    return this.data.get(key);
   }
 }
 
@@ -36,6 +41,24 @@ interface SelectedValue {
   tags: Record<string, unknown>;
   namespace: string;
   datatype: string;
+}
+
+/**
+ * Intermediate rendering state across phases
+ */
+interface RenderState {
+  tokens: Array<{
+    type: 'text' | 'reference' | 'context';
+    text?: string;
+    name?: string;
+    filter?: string;
+    min?: number;
+    max?: number;
+    separator?: string;
+    unique?: boolean;
+  }>;
+  selectedValues: Map<string, SelectedValue[]>;
+  contextRefs: string[];
 }
 
 /**
@@ -89,30 +112,82 @@ export class RenderingService implements IRenderingService {
       throw new Error(`Rulebook not found: ${namespaceName}:${rulebookName}`);
     }
 
+    // Log rulebook structure for debugging
+    console.log(`Rendering rulebook ${namespaceName}:${rulebookName}`);
+    console.log(`Entry points:`, rulebook.entry_points);
+    console.log(`Entry point count:`, rulebook.entry_points?.length);
+
+    if (!rulebook.entry_points || rulebook.entry_points.length === 0) {
+      throw new Error(
+        `Rulebook ${namespaceName}:${rulebookName} has no entry points defined. ` +
+        `Please add at least one entry point in the editor.`
+      );
+    }
+
     // Select random entry point (weighted if specified)
     const rng = new SeededRandom(seed);
     const weights = rulebook.entry_points.map((ep) => ep.weight || 1.0);
     const index = rng.weightedChoice(weights);
     const entryPoint = rulebook.entry_points[index];
 
+    console.log(`Selected entry point index ${index}:`, entryPoint);
+
     if (!entryPoint) {
-      throw new Error(`No entry point found in rulebook: ${namespaceName}:${rulebookName}`);
+      throw new Error(
+        `No entry point found at index ${index} in rulebook: ${namespaceName}:${rulebookName}. ` +
+        `Total entry points: ${rulebook.entry_points.length}`
+      );
+    }
+
+    // Handle both 'target' and 'prompt_section' field names (backwards compatibility with desktop app)
+    const target = entryPoint.target || (entryPoint as any).prompt_section;
+
+    if (!target) {
+      throw new Error(
+        `Entry point in rulebook ${namespaceName}:${rulebookName} has no target defined. ` +
+        `Entry point data: ${JSON.stringify(entryPoint)}. ` +
+        `Please edit the rulebook and ensure all entry points have a valid target or prompt_section field.`
+      );
     }
 
     // Parse target (format: namespace:promptsection or just promptsection)
-    const parts = entryPoint.target.includes(':')
-      ? entryPoint.target.split(':')
-      : [namespaceName, entryPoint.target];
+    const parts = target.includes(':')
+      ? target.split(':')
+      : [namespaceName, target];
 
     const targetNs = parts[0];
     const targetPs = parts[1];
 
     if (!targetNs || !targetPs) {
-      throw new Error(`Invalid entry point target: ${entryPoint.target}`);
+      throw new Error(`Invalid entry point target: ${target}`);
     }
 
-    // Render the selected entry point
-    return this.render(pkg, targetNs, targetPs, seed);
+    // Initialize context from rulebook if provided
+    const context = new Context();
+    if (rulebook.context) {
+      for (const [key, value] of Object.entries(rulebook.context)) {
+        context.set(key, value);
+      }
+    }
+
+    // Render the selected entry point with initialized context
+    const targetNamespace = pkg.namespaces[targetNs];
+    if (!targetNamespace) {
+      throw new Error(`Namespace not found: ${targetNs}`);
+    }
+
+    const promptSection = targetNamespace.prompt_sections[targetPs];
+    if (!promptSection) {
+      throw new Error(`PromptSection not found: ${targetNs}:${targetPs}`);
+    }
+
+    // Render the template with the initialized context
+    const text = await this.renderTemplate(pkg, targetNamespace, promptSection, rng, context);
+
+    return {
+      text: text.trim(),
+      seed,
+    };
   }
 
   private async renderTemplate(
@@ -122,40 +197,115 @@ export class RenderingService implements IRenderingService {
     rng: SeededRandom,
     context: Context
   ): Promise<string> {
+    // PHASE 1: Parse template and classify tokens
     const template = parseTemplate(promptSection.template);
-    const parts: string[] = [];
+    const state: RenderState = {
+      tokens: [],
+      selectedValues: new Map(),
+      contextRefs: [],
+    };
 
     for (const token of template.tokens) {
       if (token.type === 'text') {
-        parts.push(token.text);
+        state.tokens.push({ type: 'text', text: token.text });
       } else if (token.type === 'reference') {
-        // Resolve reference
+        // Check if this is a context reference
+        const ref = promptSection.references[token.name];
+        const isContextRef = ref?.target?.startsWith('context:');
+
+        state.tokens.push({
+          type: isContextRef ? 'context' : 'reference',
+          name: token.name,
+          filter: token.filter,
+          min: token.min,
+          max: token.max,
+          separator: token.separator,
+          unique: token.unique,
+        });
+
+        if (isContextRef) {
+          state.contextRefs.push(token.name);
+        }
+      }
+    }
+
+    // PHASE 2: Select values for all non-context references
+    for (const token of state.tokens) {
+      if (token.type === 'reference' && token.name) {
         const ref = promptSection.references[token.name];
         if (!ref) {
           throw new Error(`Reference not found: ${token.name} in ${namespace.id}:${promptSection.name}`);
         }
 
-        // Select values
         const count = rng.genRange(token.min || ref.min || 1, token.max || ref.max || 1);
-        const values: string[] = [];
+        const values: SelectedValue[] = [];
+        const excludeTexts = token.unique ? [] : undefined;
 
         for (let i = 0; i < count; i++) {
-          const value = await this.selectValue(pkg, namespace, ref, rng, context, token.unique ? values : undefined);
-          values.push(value.text);
-
-          // Store in context for coordination
-          context.set(token.name, value);
+          const value = await this.selectValue(pkg, namespace, ref, rng, context, excludeTexts);
+          values.push(value);
+          if (excludeTexts) {
+            excludeTexts.push(value.text);
+          }
         }
 
-        // Apply rules
-        this.applyRules(namespace, context);
-
-        // Format with separator
-        const formatted = this.formatList(values, token.separator || ref.separator, namespace);
-        parts.push(formatted);
+        state.selectedValues.set(token.name, values);
       }
     }
 
+    // PHASE 3: Store all selected values in context
+    for (const [name, values] of state.selectedValues.entries()) {
+      // Store the last value (or all if needed for rules)
+      if (values.length > 0) {
+        context.set(name, values[values.length - 1]);
+      }
+    }
+
+    // PHASE 4: Apply all rules to compute derived context values
+    this.applyRules(namespace, context);
+
+    // PHASE 5: Resolve all tokens (including context references)
+    const parts: string[] = [];
+    for (const token of state.tokens) {
+      if (token.type === 'text') {
+        parts.push(token.text || '');
+      } else if (token.type === 'reference' && token.name) {
+        // Get pre-selected values
+        const values = state.selectedValues.get(token.name);
+        if (!values || values.length === 0) {
+          throw new Error(`No values found for reference: ${token.name}`);
+        }
+
+        const ref = promptSection.references[token.name];
+        const formatted = this.formatList(
+          values.map(v => v.text),
+          token.separator || ref?.separator,
+          namespace
+        );
+        parts.push(formatted);
+      } else if (token.type === 'context' && token.name) {
+        // Resolve context reference
+        const ref = promptSection.references[token.name];
+        if (!ref || !ref.target) {
+          throw new Error(`Reference not found: ${token.name}`);
+        }
+
+        const contextKey = ref.target.substring(8); // Remove "context:" prefix
+        const value = context.getOrThrow(
+          contextKey,
+          `Make sure it's set by a rule that triggers before this reference is used.`
+        );
+
+        // If it's a SelectedValue, use its text
+        if (typeof value === 'object' && value !== null && 'text' in value) {
+          parts.push((value as SelectedValue).text);
+        } else {
+          parts.push(String(value));
+        }
+      }
+    }
+
+    // PHASE 6: Format and return output
     return parts.join('');
   }
 
@@ -167,6 +317,33 @@ export class RenderingService implements IRenderingService {
     context: Context,
     excludeTexts?: string[]
   ): Promise<SelectedValue> {
+    if (!ref.target) {
+      throw new Error(`Reference has no target defined in namespace ${namespace.id}`);
+    }
+
+    // Check for context: target (reads from context variables)
+    if (ref.target.startsWith('context:')) {
+      const contextKey = ref.target.substring(8); // Remove "context:" prefix
+      const value = context.get(contextKey);
+
+      if (value === undefined) {
+        throw new Error(`Context variable not found: ${contextKey}. Make sure it's set by a previous reference or rule.`);
+      }
+
+      // If it's a SelectedValue, return it
+      if (typeof value === 'object' && value !== null && 'text' in value) {
+        return value as SelectedValue;
+      }
+
+      // Otherwise, convert to string
+      return {
+        text: String(value),
+        tags: {},
+        namespace: namespace.id,
+        datatype: contextKey,
+      };
+    }
+
     // Parse target (format: namespace:name or just name)
     const parts = ref.target.includes(':')
       ? ref.target.split(':')

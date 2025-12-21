@@ -187,3 +187,11 @@ function parseReference(refText: string): TemplateToken {
   };
 }
 
+/**
+ * Check if a reference name is a context reference
+ * Context references have names like "context.article" or similar
+ */
+export function isContextReference(refName: string): boolean {
+  return refName.startsWith('context.');
+}
+

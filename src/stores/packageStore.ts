@@ -6,6 +6,7 @@ import { ref, computed } from 'vue';
 import type { Package } from '../models/package';
 import { createEmptyPackage } from '../models/package';
 import { platformService } from '../services/localStorage';
+import { fixInvalidRulebookEntryPoints } from '../utils/rulebookFixer';
 
 export const usePackageStore = defineStore('package', () => {
   // State
@@ -45,7 +46,18 @@ export const usePackageStore = defineStore('package', () => {
     try {
       isLoading.value = true;
       error.value = null;
-      currentPackage.value = await platformService.loadPackage(id);
+      const pkg = await platformService.loadPackage(id);
+
+      // Inspect rulebook entry points for debugging
+      const { fixed, changes } = fixInvalidRulebookEntryPoints(pkg);
+      if (changes.length > 0) {
+        console.warn('Rulebook inspection results:', changes);
+        if (fixed) {
+          console.warn('NOTE: Issues found but NOT auto-fixing. Use inspection tools to review.');
+        }
+      }
+
+      currentPackage.value = pkg;
       // Add to loaded packages if not already there
       if (currentPackage.value && !loadedPackages.value.some(p => p.id === id)) {
         loadedPackages.value.push(currentPackage.value);
