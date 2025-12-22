@@ -78,8 +78,7 @@ export class DependencyResolver {
       if (!pkg.dependencies) return;
 
       for (const dep of pkg.dependencies) {
-        // Handle both 'package' and 'package_id' field names
-        const pkgId = dep.package_id || (dep as any).package;
+                const pkgId = dep.package;
         if (!pkgId) continue; // Skip if no package ID
 
         const depKey = `${pkgId}@${dep.version}`;

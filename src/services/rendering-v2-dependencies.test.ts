@@ -360,20 +360,20 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       expect(consumer.dependencies?.[0]?.package).toBe('test.provider');
     });
 
-    it('should handle "package_id" field name (TypeScript format)', () => {
+    it('should handle "package" field name (DEC-0012 canonical)', () => {
       const consumer: Package = {
         ...createConsumerPackage(),
         dependencies: [
           {
-            package_id: 'test.provider', // TypeScript format
+            package: 'test.provider', // TypeScript format
             version: '1.0.0',
           },
         ],
       };
 
       expect(consumer.dependencies).toBeDefined();
-      expect(consumer.dependencies?.[0]).toHaveProperty('package_id');
-      expect(consumer.dependencies?.[0]?.package_id).toBe('test.provider');
+      expect(consumer.dependencies?.[0]).toHaveProperty('package');
+      expect(consumer.dependencies?.[0]?.package).toBe('test.provider');
     });
   });
 });

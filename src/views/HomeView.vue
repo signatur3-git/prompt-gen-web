@@ -452,8 +452,8 @@ async function loadPackageMetadata() {
       try {
         const fullPkg = await platformService.loadPackage(pkgInfo.id);
 
-        // Handle both 'package' and 'package_id' field names
-        const depIds = fullPkg.dependencies?.map(d => (d as any).package_id || (d as any).package).filter(Boolean) || [];
+        // Handle both 'package' and 'package' field names
+        const depIds = fullPkg.dependencies?.map(d => (d as any).package || (d as any).package).filter(Boolean) || [];
         const presentDeps = depIds.filter(depId => allPackageIds.has(depId));
         const missingDeps = depIds.filter(depId => !allPackageIds.has(depId));
 
@@ -658,8 +658,8 @@ async function importFromFiles() {
       console.log('Checking dependencies for package:', pkg.id, 'Dependencies:', pkg.dependencies);
       if (pkg.dependencies) {
         for (const dep of pkg.dependencies) {
-          // Handle both 'package' and 'package_id' field names
-          const depId = dep.package_id || dep.package;
+          // Handle both 'package' and 'package' field names
+          const depId = dep.package || dep.package;
           console.log('Checking dependency:', dep, 'depId:', depId, 'exists:', existingIds.has(depId));
           if (depId && !existingIds.has(depId)) {
             missingDeps.push({

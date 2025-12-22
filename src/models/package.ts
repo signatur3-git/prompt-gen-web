@@ -37,9 +37,9 @@ export interface PackageMetadata {
  */
 export interface Dependency {
   /** Package ID to depend on (e.g., "prompt-gen.common") */
-  package_id?: string;
+  package: string;
 
-  /** Alternative field name used in YAML files (backwards compatibility) */
+  /** Package to depend on (e.g., "prompt-gen.common") - DEC-0012 canonical */
   package?: string;
 
   /** Exact version required (e.g., "1.0.0") */
@@ -205,7 +205,7 @@ export interface EntryPoint {
   /** Target promptsection (namespace:name format). Also accepts 'prompt_section' for backwards compatibility. */
   target?: string;
 
-  /** Alternative field name used by desktop app (backwards compatibility) */
+  /** Package to depend on (e.g., "prompt-gen.common") - DEC-0012 canonical */
   prompt_section?: string;
 
   /** Optional weight for selection probability */

@@ -248,14 +248,14 @@ async function generate() {
     if (selectedRulebook.value.pkg.dependencies) {
       for (const dep of selectedRulebook.value.pkg.dependencies) {
         try {
-          // Handle both 'package_id' (TypeScript) and 'package' (YAML) field names
-          const depId = dep.package_id || (dep as any).package;
+          // Handle both 'package' (TypeScript) and 'package' (YAML) field names
+          const depId = dep.package || (dep as any).package;
           console.log('[generate] Loading dependency:', depId);
           const depPkg = await platformService.loadPackage(depId);
           console.log('[generate] Loaded dependency:', depId, 'with namespaces:', Object.keys(depPkg.namespaces));
           dependencies.push(depPkg);
         } catch (err) {
-          const depId = dep.package_id || (dep as any).package;
+          const depId = dep.package || (dep as any).package;
           console.warn(`Failed to load dependency ${depId}:`, err);
           // Continue anyway - renderer will throw specific error if needed
         }

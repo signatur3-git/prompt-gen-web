@@ -149,7 +149,7 @@ describe('PackageValidator', () => {
       const mainPkg = createPackage({
         id: 'game.package',
         dependencies: [
-          { package_id: 'base.package', version: '^1.0.0' },
+          { package: 'base.package', version: '^1.0.0' },
         ],
         namespaces: {
           game: createNamespace({
@@ -501,7 +501,7 @@ describe('PackageValidator', () => {
     it('should validate dependency metadata', () => {
       const pkg = createPackage({
         dependencies: [
-          { package_id: '', version: '1.0.0' }, // Empty package ID
+          { package: '', version: '1.0.0' }, // Empty package ID
         ],
         namespaces: {
           test: createNamespace(),
@@ -516,7 +516,7 @@ describe('PackageValidator', () => {
     it('should validate dependency version format', () => {
       const pkg = createPackage({
         dependencies: [
-          { package_id: 'base.package', version: 'invalid-version' },
+          { package: 'base.package', version: 'invalid-version' },
         ],
         namespaces: {
           test: createNamespace(),

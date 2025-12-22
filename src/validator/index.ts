@@ -138,14 +138,13 @@ export class PackageValidator {
     if (!pkg.dependencies) return;
 
     for (const dep of pkg.dependencies) {
-      // Handle both 'package_id' and 'package' field names (backwards compatibility)
-      const packageId = (dep as any).package_id || (dep as any).package;
+            const packageId = dep.package;
 
       // Validate package ID exists
       if (!packageId || typeof packageId !== 'string') {
         addError(result, createInvalidDependencyError(
           packageId || '(missing)',
-          'package or package_id field is required'
+          'package field is required (DEC-0012)'
         ));
         continue;
       }
@@ -557,8 +556,7 @@ export class PackageValidator {
 
         // Validate each entry point target exists
         for (const entryPoint of rulebook.entry_points || []) {
-          // Handle both 'target' and 'prompt_section' field names (backwards compatibility)
-          const target = entryPoint.target || (entryPoint as any).prompt_section;
+                    const target = entryPoint.target || (entryPoint as any).prompt_section;
 
           // Skip if target is undefined or null
           if (!target || typeof target !== 'string') {
