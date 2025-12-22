@@ -400,7 +400,7 @@
               @keydown.enter.prevent="applyNamespaceModal"
             >
             <p class="hint">
-              Use lowercase letters, numbers, and underscores only
+              Use lowercase letters, numbers, dots, and underscores only
             </p>
             <p
               v-if="namespaceModalError"

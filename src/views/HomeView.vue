@@ -880,15 +880,11 @@ section h2 {
   padding: 2rem;
   text-align: center;
   background: white;
-  transition: all 0.3s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.action-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  border-color: #667eea;
-}
+/* Remove confusing hover effect from card itself */
+/* Users should click the buttons, not the card */
 
 .card-icon {
   font-size: 3rem;
@@ -926,34 +922,42 @@ section h2 {
 .btn-primary, .btn-secondary, .btn-cancel {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-weight: 500;
 }
 
 .btn-primary {
   background: #42b983;
   color: white;
+  box-shadow: 0 2px 4px rgba(66, 185, 131, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: #359268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 185, 131, 0.4);
 }
 
 .btn-primary:disabled {
   background: #ccc;
   cursor: not-allowed;
   opacity: 0.6;
+  box-shadow: none;
 }
 
 .btn-secondary {
-  background: #f0f0f0;
-  color: #333;
+  background: #667eea;
+  color: white;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .btn-cancel {
