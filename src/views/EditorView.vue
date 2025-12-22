@@ -477,7 +477,8 @@ const canApplyNamespaceModal = computed(() => {
   if (!isNamespaceModalOpen.value) return false;
   const nextId = namespaceModalNextId.value.trim();
   if (!nextId) return false;
-  if (!/^[a-z][a-z0-9_]*$/.test(nextId)) return false;
+  // Allow lowercase letters, numbers, dots, and underscores
+  if (!/^[a-z][a-z0-9_.]*$/.test(nextId)) return false;
   if (namespaceModalMode.value === 'rename' && nextId === namespaceModalCurrentId.value) return false;
   if (currentPackage.value?.namespaces[nextId]) return false;
   return true;
@@ -1200,6 +1201,19 @@ function updateAuthors(event: Event) {
   z-index: 1000;
 }
 
+.modal-overlay .modal {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .modal-header {
   padding: 1rem 1rem 0.5rem 1rem;
   border-bottom: 1px solid #e0e0e0;
@@ -1211,6 +1225,9 @@ function updateAuthors(event: Event) {
 
 .modal-body {
   padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+  background: white;
 }
 
 .modal-subtitle {
