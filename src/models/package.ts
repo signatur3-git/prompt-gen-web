@@ -39,9 +39,6 @@ export interface Dependency {
   /** Package ID to depend on (e.g., "prompt-gen.common") */
   package: string;
 
-  /** Package to depend on (e.g., "prompt-gen.common") - DEC-0012 canonical */
-  package?: string;
-
   /** Exact version required (e.g., "1.0.0") */
   version: string;
 
