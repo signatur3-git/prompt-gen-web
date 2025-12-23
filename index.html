@@ -19,7 +19,12 @@
       // the correct url will be waiting in the browser's history for
       // the single page app to route accordingly.
       (function (l) {
+        console.log('[index.html] Current URL:', l.href);
+        console.log('[index.html] Search:', l.search);
+
         if (l.search[1] === '/') {
+          console.log('[index.html] Detected SPA redirect');
+
           var decoded = l.search
             .slice(1)
             .split('&')
@@ -27,7 +32,14 @@
               return s.replace(/~and~/g, '&');
             })
             .join('?');
-          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+
+          console.log('[index.html] Decoded:', decoded);
+
+          var newUrl = l.pathname.slice(0, -1) + decoded + l.hash;
+          console.log('[index.html] New URL:', newUrl);
+
+          window.history.replaceState(null, null, newUrl);
+          console.log('[index.html] History replaced');
         }
       })(window.location);
     </script>

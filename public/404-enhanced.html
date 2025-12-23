@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      // Enhanced Single Page Apps for GitHub Pages redirect
+      // Handles OAuth callbacks with query parameters
+
+      (function () {
+        var pathSegmentsToKeep = 1;
+        var l = window.location;
+
+        // Extract the path after the base
+        var pathname = l.pathname;
+        var segments = pathname.split('/').filter(function (s) {
+          return s;
+        });
+
+        // Remove the base path segment (e.g., 'prompt-gen-web')
+        var routePath = segments.slice(pathSegmentsToKeep).join('/');
+
+        // Build redirect URL
+        // For /prompt-gen-web/oauth/callback?code=x&state=y
+        // Redirect to /prompt-gen-web/?/oauth/callback&code=x~and~state=y
+        var baseUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '');
+        var basePath = '/' + segments.slice(0, pathSegmentsToKeep).join('/');
+
+        var redirectUrl = baseUrl + basePath + '/?/' + routePath;
+
+        // Encode query string if present
+        if (l.search) {
+          redirectUrl += '&' + l.search.slice(1).replace(/&/g, '~and~');
+        }
+
+        // Preserve hash
+        if (l.hash) {
+          redirectUrl += l.hash;
+        }
+
+        console.log('[404] Original URL:', l.href);
+        console.log('[404] Redirecting to:', redirectUrl);
+
+        l.replace(redirectUrl);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>

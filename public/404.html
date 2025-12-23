@@ -4,41 +4,51 @@
     <meta charset="utf-8" />
     <title>Redirecting...</title>
     <script>
-      // Single Page Apps for GitHub Pages
-      // https://github.com/rafgraph/spa-github-pages
-      // This script takes the current url and converts the path and query
-      // string into just a query string, and then redirects the browser
-      // to the new url with only a query string and hash fragment,
-      // e.g. https://www.foo.tld/one/two?a=b&c=d#qwe becomes
-      // https://www.foo.tld/?/one/two&a=b~and~c=d#qwe
-      // Note: this 404.html file must be at least 512 bytes for it to work
-      // with Internet Explorer (it is currently > 512 bytes)
+      // Single Page Apps for GitHub Pages - Simplified for OAuth callbacks
+      (function (l) {
+        // For GitHub Pages with base path like /prompt-gen-web/
+        // This script redirects 404s to index.html with the path encoded
 
-      // If you're creating an SPA, and you're not using GitHub Pages, this is not needed.
+        // Get the number of path segments to keep (base path)
+        var pathSegmentsToKeep = 1; // Keep 'prompt-gen-web'
 
-      var pathSegmentsToKeep = 1;
+        // Split pathname and get base + route
+        var segments = l.pathname.slice(1).split('/');
+        var basePath = segments.slice(0, pathSegmentsToKeep).join('/');
+        var routePath = segments.slice(pathSegmentsToKeep).join('/');
 
-      var l = window.location;
-      l.replace(
-        l.protocol +
+        // Build the redirect URL
+        var redirectUrl =
+          l.protocol +
           '//' +
           l.hostname +
           (l.port ? ':' + l.port : '') +
-          l.pathname
-            .split('/')
-            .slice(0, 1 + pathSegmentsToKeep)
-            .join('/') +
+          '/' +
+          basePath +
           '/?/' +
-          l.pathname
-            .slice(1)
-            .split('/')
-            .slice(pathSegmentsToKeep)
-            .join('/')
-            .replace(/&/g, '~and~') +
-          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-          l.hash
-      );
+          routePath;
+
+        // Encode query parameters (&amp; → ~and~)
+        if (l.search) {
+          redirectUrl += '&' + l.search.slice(1).replace(/&/g, '~and~');
+        }
+
+        // Preserve hash
+        if (l.hash) {
+          redirectUrl += l.hash;
+        }
+
+        // Debug logging
+        console.log('[404.html] Redirecting from:', l.href);
+        console.log('[404.html] Redirecting to:', redirectUrl);
+
+        // Redirect
+        l.replace(redirectUrl);
+      })(window.location);
     </script>
   </head>
-  <body></body>
+  <body>
+    <!-- Padding to meet 512 byte minimum for IE -->
+    <p>Redirecting to the app...</p>
+  </body>
 </html>
