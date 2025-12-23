@@ -1,5 +1,6 @@
 <template>
   <div class="oauth-callback">
+    <AppNav />
     <div class="callback-container">
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
@@ -32,6 +33,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { oauthService } from '../services/oauth.service';
+import AppNav from '../components/AppNav.vue';
 
 const router = useRouter();
 const loading = ref(true);
@@ -74,15 +76,18 @@ function goHome() {
 
 <style scoped>
 .oauth-callback {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .callback-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   background: white;
   border-radius: 1rem;
   padding: 3rem;

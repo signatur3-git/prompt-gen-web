@@ -1,12 +1,15 @@
 <template>
   <div class="marketplace-view">
-    <div class="marketplace-header">
-      <h1>🏪 Marketplace</h1>
-      <p v-if="!isAuthenticated" class="auth-notice">
-        Connect to browse and install packages from the community
-      </p>
-      <p v-else class="auth-notice success">✅ Connected to marketplace</p>
-    </div>
+    <AppNav />
+
+    <div class="marketplace-content-wrapper">
+      <div class="marketplace-header">
+        <h1>🏪 Marketplace</h1>
+        <p v-if="!isAuthenticated" class="auth-notice">
+          Connect to browse and install packages from the community
+        </p>
+        <p v-else class="auth-notice success">✅ Connected to marketplace</p>
+      </div>
 
     <!-- Connection Panel -->
     <div v-if="!isAuthenticated" class="connection-panel">
@@ -87,11 +90,8 @@
           </div>
         </div>
       </div>
-
-      <!-- User Actions -->
-      <div class="user-actions">
-        <button @click="disconnect" class="btn-disconnect">Disconnect</button>
-      </div>
+    </div>
+    <!-- Close marketplace-content-wrapper -->
     </div>
   </div>
 </template>
@@ -100,6 +100,7 @@
 import { ref, onMounted } from 'vue';
 import { oauthService } from '../services/oauth.service';
 import { marketplaceClient, type Package } from '../services/marketplace-client';
+import AppNav from '../components/AppNav.vue';
 
 const isAuthenticated = ref(false);
 const connecting = ref(false);
@@ -191,9 +192,14 @@ async function downloadPackage(pkg: Package) {
 
 <style scoped>
 .marketplace-view {
-  padding: 2rem;
-  max-width: 1200px;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.marketplace-content-wrapper {
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 2rem;
 }
 
 .marketplace-header {
@@ -460,27 +466,5 @@ async function downloadPackage(pkg: Package) {
 .btn-download:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-/* User Actions */
-.user-actions {
-  margin-top: 3rem;
-  text-align: center;
-  padding-top: 2rem;
-  border-top: 1px solid #e2e8f0;
-}
-
-.btn-disconnect {
-  padding: 0.5rem 1.5rem;
-  background: #e2e8f0;
-  color: #4a5568;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-disconnect:hover {
-  background: #cbd5e0;
 }
 </style>
