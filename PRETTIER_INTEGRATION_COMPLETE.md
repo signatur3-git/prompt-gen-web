@@ -8,6 +8,7 @@
 ## 🎯 Problem Solved
 
 **Issue:** Could not commit due to strict ESLint warnings about Vue formatting
+
 - `vue/max-attributes-per-line`
 - `vue/html-self-closing`
 - `vue/singleline-html-element-content-newline`
@@ -25,6 +26,7 @@ npm install -D prettier eslint-config-prettier eslint-plugin-prettier
 ```
 
 **Packages:**
+
 - **prettier** - Opinionated code formatter
 - **eslint-config-prettier** - Disables ESLint formatting rules that conflict with Prettier
 - **eslint-plugin-prettier** - Runs Prettier as an ESLint rule
@@ -34,7 +36,9 @@ npm install -D prettier eslint-config-prettier eslint-plugin-prettier
 ## 📁 Files Created
 
 ### 1. `.prettierrc`
+
 Prettier configuration with sensible defaults:
+
 - Single quotes
 - 2 space indentation
 - 100 character line width
@@ -43,7 +47,9 @@ Prettier configuration with sensible defaults:
 - Single attribute per line disabled (Prettier decides)
 
 ### 2. `.prettierignore`
+
 Excludes build artifacts and dependencies:
+
 - dist/
 - node_modules/
 - coverage/
@@ -56,6 +62,7 @@ Excludes build artifacts and dependencies:
 ## 🔧 Files Modified
 
 ### 1. `eslint.config.js`
+
 - Added `import prettierConfig from 'eslint-config-prettier'`
 - Disabled all Vue formatting rules that conflict with Prettier:
   - `vue/max-attributes-per-line: 'off'`
@@ -70,7 +77,9 @@ Excludes build artifacts and dependencies:
   - `vue/html-closing-bracket-spacing: 'off'`
 
 ### 2. `package.json`
+
 Added new scripts:
+
 ```json
 {
   "format": "prettier --write .",
@@ -84,27 +93,35 @@ Added new scripts:
 ## 🚀 New Commands Available
 
 ### Format All Files
+
 ```bash
 npm run format
 ```
+
 Automatically formats all files according to Prettier rules.
 
 ### Check Formatting
+
 ```bash
 npm run format:check
 ```
+
 Checks if files are formatted correctly without modifying them. Useful for CI/CD.
 
 ### Lint (No More Warnings!)
+
 ```bash
 npm run lint
 ```
+
 Now passes with `--max-warnings 0` because Prettier handles all formatting.
 
 ### Full Validation
+
 ```bash
 npm run validate
 ```
+
 Runs format check, lint, type-check, and tests in sequence.
 
 ---
@@ -123,6 +140,7 @@ All checks now pass:
 ## 📝 Usage Workflow
 
 ### Before Committing
+
 ```bash
 npm run format    # Auto-format all files
 npm run validate  # Run all checks
@@ -131,12 +149,15 @@ git commit -m "Your message"
 ```
 
 ### In Your Editor
+
 **VS Code:** Install the Prettier extension
+
 - Extension ID: `esbenp.prettier-vscode`
 - Set as default formatter
 - Enable "Format on Save"
 
 **.vscode/settings.json** (optional):
+
 ```json
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -160,6 +181,7 @@ git commit -m "Your message"
 Prettier automatically handles:
 
 ### Vue Files
+
 - Attribute order and placement
 - Element self-closing
 - Content line breaks
@@ -167,6 +189,7 @@ Prettier automatically handles:
 - Spacing
 
 ### TypeScript/JavaScript
+
 - Semicolons
 - Quotes (single vs double)
 - Trailing commas
@@ -174,6 +197,7 @@ Prettier automatically handles:
 - Indentation
 
 ### All Files
+
 - End of line (LF)
 - Final newline
 - Trailing whitespace
@@ -183,6 +207,7 @@ Prettier automatically handles:
 ## 🔄 How It Works
 
 ### The Flow
+
 1. **You write code** - Focus on logic, not formatting
 2. **Prettier formats** - Automatically on save or via `npm run format`
 3. **ESLint checks logic** - Only code quality, not formatting
@@ -190,6 +215,7 @@ Prettier automatically handles:
 5. **All pass** - Ready to commit!
 
 ### Why This Is Better
+
 - ❌ **Before:** Manually fix 50+ formatting warnings
 - ✅ **Now:** Prettier fixes everything automatically
 - ❌ **Before:** Debate formatting in code reviews
@@ -205,20 +231,21 @@ Prettier automatically handles:
 
 ```json
 {
-  "semi": true,                      // Use semicolons
-  "trailingComma": "es5",           // Trailing commas where valid in ES5
-  "singleQuote": true,               // Use single quotes
-  "printWidth": 100,                 // Wrap lines at 100 characters
-  "tabWidth": 2,                     // 2 spaces per indentation level
-  "useTabs": false,                  // Use spaces, not tabs
-  "arrowParens": "avoid",            // Omit parens when possible (x => x)
-  "endOfLine": "lf",                 // Unix line endings
-  "vueIndentScriptAndStyle": false,  // Don't indent <script> and <style>
-  "singleAttributePerLine": false    // Prettier decides attribute layout
+  "semi": true, // Use semicolons
+  "trailingComma": "es5", // Trailing commas where valid in ES5
+  "singleQuote": true, // Use single quotes
+  "printWidth": 100, // Wrap lines at 100 characters
+  "tabWidth": 2, // 2 spaces per indentation level
+  "useTabs": false, // Use spaces, not tabs
+  "arrowParens": "avoid", // Omit parens when possible (x => x)
+  "endOfLine": "lf", // Unix line endings
+  "vueIndentScriptAndStyle": false, // Don't indent <script> and <style>
+  "singleAttributePerLine": false // Prettier decides attribute layout
 }
 ```
 
 ### Why These Settings?
+
 - **Single quotes:** Common in modern JS/TS projects
 - **100 char width:** Good for modern screens, readable
 - **No tabs:** Consistent across all editors
@@ -231,7 +258,9 @@ Prettier automatically handles:
 ## 📊 Impact
 
 ### Files Formatted
+
 Prettier formatted **73 files**:
+
 - All `.vue` components
 - All `.ts` files
 - All `.js` config files
@@ -239,10 +268,12 @@ Prettier formatted **73 files**:
 - All test files
 
 ### Warnings Eliminated
+
 **Before:** 50+ ESLint formatting warnings  
 **After:** 0 warnings ✅
 
 ### Can Now Commit
+
 **Before:** `npm run lint` failed with `--max-warnings 0`  
 **After:** All checks pass, ready to commit ✅
 
@@ -251,6 +282,7 @@ Prettier formatted **73 files**:
 ## 🎓 Best Practices
 
 ### DO ✅
+
 - Run `npm run format` before committing
 - Install Prettier extension in your editor
 - Enable format on save
@@ -258,6 +290,7 @@ Prettier formatted **73 files**:
 - Focus on writing code, not formatting
 
 ### DON'T ❌
+
 - Manually format Vue templates
 - Fight with Prettier's decisions
 - Disable Prettier for specific files without good reason
@@ -277,6 +310,7 @@ The `validate` script is perfect for CI/CD:
 ```
 
 This checks:
+
 1. Formatting is correct (`format:check`)
 2. No ESLint warnings (`lint`)
 3. TypeScript compiles (`type-check`)
@@ -313,4 +347,3 @@ git push
 ---
 
 **All formatting issues resolved! Ready to commit! 🎉**
-
