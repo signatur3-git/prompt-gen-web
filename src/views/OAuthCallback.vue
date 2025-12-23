@@ -41,6 +41,10 @@ const errorDescription = ref('');
 
 onMounted(async () => {
   console.log('[OAuthCallback] Processing OAuth callback...');
+  console.log('[OAuthCallback] Current URL:', window.location.href);
+  console.log('[OAuthCallback] Search params:', window.location.search);
+  console.log('[OAuthCallback] Hash:', window.location.hash);
+  console.log('[OAuthCallback] Pathname:', window.location.pathname);
 
   const result = await oauthService.handleCallback();
   loading.value = false;

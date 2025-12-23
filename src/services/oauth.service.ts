@@ -98,9 +98,17 @@ export class OAuthService {
    */
   async handleCallback(): Promise<OAuthCallbackResult> {
     try {
+      console.log('[OAuth] handleCallback started');
+      console.log('[OAuth] URL:', window.location.href);
+      console.log('[OAuth] Search:', window.location.search);
+      console.log('[OAuth] Hash:', window.location.hash);
+
       // Extract parameters from URL (supports both query and hash)
       const urlParams = new URLSearchParams(window.location.search);
       const hashParams = new URLSearchParams(window.location.hash.slice(1));
+
+      console.log('[OAuth] URL params:', Object.fromEntries(urlParams.entries()));
+      console.log('[OAuth] Hash params:', Object.fromEntries(hashParams.entries()));
 
       // Check query params first, then hash params
       const code = urlParams.get('code') || hashParams.get('code');
@@ -108,6 +116,8 @@ export class OAuthService {
       const error = urlParams.get('error') || hashParams.get('error');
       const errorDescription =
         urlParams.get('error_description') || hashParams.get('error_description');
+
+      console.log('[OAuth] Extracted:', { code: code?.substring(0, 10) + '...', state, error });
 
       // Handle authorization errors
       if (error) {
@@ -122,6 +132,7 @@ export class OAuthService {
       // Validate required parameters
       if (!code || !state) {
         console.error('[OAuth] Missing code or state in callback');
+        console.error('[OAuth] Code exists:', !!code, 'State exists:', !!state);
         return {
           success: false,
           error: 'invalid_request',
