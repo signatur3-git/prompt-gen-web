@@ -3,6 +3,7 @@
 ## ✅ Pre-Commit Checklist
 
 ### Documentation
+
 - [x] README.md updated with project description
 - [x] USER_GUIDE.md created for end users
 - [x] DEPLOYMENT.md created with hosting options
@@ -10,17 +11,20 @@
 - [x] LICENSE file present
 
 ### Configuration Files
+
 - [x] .gitignore configured for Node.js/Vue.js/Vite
 - [x] .gitattributes added for consistent line endings
 - [x] vite.config.ts configured with GitHub Pages base path
 - [x] package.json version updated to 1.0.0-rc
 
 ### GitHub Actions
+
 - [x] CI workflow created (.github/workflows/ci.yml)
 - [x] Release workflow created (.github/workflows/release.yml)
 - [x] GitHub Pages setup documented (.github/PAGES_SETUP.md)
 
 ### Code Quality
+
 - [ ] All tests passing locally (`npm run test:run`)
 - [ ] E2E tests passing (`npm run test:e2e`)
 - [ ] Linting passes (`npm run lint`)
@@ -29,6 +33,7 @@
 - [ ] Build succeeds without errors (`npm run build`)
 
 ### Final Checks
+
 - [ ] All files staged for commit
 - [ ] Commit message prepared
 - [ ] Ready to push to GitHub
@@ -36,17 +41,21 @@
 ## 🚀 Post-Commit Actions
 
 ### 1. Verify CI Pipeline
+
 After pushing to GitHub:
+
 - [ ] Go to Actions tab
 - [ ] Verify CI workflow runs successfully
 - [ ] Check that all tests pass
 
 ### 2. Enable GitHub Pages
+
 - [ ] Go to repository Settings → Pages
 - [ ] Set Source to "GitHub Actions"
 - [ ] Save changes
 
 ### 3. Create Release Tag
+
 ```bash
 # Tag the release
 git tag v1.0.0-rc -m "Release version 1.0.0-rc"
@@ -56,12 +65,14 @@ git push origin v1.0.0-rc
 ```
 
 ### 4. Verify Release Deployment
+
 - [ ] Release workflow completes successfully
 - [ ] GitHub Release is created with artifacts
 - [ ] Application deploys to GitHub Pages
 - [ ] Visit the live URL and test basic functionality
 
 ### 5. Update Repository Settings (Optional)
+
 - [ ] Add repository description
 - [ ] Add topics/tags (vue, vite, prompt-generator, etc.)
 - [ ] Update repository URL (if using custom domain)
@@ -91,11 +102,13 @@ npm run preview
 ## 🔧 Configuration to Review
 
 ### vite.config.ts
+
 - [ ] Verify base path matches your repository name
 - Current: `/prompt-gen-web/`
 - Change if your repo has a different name
 
 ### Repository-Specific Items
+
 - [ ] Update repository owner/name references if needed
 - [ ] Verify all documentation links work
 - [ ] Check that example code/snippets are accurate
@@ -125,6 +138,7 @@ for the Random Prompt Generator with:
 ## ⚠️ Known Limitations (v1.0.0-rc)
 
 Document these in release notes:
+
 - Basic editor UI (full component editors in future versions)
 - LocalStorage only (no cloud sync yet)
 - Single-user/single-device (no collaboration features)
@@ -133,6 +147,7 @@ Document these in release notes:
 ## 🎯 Success Criteria
 
 Before considering this release complete:
+
 - [x] All documentation is user-facing and accurate
 - [ ] CI/CD pipeline is working
 - [ ] Application is deployed and accessible
@@ -142,6 +157,7 @@ Before considering this release complete:
 ## 📌 Next Steps After Release
 
 Consider for future versions:
+
 - Add keyboard shortcuts
 - Implement advanced editor UI
 - Add package marketplace/sharing
@@ -149,4 +165,3 @@ Consider for future versions:
 - Offline PWA capabilities
 - Mobile-responsive improvements
 - Dark mode theme
-

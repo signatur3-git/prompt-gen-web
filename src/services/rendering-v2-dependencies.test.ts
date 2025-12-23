@@ -114,9 +114,7 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
         rulebooks: {
           consumer_demo: {
             name: 'consumer_demo',
-            entry_points: [
-              { prompt_section: 'consumer:colored_item', weight: 1.0 },
-            ],
+            entry_points: [{ prompt_section: 'consumer:colored_item', weight: 1.0 }],
           },
         },
       },
@@ -231,7 +229,9 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       // No dependencies provided
       const engine = new RenderingEngineV2(consumer, 12345, []);
 
-      await expect(engine.render('consumer:colored_item')).rejects.toThrow('Namespace not found: provider');
+      await expect(engine.render('consumer:colored_item')).rejects.toThrow(
+        'Namespace not found: provider'
+      );
     });
   });
 
@@ -247,7 +247,9 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
 
       expect(result).toBeDefined();
       // Should contain action (wielding/carrying) + nested item (size + color + "item")
-      expect(result.text).toMatch(/(wielding|carrying) (tiny|small|large) (crimson|azure|emerald) item/);
+      expect(result.text).toMatch(
+        /(wielding|carrying) (tiny|small|large) (crimson|azure|emerald) item/
+      );
     });
 
     it('should handle nested promptsections with normalized references', async () => {
@@ -311,7 +313,9 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
       // Provider not included
       const engine = new RenderingEngineV2(consumer, 12345, []);
 
-      await expect(engine.render('consumer:colored_item')).rejects.toThrow('Namespace not found: provider');
+      await expect(engine.render('consumer:colored_item')).rejects.toThrow(
+        'Namespace not found: provider'
+      );
     });
 
     it('should throw clear error for missing datatype in dependency', async () => {
@@ -377,4 +381,3 @@ describe('RenderingEngineV2 - Cross-Package References', () => {
     });
   });
 });
-

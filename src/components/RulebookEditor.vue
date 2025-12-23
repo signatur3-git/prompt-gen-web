@@ -2,28 +2,17 @@
   <div class="rulebook-editor">
     <header class="editor-header">
       <h2>Rulebooks</h2>
-      <button
-        class="btn-primary"
-        @click="addRulebook"
-      >
-        + Add Rulebook
-      </button>
+      <button class="btn-primary" @click="addRulebook">+ Add Rulebook</button>
     </header>
 
-    <div
-      v-if="rulebooks.length === 0"
-      class="empty-state"
-    >
+    <div v-if="rulebooks.length === 0" class="empty-state">
       <p>No rulebooks yet. Add a rulebook to define entry points for prompt generation.</p>
       <p class="hint-text">
         Rulebooks allow weighted selection from multiple prompt sections for batch variety.
       </p>
     </div>
 
-    <div
-      v-else
-      class="rulebook-list"
-    >
+    <div v-else class="rulebook-list">
       <div
         v-for="rulebook in rulebooks"
         :key="rulebook.id"
@@ -33,9 +22,7 @@
       >
         <div class="rulebook-header">
           <span class="rulebook-name">{{ rulebook.name || rulebook.id }}</span>
-          <span class="rulebook-meta">
-            {{ rulebook.entry_points.length }} entry point(s)
-          </span>
+          <span class="rulebook-meta"> {{ rulebook.entry_points.length }} entry point(s) </span>
         </div>
         <button
           class="btn-delete"
@@ -48,15 +35,12 @@
     </div>
 
     <!-- Rulebook Editor Panel -->
-    <div
-      v-if="editingRulebook"
-      class="rulebook-details"
-    >
+    <div v-if="editingRulebook" class="rulebook-details">
       <h3>Edit Rulebook</h3>
 
       <div class="form-group">
         <label>ID: <span class="required">*</span></label>
-        <div style="display: flex; gap: 0.5rem; align-items: start;">
+        <div style="display: flex; gap: 0.5rem; align-items: start">
           <input
             v-model="editingRulebook.id"
             placeholder="e.g., fantasy_scenes"
@@ -64,7 +48,7 @@
             :disabled="!!originalId"
             @input="markDirty"
             @blur="validateRulebookId"
-          >
+          />
           <button
             v-if="originalId"
             type="button"
@@ -75,16 +59,10 @@
             Rename
           </button>
         </div>
-        <p
-          v-if="originalId"
-          class="hint"
-        >
+        <p v-if="originalId" class="hint">
           IDs are immutable while editing. Use Rename for a safe key change.
         </p>
-        <p
-          v-if="idError"
-          class="error"
-        >
+        <p v-if="idError" class="error">
           {{ idError }}
         </p>
       </div>
@@ -95,16 +73,15 @@
           v-model="editingRulebook.name"
           placeholder="e.g., Fantasy Scenes"
           @input="markDirty"
-        >
-        <p class="hint">
-          Display name for this rulebook
-        </p>
+        />
+        <p class="hint">Display name for this rulebook</p>
       </div>
 
       <div class="entry-points-section">
         <h4>Entry Points</h4>
         <p class="hint">
-          Define which prompt sections can be used as starting points, with optional weights for selection probability.
+          Define which prompt sections can be used as starting points, with optional weights for
+          selection probability.
         </p>
 
         <div
@@ -114,10 +91,7 @@
           <p>No entry points yet. Add at least one entry point.</p>
         </div>
 
-        <div
-          v-else
-          class="entry-points-list"
-        >
+        <div v-else class="entry-points-list">
           <div
             v-for="(entryPoint, index) in editingRulebook.entry_points"
             :key="index"
@@ -130,7 +104,7 @@
                   v-model="entryPoint.target"
                   placeholder="e.g., namespace:promptsection or promptsection_id"
                   @input="markDirty"
-                >
+                />
                 <p class="hint">
                   Reference to a prompt section (namespace:name or just name for same namespace)
                 </p>
@@ -145,81 +119,51 @@
                   step="0.1"
                   placeholder="1.0"
                   @input="markDirty"
-                >
-                <p class="hint">
-                  Selection probability (higher = more likely)
-                </p>
+                />
+                <p class="hint">Selection probability (higher = more likely)</p>
               </div>
             </div>
 
-            <button
-              class="btn-remove"
-              title="Remove entry point"
-              @click="removeEntryPoint(index)"
-            >
+            <button class="btn-remove" title="Remove entry point" @click="removeEntryPoint(index)">
               ✕ Remove
             </button>
           </div>
         </div>
 
-        <button
-          class="btn-secondary"
-          @click="addEntryPoint"
-        >
-          + Add Entry Point
-        </button>
+        <button class="btn-secondary" @click="addEntryPoint">+ Add Entry Point</button>
       </div>
 
       <!-- Context Initialization (Optional) -->
       <div class="context-section">
         <h4>Context Defaults (Optional)</h4>
-        <p class="hint">
-          Initialize context values before rendering. Format: key = value
-        </p>
+        <p class="hint">Initialize context values before rendering. Format: key = value</p>
 
-        <div
-          v-if="contextEntries.length === 0"
-          class="empty-state-small"
-        >
+        <div v-if="contextEntries.length === 0" class="empty-state-small">
           <p>No context defaults. Add context values if needed.</p>
         </div>
 
-        <div
-          v-else
-          class="context-list"
-        >
-          <div
-            v-for="(entry, index) in contextEntries"
-            :key="index"
-            class="context-item"
-          >
+        <div v-else class="context-list">
+          <div v-for="(entry, index) in contextEntries" :key="index" class="context-item">
             <input
               v-model="entry.key"
               placeholder="context key (e.g., style)"
               class="context-key"
               @input="markDirty"
-            >
+            />
             <span class="context-equals">=</span>
             <input
               v-model="entry.value"
               placeholder="value"
               class="context-value"
               @input="markDirty"
-            >
-            <button
-              class="btn-remove-small"
-              title="Remove"
-              @click="removeContextEntry(index)"
-            >
+            />
+            <button class="btn-remove-small" title="Remove" @click="removeContextEntry(index)">
               ✕
             </button>
           </div>
         </div>
 
-        <button
-          class="btn-secondary btn-small"
-          @click="addContextEntry"
-        >
+        <button class="btn-secondary btn-small" @click="addContextEntry">
           + Add Context Default
         </button>
       </div>
@@ -229,24 +173,14 @@
         <h4>💡 Example: Fantasy Scene Generator</h4>
         <div class="example-content">
           <div class="example-code">
-            <div class="code-line">
-              <strong>ID:</strong> fantasy_scenes
-            </div>
-            <div class="code-line">
-              <strong>Name:</strong> Fantasy Scenes
-            </div>
+            <div class="code-line"><strong>ID:</strong> fantasy_scenes</div>
+            <div class="code-line"><strong>Name:</strong> Fantasy Scenes</div>
             <div class="code-line">
               <strong>Entry Points:</strong>
             </div>
-            <div class="code-line indent">
-              • forest_scene (weight: 2.0) - 50% chance
-            </div>
-            <div class="code-line indent">
-              • dungeon_scene (weight: 1.0) - 25% chance
-            </div>
-            <div class="code-line indent">
-              • tavern_scene (weight: 1.0) - 25% chance
-            </div>
+            <div class="code-line indent">• forest_scene (weight: 2.0) - 50% chance</div>
+            <div class="code-line indent">• dungeon_scene (weight: 1.0) - 25% chance</div>
+            <div class="code-line indent">• tavern_scene (weight: 1.0) - 25% chance</div>
           </div>
           <p class="example-result">
             <strong>Result:</strong> Batch generation randomly selects from these prompt sections
@@ -255,66 +189,36 @@
         </div>
       </div>
 
-      <div
-        v-if="validationError"
-        class="error-message"
-      >
+      <div v-if="validationError" class="error-message">
         {{ validationError }}
       </div>
 
-      <div
-        v-if="saveMessage"
-        class="success-message"
-      >
+      <div v-if="saveMessage" class="success-message">
         {{ saveMessage }}
       </div>
 
       <div class="editor-actions">
-        <button
-          :disabled="!canSave"
-          class="btn-primary"
-          @click="saveRulebook"
-        >
-          Save Changes
-        </button>
-        <button
-          class="btn-secondary"
-          @click="cancelEdit"
-        >
-          Cancel
-        </button>
+        <button :disabled="!canSave" class="btn-primary" @click="saveRulebook">Save Changes</button>
+        <button class="btn-secondary" @click="cancelEdit">Cancel</button>
       </div>
     </div>
 
     <!-- Rename Modal -->
-    <div
-      v-if="isRenameModalOpen"
-      class="modal-overlay"
-      @click.self="closeRenameModal"
-    >
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="rename-modal-title"
-      >
+    <div v-if="isRenameModalOpen" class="modal-overlay" @click.self="closeRenameModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-modal-title">
         <div class="modal-header">
-          <h3 id="rename-modal-title">
-            Rename Rulebook
-          </h3>
+          <h3 id="rename-modal-title">Rename Rulebook</h3>
         </div>
 
         <div class="modal-body">
           <p class="modal-subtitle">
-            Renaming changes the rulebook ID (the key used to reference it). This may affect references.
+            Renaming changes the rulebook ID (the key used to reference it). This may affect
+            references.
           </p>
 
           <div class="form-group">
             <label>Current ID</label>
-            <input
-              :value="renameModalCurrentId"
-              disabled
-            >
+            <input :value="renameModalCurrentId" disabled />
           </div>
 
           <div class="form-group">
@@ -324,24 +228,15 @@
               placeholder="e.g., fantasy_scenes_v2"
               @keydown.enter.prevent="applyRename"
               @keydown.escape="closeRenameModal"
-            >
-            <p
-              v-if="renameModalError"
-              class="error"
-            >
+            />
+            <p v-if="renameModalError" class="error">
               {{ renameModalError }}
             </p>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="closeRenameModal"
-          >
-            Cancel
-          </button>
+          <button type="button" class="btn-cancel" @click="closeRenameModal">Cancel</button>
           <button
             type="button"
             class="btn-primary"
@@ -376,7 +271,7 @@ interface ContextEntry {
 }
 
 const selectedRulebookId = ref<string | null>(null);
-const editingRulebook = ref<Rulebook & { id: string } | null>(null);
+const editingRulebook = ref<(Rulebook & { id: string }) | null>(null);
 const contextEntries = ref<ContextEntry[]>([]);
 const originalId = ref<string | null>(null);
 const isDirty = ref(false);
@@ -400,7 +295,8 @@ const canSave = computed(() => {
   if (!editingRulebook.value) return false;
   if (!editingRulebook.value.id.trim()) return false;
   if (!editingRulebook.value.name.trim()) return false;
-  if (!editingRulebook.value.entry_points || editingRulebook.value.entry_points.length === 0) return false;
+  if (!editingRulebook.value.entry_points || editingRulebook.value.entry_points.length === 0)
+    return false;
   if (idError.value) return false;
   return isDirty.value;
 });
@@ -412,7 +308,6 @@ const canApplyRename = computed(() => {
   if (!/^[a-z0-9_]+$/.test(nextId)) return false;
   if (nextId === renameModalCurrentId.value) return false;
   return !props.rulebooks[nextId];
-
 });
 
 function selectRulebook(id: string) {
@@ -531,7 +426,8 @@ function validateRulebookId() {
   }
 
   if (!/^[a-z][a-z0-9_]*$/.test(id)) {
-    idError.value = 'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
+    idError.value =
+      'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
     return;
   }
 
@@ -581,13 +477,14 @@ function saveRulebook() {
   validationError.value = '';
 
   // Convert context entries back to object
-  const context: Record<string, unknown> | undefined = contextEntries.value.length > 0
-    ? Object.fromEntries(
-        contextEntries.value
-          .filter(e => e.key.trim() && e.value.trim())
-          .map(e => [e.key.trim(), e.value.trim()])
-      )
-    : undefined;
+  const context: Record<string, unknown> | undefined =
+    contextEntries.value.length > 0
+      ? Object.fromEntries(
+          contextEntries.value
+            .filter(e => e.key.trim() && e.value.trim())
+            .map(e => [e.key.trim(), e.value.trim()])
+        )
+      : undefined;
 
   const rulebook: Rulebook = {
     name: editingRulebook.value.name.trim(),
@@ -1065,4 +962,3 @@ function applyRename() {
   border: 1px solid #dee2e6;
 }
 </style>
-

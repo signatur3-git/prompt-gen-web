@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Click Bug Test - Simplified', () => {
-  test('Verify editor shows and selection updates on first click after manual setup', async ({ page }) => {
+  test('Verify editor shows and selection updates on first click after manual setup', async ({
+    page,
+  }) => {
     // Go to app
     await page.goto('/');
     await page.waitForSelector('text=Random Prompt Generator');
@@ -67,7 +69,9 @@ test.describe('Click Bug Test - Simplified', () => {
     ];
 
     for (const c of cases) {
-      const header = page.locator('.datatype-item', { hasText: c.displayName }).locator('.datatype-header');
+      const header = page
+        .locator('.datatype-item', { hasText: c.displayName })
+        .locator('.datatype-header');
       await header.waitFor({ state: 'visible', timeout: 5000 });
       await header.click();
 

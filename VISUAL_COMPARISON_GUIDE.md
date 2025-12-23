@@ -7,11 +7,13 @@
 I've created a standalone HTML preview file that shows exactly what the design should look like.
 
 **Open in browser:**
+
 ```
 http://localhost:5173/landing-preview.html
 ```
 
 Or open directly:
+
 ```
 D:\workspaces\prompt-gen-web\public\landing-preview.html
 ```
@@ -27,6 +29,7 @@ This shows the **EXPECTED design** with all gradients, colors, and styling.
 ## What You Should See (Expected)
 
 ### Hero Section
+
 - **Background:** Purple gradient (#667eea → #764ba2)
 - **Text color:** White
 - **Shadow:** Soft purple glow around banner
@@ -34,6 +37,7 @@ This shows the **EXPECTED design** with all gradients, colors, and styling.
 - **Size:** Large, prominent, 3rem title
 
 Should look like this:
+
 ```
 ┌──────────────────────────────────────┐
 │                                      │
@@ -47,6 +51,7 @@ Should look like this:
 ```
 
 ### Getting Started Section
+
 - **Card background:** Pink gradient (#f093fb → #f5576c)
 - **Text:** White
 - **Icon:** 🎁 (3rem size)
@@ -54,6 +59,7 @@ Should look like this:
 - **Button:** Purple with hover effect
 
 Should look like this:
+
 ```
 ✨ Getting Started (black text)
 New here? Try the sample package... (gray text)
@@ -71,12 +77,14 @@ New here? Try the sample package... (gray text)
 ```
 
 ### Generate Section
+
 - **Card background:** Teal/pink gradient (#a8edea → #fed6e3)
 - **Text:** Dark gray
 - **Icon:** ⚡
 - **Shape:** Rounded
 
 Should look like this:
+
 ```
 🚀 Generate Prompts (black text)
 Use your packages to create... (gray text)
@@ -94,12 +102,14 @@ Use your packages to create... (gray text)
 ```
 
 ### Management Section
+
 - **Card backgrounds:** White with gray border
 - **Three columns:** Side by side on desktop
 - **Icons:** ➕ 📂 📥
 - **Hover:** Cards lift and border turns purple
 
 Should look like this:
+
 ```
 📦 Package Management (black text)
 Create, import, and edit... (gray text)
@@ -116,31 +126,40 @@ Create, import, and edit... (gray text)
 ## Troubleshooting: If You See All White
 
 ### Issue 1: Browser Cache
+
 **Solution:** Hard refresh
+
 - **Windows:** Ctrl + Shift + R
 - **Mac:** Cmd + Shift + R
 
 ### Issue 2: Dev Server Not Updated
+
 **Solution:** Restart dev server
+
 ```powershell
 # Stop server (Ctrl+C)
 npm run dev
 ```
 
 ### Issue 3: CSS Not Loading
+
 **Check browser console (F12):**
+
 - Look for CSS errors
 - Check if styles are being applied
 
 **In DevTools Elements tab:**
+
 - Click on the hero div
 - Check "Computed" styles
 - Look for `background` - should show gradient
 
 ### Issue 4: Vue Scoped Styles Issue
+
 If styles aren't applying, check if elements have `data-v-` attributes.
 
 **Temporary fix:** Remove `scoped` from `<style scoped>` tag:
+
 ```vue
 <!-- Change this: -->
 <style scoped>
@@ -154,12 +173,14 @@ If styles aren't applying, check if elements have `data-v-` attributes.
 Use this to verify the design is correct:
 
 ### Colors Present
+
 - [ ] Purple gradient hero (top banner)
 - [ ] Pink gradient "Load Sample" card
 - [ ] Teal/pink gradient "Generate" card
 - [ ] White cards with gray borders (management)
 
 ### Text Colors
+
 - [ ] Hero text is white
 - [ ] Section headers are dark (#2c3e50)
 - [ ] Section intros are gray (#666)
@@ -167,6 +188,7 @@ Use this to verify the design is correct:
 - [ ] Teal card text is dark
 
 ### Shadows & Effects
+
 - [ ] Hero has purple glow
 - [ ] Pink card has pink glow
 - [ ] Teal card has soft shadow
@@ -174,6 +196,7 @@ Use this to verify the design is correct:
 - [ ] Cards lift on hover
 
 ### Layout
+
 - [ ] Hero spans full width (max 1200px)
 - [ ] Featured cards are centered (max 700px)
 - [ ] Management cards are in 3-column grid
@@ -182,6 +205,7 @@ Use this to verify the design is correct:
 ## Quick Visual Test
 
 **If you see these colors, it's working:**
+
 1. 🟣 Purple at the top (hero)
 2. 🌸 Pink in the middle (sample card)
 3. 🦄 Teal/pink below that (generate card)
@@ -194,11 +218,13 @@ Use this to verify the design is correct:
 If possible, take screenshots and compare:
 
 **Expected (from landing-preview.html):**
+
 - Colorful gradients
 - Clear visual hierarchy
 - Professional appearance
 
 **Actual (from /):**
+
 - Should match expected
 - If all white: issue with CSS loading
 
@@ -220,4 +246,3 @@ If it still looks wrong after trying the fixes above:
 ---
 
 **The design SHOULD be very colorful, not white!** If you're seeing mostly white, the CSS isn't being applied correctly.
-

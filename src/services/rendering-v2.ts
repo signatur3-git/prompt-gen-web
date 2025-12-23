@@ -69,10 +69,7 @@ export class RenderingEngineV2 {
   /**
    * Render from a rulebook entry point
    */
-  async renderRulebook(
-    namespaceName: string,
-    rulebookName: string
-  ): Promise<RenderResult> {
+  async renderRulebook(namespaceName: string, rulebookName: string): Promise<RenderResult> {
     const namespace = this.pkg.namespaces[namespaceName];
     if (!namespace) {
       throw new Error(`Namespace not found: ${namespaceName}`);
@@ -88,12 +85,14 @@ export class RenderingEngineV2 {
     }
 
     // Select random entry point (weighted)
-    const weights = rulebook.entry_points.map((ep) => ep.weight || 1.0);
+    const weights = rulebook.entry_points.map(ep => ep.weight || 1.0);
     const index = this.rng.weightedChoice(weights);
     const entryPoint = rulebook.entry_points[index];
 
     if (!entryPoint) {
-      throw new Error(`No entry point found at index ${index} in rulebook ${namespaceName}:${rulebookName}`);
+      throw new Error(
+        `No entry point found at index ${index} in rulebook ${namespaceName}:${rulebookName}`
+      );
     }
 
     // Handle both 'target' and 'prompt_section' field names
@@ -192,20 +191,24 @@ export class RenderingEngineV2 {
       }
 
       // Check if this is a nested promptsection
-        if (this.isPromptSectionReference(reference.target)) {
-          // Render recursively
-          const nestedResult = await this.renderWithDepthAndContext(reference.target, depth + 1, null);
-          const selectedVal: SelectedValue = {
-            text: nestedResult.text,
-            tags: {},
-            namespace: '',
-            datatype: '',
-          };
-          if (selectedVal && selectedVal.text) {
-            selected.set(refName, [selectedVal]);
-            selectionContext.set(refName, { text: nestedResult.text, tags: {} });
-          }
-        } else {
+      if (this.isPromptSectionReference(reference.target)) {
+        // Render recursively
+        const nestedResult = await this.renderWithDepthAndContext(
+          reference.target,
+          depth + 1,
+          null
+        );
+        const selectedVal: SelectedValue = {
+          text: nestedResult.text,
+          tags: {},
+          namespace: '',
+          datatype: '',
+        };
+        if (selectedVal && selectedVal.text) {
+          selected.set(refName, [selectedVal]);
+          selectionContext.set(refName, { text: nestedResult.text, tags: {} });
+        }
+      } else {
         // Select from datatype
         const values = await this.selectValues(reference, selectionContext);
         selected.set(refName, values);
@@ -237,7 +240,11 @@ export class RenderingEngineV2 {
     for (const [_refName, values] of selected) {
       if (values && values.length > 0 && values[0]) {
         const firstValue = values[0];
-        if (firstValue.tags && typeof firstValue.tags === 'object' && 'article' in firstValue.tags) {
+        if (
+          firstValue.tags &&
+          typeof firstValue.tags === 'object' &&
+          'article' in firstValue.tags
+        ) {
           const article = firstValue.tags.article;
           if (article && (typeof article === 'string' || typeof article === 'number')) {
             context.set('article', String(article));
@@ -302,10 +309,7 @@ export class RenderingEngineV2 {
   /**
    * Compute selection order using topological sort
    */
-  private computeSelectionOrder(
-    _promptSection: PromptSection,
-    tokens: TemplateToken[]
-  ): string[] {
+  private computeSelectionOrder(_promptSection: PromptSection, tokens: TemplateToken[]): string[] {
     // Get all reference names from template (in template order)
     const refNames: string[] = [];
     for (const token of tokens) {
@@ -410,10 +414,15 @@ export class RenderingEngineV2 {
 
     // If not found, search dependencies
     if (!namespace) {
-      console.log(`[findPromptSection] Not in main package, searching ${this.dependencies.size} dependencies`);
+      console.log(
+        `[findPromptSection] Not in main package, searching ${this.dependencies.size} dependencies`
+      );
       for (const [depId, dep] of this.dependencies.entries()) {
         if (dep && dep.namespaces) {
-          console.log(`[findPromptSection] Checking dependency ${depId}, namespaces:`, Object.keys(dep.namespaces));
+          console.log(
+            `[findPromptSection] Checking dependency ${depId}, namespaces:`,
+            Object.keys(dep.namespaces)
+          );
           namespace = dep.namespaces[nsName];
           if (namespace) {
             console.log(`[findPromptSection] Found in dependency ${depId}`);
@@ -424,7 +433,9 @@ export class RenderingEngineV2 {
     }
 
     if (!namespace) {
-      console.error(`[findPromptSection] Namespace '${nsName}' not found in main package or any dependency`);
+      console.error(
+        `[findPromptSection] Namespace '${nsName}' not found in main package or any dependency`
+      );
       throw new Error(`Namespace not found: ${nsName}`);
     }
 
@@ -459,10 +470,15 @@ export class RenderingEngineV2 {
 
     // If not found, search dependencies
     if (!namespace) {
-      console.log(`[findDatatype] Not in main package, searching ${this.dependencies.size} dependencies`);
+      console.log(
+        `[findDatatype] Not in main package, searching ${this.dependencies.size} dependencies`
+      );
       for (const [depId, dep] of this.dependencies.entries()) {
         if (dep && dep.namespaces) {
-          console.log(`[findDatatype] Checking dependency ${depId}, namespaces:`, Object.keys(dep.namespaces));
+          console.log(
+            `[findDatatype] Checking dependency ${depId}, namespaces:`,
+            Object.keys(dep.namespaces)
+          );
           namespace = dep.namespaces[nsName];
           if (namespace) {
             console.log(`[findDatatype] Found in dependency ${depId}`);
@@ -473,7 +489,9 @@ export class RenderingEngineV2 {
     }
 
     if (!namespace) {
-      console.error(`[findDatatype] Namespace '${nsName}' not found in main package or any dependency`);
+      console.error(
+        `[findDatatype] Namespace '${nsName}' not found in main package or any dependency`
+      );
       throw new Error(`Namespace not found: ${nsName}`);
     }
 
@@ -511,7 +529,7 @@ export class RenderingEngineV2 {
     }
 
     // 3+ values
-    const texts = values.map((v) => v?.text || '').filter(t => t);
+    const texts = values.map(v => v?.text || '').filter(t => t);
     if (texts.length === 0) return '';
     const last = texts.pop()!;
     return `${texts.join(separatorSet.primary)}${separatorSet.secondary}${last}`;
@@ -536,4 +554,3 @@ class Context {
     return this.data.has(key);
   }
 }
-

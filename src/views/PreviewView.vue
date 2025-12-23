@@ -10,12 +10,7 @@
         >
           Back to Editor
         </button>
-        <button
-          class="btn-secondary"
-          @click="router.push('/')"
-        >
-          Home
-        </button>
+        <button class="btn-secondary" @click="router.push('/')">Home</button>
       </div>
     </header>
 
@@ -31,26 +26,18 @@
               type="text"
               placeholder="Search rulebooks..."
               class="search-input"
-            >
+            />
           </div>
 
           <!-- Rulebook list -->
-          <div
-            v-if="filteredRulebooks.length === 0"
-            class="empty-state-small"
-          >
+          <div v-if="filteredRulebooks.length === 0" class="empty-state-small">
             <p v-if="allRulebooks.length === 0">
               No rulebooks found in local storage. Create packages with rulebooks first.
             </p>
-            <p v-else>
-              No rulebooks match your search.
-            </p>
+            <p v-else>No rulebooks match your search.</p>
           </div>
 
-          <div
-            v-else
-            class="rulebook-list"
-          >
+          <div v-else class="rulebook-list">
             <div
               v-for="rb in filteredRulebooks"
               :key="`${rb.packageId}:${rb.namespaceId}:${rb.rulebookId}`"
@@ -72,45 +59,23 @@
           </div>
 
           <!-- Generation settings -->
-          <div
-            v-if="selectedRulebook"
-            class="generation-settings"
-          >
+          <div v-if="selectedRulebook" class="generation-settings">
             <h3>Generation Settings</h3>
 
             <div class="form-group">
               <label>Seed:</label>
               <div class="seed-input-group">
-                <input
-                  v-model.number="seed"
-                  type="number"
-                  class="seed-input"
-                >
-                <button
-                  class="btn-small"
-                  @click="randomSeed"
-                >
-                  Random
-                </button>
+                <input v-model.number="seed" type="number" class="seed-input" />
+                <button class="btn-small" @click="randomSeed">Random</button>
               </div>
             </div>
 
             <div class="form-group">
               <label>Count:</label>
-              <input
-                v-model.number="batchCount"
-                type="number"
-                min="1"
-                max="50"
-              >
+              <input v-model.number="batchCount" type="number" min="1" max="50" />
             </div>
 
-            <button
-              class="btn-primary"
-              @click="generate"
-            >
-              Generate
-            </button>
+            <button class="btn-primary" @click="generate">Generate</button>
           </div>
         </div>
       </aside>
@@ -118,31 +83,16 @@
       <main class="preview-main">
         <h2>Generated Prompts</h2>
 
-        <div
-          v-if="results.length === 0 && !error"
-          class="empty-results"
-        >
+        <div v-if="results.length === 0 && !error" class="empty-results">
           <p>Select a rulebook and click Generate to see results</p>
         </div>
 
-        <div
-          v-else-if="results.length > 0"
-          class="results"
-        >
-          <div
-            v-for="(result, index) in results"
-            :key="index"
-            class="result-card"
-          >
+        <div v-else-if="results.length > 0" class="results">
+          <div v-for="(result, index) in results" :key="index" class="result-card">
             <div class="result-header">
               <span class="result-number">#{{ index + 1 }}</span>
               <span class="result-seed">Seed: {{ result.seed }}</span>
-              <button
-                class="btn-copy"
-                @click="copyResult(result.text)"
-              >
-                📋 Copy
-              </button>
+              <button class="btn-copy" @click="copyResult(result.text)">📋 Copy</button>
             </div>
             <div class="result-text">
               {{ result.text }}
@@ -150,25 +100,12 @@
           </div>
 
           <div class="results-actions">
-            <button
-              class="btn-secondary"
-              @click="copyAllResults"
-            >
-              Copy All Results
-            </button>
-            <button
-              class="btn-secondary"
-              @click="exportResults"
-            >
-              Export as Text
-            </button>
+            <button class="btn-secondary" @click="copyAllResults">Copy All Results</button>
+            <button class="btn-secondary" @click="exportResults">Export as Text</button>
           </div>
         </div>
 
-        <p
-          v-if="error"
-          class="error"
-        >
+        <p v-if="error" class="error">
           {{ error }}
         </p>
       </main>
@@ -209,18 +146,21 @@ const filteredRulebooks = computed(() => {
   if (!searchQuery.value) return allRulebooks.value;
 
   const query = searchQuery.value.toLowerCase();
-  return allRulebooks.value.filter(rb =>
-    rb.rulebookId.toLowerCase().includes(query) ||
-    rb.packageName.toLowerCase().includes(query) ||
-    rb.namespaceId.toLowerCase().includes(query)
+  return allRulebooks.value.filter(
+    rb =>
+      rb.rulebookId.toLowerCase().includes(query) ||
+      rb.packageName.toLowerCase().includes(query) ||
+      rb.namespaceId.toLowerCase().includes(query)
   );
 });
 
 function isSelected(rb: RulebookInfo): boolean {
   if (!selectedRulebook.value) return false;
-  return selectedRulebook.value.packageId === rb.packageId &&
-         selectedRulebook.value.namespaceId === rb.namespaceId &&
-         selectedRulebook.value.rulebookId === rb.rulebookId;
+  return (
+    selectedRulebook.value.packageId === rb.packageId &&
+    selectedRulebook.value.namespaceId === rb.namespaceId &&
+    selectedRulebook.value.rulebookId === rb.rulebookId
+  );
 }
 
 function selectRulebook(rb: RulebookInfo) {
@@ -252,7 +192,12 @@ async function generate() {
           const depId = dep.package || (dep as any).package;
           console.log('[generate] Loading dependency:', depId);
           const depPkg = await platformService.loadPackage(depId);
-          console.log('[generate] Loaded dependency:', depId, 'with namespaces:', Object.keys(depPkg.namespaces));
+          console.log(
+            '[generate] Loaded dependency:',
+            depId,
+            'with namespaces:',
+            Object.keys(depPkg.namespaces)
+          );
           dependencies.push(depPkg);
         } catch (err) {
           const depId = dep.package || (dep as any).package;
@@ -263,17 +208,16 @@ async function generate() {
     }
 
     console.log('[generate] Total dependencies loaded:', dependencies.length);
-    console.log('[generate] Dependency package IDs:', dependencies.map(d => d.id));
+    console.log(
+      '[generate] Dependency package IDs:',
+      dependencies.map(d => d.id)
+    );
 
     for (let i = 0; i < batchCount.value; i++) {
       const currentSeed = seed.value + i;
 
       // Use new V2 renderer with dependencies
-      const engine = new RenderingEngineV2(
-        selectedRulebook.value.pkg,
-        currentSeed,
-        dependencies
-      );
+      const engine = new RenderingEngineV2(selectedRulebook.value.pkg, currentSeed, dependencies);
       const result = await engine.renderRulebook(
         selectedRulebook.value.namespaceId,
         selectedRulebook.value.rulebookId
@@ -291,12 +235,16 @@ function copyResult(text: string) {
 }
 
 function copyAllResults() {
-  const allText = results.value.map((r, i) => `#${i + 1} (Seed: ${r.seed})\n${r.text}`).join('\n\n---\n\n');
+  const allText = results.value
+    .map((r, i) => `#${i + 1} (Seed: ${r.seed})\n${r.text}`)
+    .join('\n\n---\n\n');
   navigator.clipboard.writeText(allText);
 }
 
 function exportResults() {
-  const allText = results.value.map((r, i) => `#${i + 1} (Seed: ${r.seed})\n${r.text}`).join('\n\n---\n\n');
+  const allText = results.value
+    .map((r, i) => `#${i + 1} (Seed: ${r.seed})\n${r.text}`)
+    .join('\n\n---\n\n');
   const blob = new Blob([allText], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -570,7 +518,7 @@ onMounted(() => {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .result-header {
@@ -668,4 +616,3 @@ onMounted(() => {
   border: 1px solid #fee;
 }
 </style>
-

@@ -2,25 +2,14 @@
   <div class="promptsection-editor">
     <header class="editor-header">
       <h2>Prompt Sections</h2>
-      <button
-        class="btn-primary"
-        @click="addPromptSection"
-      >
-        + Add Prompt Section
-      </button>
+      <button class="btn-primary" @click="addPromptSection">+ Add Prompt Section</button>
     </header>
 
-    <div
-      v-if="promptSections.length === 0"
-      class="empty-state"
-    >
+    <div v-if="promptSections.length === 0" class="empty-state">
       <p>No prompt sections yet. Add your first prompt section to get started.</p>
     </div>
 
-    <div
-      v-else
-      class="promptsection-list"
-    >
+    <div v-else class="promptsection-list">
       <div
         v-for="section in promptSections"
         :key="section.id"
@@ -45,15 +34,12 @@
     </div>
 
     <!-- Prompt Section Editor Panel -->
-    <div
-      v-if="editingPromptSection"
-      class="promptsection-details"
-    >
+    <div v-if="editingPromptSection" class="promptsection-details">
       <h3>Edit Prompt Section</h3>
 
       <div class="form-group">
         <label>ID: <span class="required">*</span></label>
-        <div style="display: flex; gap: 0.5rem; align-items: start;">
+        <div style="display: flex; gap: 0.5rem; align-items: start">
           <input
             v-model="editingPromptSection.id"
             placeholder="e.g., character_description"
@@ -61,7 +47,7 @@
             :disabled="!!originalId"
             @input="markDirty"
             @blur="validatePromptSectionId"
-          >
+          />
           <button
             v-if="originalId"
             type="button"
@@ -72,16 +58,10 @@
             Rename
           </button>
         </div>
-        <p
-          v-if="originalId"
-          class="hint"
-        >
+        <p v-if="originalId" class="hint">
           IDs are immutable while editing. Use Rename for a safe key change.
         </p>
-        <p
-          v-if="idError"
-          class="error"
-        >
+        <p v-if="idError" class="error">
           {{ idError }}
         </p>
       </div>
@@ -92,7 +72,7 @@
           v-model="editingPromptSection.name"
           placeholder="e.g., Character Description"
           @input="markDirty"
-        >
+        />
       </div>
 
       <div class="form-group">
@@ -104,25 +84,23 @@
           class="template-editor"
           @input="markDirty"
         />
-        <p class="hint">
-          Use {reference_name} to insert references
-        </p>
+        <p class="hint">Use {reference_name} to insert references</p>
       </div>
 
       <div class="references-section">
         <h4>References</h4>
 
         <div
-          v-if="!editingPromptSection.references || Object.keys(editingPromptSection.references).length === 0"
+          v-if="
+            !editingPromptSection.references ||
+            Object.keys(editingPromptSection.references).length === 0
+          "
           class="empty-state-small"
         >
           <p>No references yet. Add references that appear in your template.</p>
         </div>
 
-        <div
-          v-else
-          class="references-list"
-        >
+        <div v-else class="references-list">
           <div
             v-for="(refData, refName) in editingPromptSection.references"
             :key="refName"
@@ -135,7 +113,7 @@
                   :value="refName"
                   placeholder="e.g., character"
                   @input="updateReferenceName(refName, ($event.target as HTMLInputElement).value)"
-                >
+                />
               </div>
 
               <div class="field-group">
@@ -144,10 +122,8 @@
                   v-model="refData.target"
                   placeholder="e.g., character_class or core:weapon"
                   @input="markDirty"
-                >
-                <p class="hint">
-                  Format: datatype_id or namespace:datatype_id
-                </p>
+                />
+                <p class="hint">Format: datatype_id or namespace:datatype_id</p>
               </div>
 
               <div class="field-group field-small">
@@ -158,7 +134,7 @@
                   min="0"
                   placeholder="0"
                   @input="markDirty"
-                >
+                />
               </div>
 
               <div class="field-group field-small">
@@ -169,7 +145,7 @@
                   min="1"
                   placeholder="1"
                   @input="markDirty"
-                >
+                />
               </div>
 
               <div class="field-group">
@@ -178,111 +154,64 @@
                   v-model="refData.filter"
                   placeholder="e.g., phonetic:vowel"
                   @input="markDirty"
-                >
-                <p class="hint">
-                  Optional tag filter
-                </p>
+                />
+                <p class="hint">Optional tag filter</p>
               </div>
 
               <div class="field-group field-small">
                 <label>Separator:</label>
-                <input
-                  v-model="refData.separator"
-                  placeholder="e.g., comma"
-                  @input="markDirty"
-                >
+                <input v-model="refData.separator" placeholder="e.g., comma" @input="markDirty" />
               </div>
 
               <div class="field-group field-small">
                 <label>
-                  <input
-                    v-model="refData.unique"
-                    type="checkbox"
-                    @change="markDirty"
-                  >
+                  <input v-model="refData.unique" type="checkbox" @change="markDirty" />
                   Unique
                 </label>
               </div>
             </div>
 
-            <button
-              class="btn-remove"
-              title="Remove reference"
-              @click="removeReference(refName)"
-            >
+            <button class="btn-remove" title="Remove reference" @click="removeReference(refName)">
               ✕ Remove
             </button>
           </div>
         </div>
 
-        <button
-          class="btn-secondary"
-          @click="addReference"
-        >
-          + Add Reference
-        </button>
+        <button class="btn-secondary" @click="addReference">+ Add Reference</button>
       </div>
 
-      <div
-        v-if="validationError"
-        class="error-message"
-      >
+      <div v-if="validationError" class="error-message">
         {{ validationError }}
       </div>
 
-      <div
-        v-if="saveMessage"
-        class="success-message"
-      >
+      <div v-if="saveMessage" class="success-message">
         {{ saveMessage }}
       </div>
 
       <div class="editor-actions">
-        <button
-          :disabled="!canSave"
-          class="btn-primary"
-          @click="savePromptSection"
-        >
+        <button :disabled="!canSave" class="btn-primary" @click="savePromptSection">
           Save Changes
         </button>
-        <button
-          class="btn-secondary"
-          @click="cancelEdit"
-        >
-          Cancel
-        </button>
+        <button class="btn-secondary" @click="cancelEdit">Cancel</button>
       </div>
     </div>
 
     <!-- Rename Modal -->
-    <div
-      v-if="isRenameModalOpen"
-      class="modal-overlay"
-      @click.self="closeRenameModal"
-    >
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="rename-modal-title"
-      >
+    <div v-if="isRenameModalOpen" class="modal-overlay" @click.self="closeRenameModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-modal-title">
         <div class="modal-header">
-          <h3 id="rename-modal-title">
-            Rename Prompt Section
-          </h3>
+          <h3 id="rename-modal-title">Rename Prompt Section</h3>
         </div>
 
         <div class="modal-body">
           <p class="modal-subtitle">
-            Renaming changes the prompt section ID (the key used to reference it). This may affect references.
+            Renaming changes the prompt section ID (the key used to reference it). This may affect
+            references.
           </p>
 
           <div class="form-group">
             <label>Current ID</label>
-            <input
-              :value="renameModalCurrentId"
-              disabled
-            >
+            <input :value="renameModalCurrentId" disabled />
           </div>
 
           <div class="form-group">
@@ -292,24 +221,15 @@
               placeholder="e.g., character_description_v2"
               @keydown.enter.prevent="applyRename"
               @keydown.escape="closeRenameModal"
-            >
-            <p
-              v-if="renameModalError"
-              class="error"
-            >
+            />
+            <p v-if="renameModalError" class="error">
               {{ renameModalError }}
             </p>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="closeRenameModal"
-          >
-            Cancel
-          </button>
+          <button type="button" class="btn-cancel" @click="closeRenameModal">Cancel</button>
           <button
             type="button"
             class="btn-primary"
@@ -339,7 +259,7 @@ const emit = defineEmits<{
 }>();
 
 const selectedPromptSectionId = ref<string | null>(null);
-const editingPromptSection = ref<PromptSection & { id: string } | null>(null);
+const editingPromptSection = ref<(PromptSection & { id: string }) | null>(null);
 const originalId = ref<string | null>(null);
 const isDirty = ref(false);
 const idError = ref('');
@@ -494,7 +414,8 @@ function validatePromptSectionId() {
   }
 
   if (!/^[a-z][a-z0-9_]*$/.test(id)) {
-    idError.value = 'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
+    idError.value =
+      'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
     return;
   }
 
@@ -905,4 +826,3 @@ function applyRename() {
   border-radius: 4px;
 }
 </style>
-

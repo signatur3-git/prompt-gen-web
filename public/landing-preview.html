@@ -1,283 +1,288 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Landing Page Preview - Expected Design</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page Preview - Expected Design</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #f5f7fa;
-      padding: 20px;
-    }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        background: #f5f7fa;
+        padding: 20px;
+      }
 
-    .home {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
+      .home {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
 
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 3rem 2rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 16px;
-      color: white;
-      margin-bottom: 4rem;
-      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-    }
+      /* Hero Section */
+      .hero {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        color: white;
+        margin-bottom: 4rem;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+      }
 
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-    .hero-subtitle {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      opacity: 0.95;
-      font-weight: 500;
-    }
+      .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.95;
+        font-weight: 500;
+      }
 
-    .hero-description {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      opacity: 0.9;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+      .hero-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        opacity: 0.9;
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-    /* Sections */
-    section {
-      margin-bottom: 4rem;
-    }
+      /* Sections */
+      section {
+        margin-bottom: 4rem;
+      }
 
-    section h2 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      color: #2c3e50;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+      section h2 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-    .section-intro {
-      color: #666;
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
+      .section-intro {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+      }
 
-    /* Getting Started - Hero Card */
-    .getting-started .action-card {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+      /* Getting Started - Hero Card */
+      .getting-started .action-card {
+        max-width: 700px;
+        margin: 0 auto;
+      }
 
-    .action-card-hero {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      border: none;
-      padding: 3rem;
-      box-shadow: 0 12px 48px rgba(245, 87, 108, 0.3);
-      border-radius: 12px;
-      text-align: center;
-    }
+      .action-card-hero {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border: none;
+        padding: 3rem;
+        box-shadow: 0 12px 48px rgba(245, 87, 108, 0.3);
+        border-radius: 12px;
+        text-align: center;
+      }
 
-    .action-card-hero h3 {
-      color: white;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
+      .action-card-hero h3 {
+        color: white;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+      }
 
-    .action-card-hero p {
-      color: rgba(255, 255, 255, 0.95);
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
+      .action-card-hero p {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
 
-    /* Quick Actions - Primary Card */
-    .quick-actions .action-card {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+      /* Quick Actions - Primary Card */
+      .quick-actions .action-card {
+        max-width: 700px;
+        margin: 0 auto;
+      }
 
-    .action-card-primary {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      border: none;
-      padding: 2.5rem;
-      box-shadow: 0 8px 32px rgba(168, 237, 234, 0.3);
-      border-radius: 12px;
-      text-align: center;
-    }
+      .action-card-primary {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        border: none;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(168, 237, 234, 0.3);
+        border-radius: 12px;
+        text-align: center;
+      }
 
-    .action-card-primary h3 {
-      color: #2c3e50;
-      font-size: 1.6rem;
-      margin-bottom: 0.75rem;
-    }
+      .action-card-primary h3 {
+        color: #2c3e50;
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+      }
 
-    .action-card-primary p {
-      color: #555;
-      font-size: 1.05rem;
-      margin-bottom: 1.5rem;
-    }
+      .action-card-primary p {
+        color: #555;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+      }
 
-    /* Actions Grid */
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
+      /* Actions Grid */
+      .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
 
-    .action-card {
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      padding: 2rem;
-      text-align: center;
-      background: white;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
+      .action-card {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        background: white;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
 
-    .action-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      border-color: #667eea;
-    }
+      .action-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+      }
 
-    .card-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
+      .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
 
-    .action-card h3 {
-      font-size: 1.4rem;
-      margin-bottom: 0.75rem;
-      color: #2c3e50;
-    }
+      .action-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0.75rem;
+        color: #2c3e50;
+      }
 
-    .action-card p {
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-    }
+      .action-card p {
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
 
-    /* Buttons */
-    button {
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+      /* Buttons */
+      button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
 
-    .btn-primary {
-      background: #667eea;
-      color: white;
-    }
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
 
-    .btn-primary:hover {
-      background: #5568d3;
-      transform: scale(1.05);
-    }
+      .btn-primary:hover {
+        background: #5568d3;
+        transform: scale(1.05);
+      }
 
-    .btn-secondary {
-      background: #e0e0e0;
-      color: #2c3e50;
-    }
+      .btn-secondary {
+        background: #e0e0e0;
+        color: #2c3e50;
+      }
 
-    .btn-secondary:hover {
-      background: #d0d0d0;
-      transform: scale(1.05);
-    }
+      .btn-secondary:hover {
+        background: #d0d0d0;
+        transform: scale(1.05);
+      }
 
-    .btn-large {
-      font-size: 1.1rem;
-      padding: 1rem 2rem;
-    }
-  </style>
-</head>
-<body>
-  <div class="home">
-    <!-- Hero Section -->
-    <div class="hero">
-      <h1>Random Prompt Generator</h1>
-      <p class="hero-subtitle">Create dynamic, randomized prompts for AI image generation</p>
-      <p class="hero-description">
-        Build complex prompt templates with datatypes, rules, and dependencies.
-        Generate deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art tools.
-      </p>
+      .btn-large {
+        font-size: 1.1rem;
+        padding: 1rem 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="home">
+      <!-- Hero Section -->
+      <div class="hero">
+        <h1>Random Prompt Generator</h1>
+        <p class="hero-subtitle">Create dynamic, randomized prompts for AI image generation</p>
+        <p class="hero-description">
+          Build complex prompt templates with datatypes, rules, and dependencies. Generate
+          deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art
+          tools.
+        </p>
+      </div>
+
+      <!-- Getting Started Section -->
+      <section class="getting-started">
+        <h2>✨ Getting Started</h2>
+        <p class="section-intro">New here? Try the sample package to see what this tool can do!</p>
+
+        <div class="action-card action-card-hero">
+          <div class="card-icon">🎁</div>
+          <h3>Load Sample Package</h3>
+          <p>
+            Explore featured.common with ready-to-use rulebooks for fantasy scenes, lighting,
+            characters, and more
+          </p>
+          <button class="btn-primary btn-large">Load Sample & Start Generating</button>
+        </div>
+      </section>
+
+      <!-- Quick Actions Section -->
+      <section class="quick-actions">
+        <h2>🚀 Generate Prompts</h2>
+        <p class="section-intro">Use your packages to create randomized prompts</p>
+
+        <div class="action-card action-card-primary">
+          <div class="card-icon">⚡</div>
+          <h3>Preview & Generate</h3>
+          <p>Generate prompts from any rulebook in your collection</p>
+          <button class="btn-primary">Open Generator</button>
+        </div>
+      </section>
+
+      <!-- Package Management Section -->
+      <section class="package-management">
+        <h2>📦 Package Management</h2>
+        <p class="section-intro">Create, import, and edit your prompt generation packages</p>
+
+        <div class="actions-grid">
+          <div class="action-card">
+            <div class="card-icon">➕</div>
+            <h3>Create New Package</h3>
+            <p>Start building a package from scratch</p>
+            <button class="btn-secondary">Create Package</button>
+          </div>
+
+          <div class="action-card">
+            <div class="card-icon">📂</div>
+            <h3>Load Existing Package</h3>
+            <p>Edit packages from your storage</p>
+            <button class="btn-secondary">Load Package</button>
+          </div>
+
+          <div class="action-card">
+            <div class="card-icon">📥</div>
+            <h3>Import Package(s)</h3>
+            <p>Import YAML/JSON files with dependencies</p>
+            <button class="btn-secondary">Import Files</button>
+          </div>
+        </div>
+      </section>
     </div>
-
-    <!-- Getting Started Section -->
-    <section class="getting-started">
-      <h2>✨ Getting Started</h2>
-      <p class="section-intro">New here? Try the sample package to see what this tool can do!</p>
-
-      <div class="action-card action-card-hero">
-        <div class="card-icon">🎁</div>
-        <h3>Load Sample Package</h3>
-        <p>Explore featured.common with ready-to-use rulebooks for fantasy scenes, lighting, characters, and more</p>
-        <button class="btn-primary btn-large">Load Sample & Start Generating</button>
-      </div>
-    </section>
-
-    <!-- Quick Actions Section -->
-    <section class="quick-actions">
-      <h2>🚀 Generate Prompts</h2>
-      <p class="section-intro">Use your packages to create randomized prompts</p>
-
-      <div class="action-card action-card-primary">
-        <div class="card-icon">⚡</div>
-        <h3>Preview & Generate</h3>
-        <p>Generate prompts from any rulebook in your collection</p>
-        <button class="btn-primary">Open Generator</button>
-      </div>
-    </section>
-
-    <!-- Package Management Section -->
-    <section class="package-management">
-      <h2>📦 Package Management</h2>
-      <p class="section-intro">Create, import, and edit your prompt generation packages</p>
-
-      <div class="actions-grid">
-        <div class="action-card">
-          <div class="card-icon">➕</div>
-          <h3>Create New Package</h3>
-          <p>Start building a package from scratch</p>
-          <button class="btn-secondary">Create Package</button>
-        </div>
-
-        <div class="action-card">
-          <div class="card-icon">📂</div>
-          <h3>Load Existing Package</h3>
-          <p>Edit packages from your storage</p>
-          <button class="btn-secondary">Load Package</button>
-        </div>
-
-        <div class="action-card">
-          <div class="card-icon">📥</div>
-          <h3>Import Package(s)</h3>
-          <p>Import YAML/JSON files with dependencies</p>
-          <button class="btn-secondary">Import Files</button>
-        </div>
-      </div>
-    </section>
-  </div>
-</body>
+  </body>
 </html>
-

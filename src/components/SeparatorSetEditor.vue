@@ -2,25 +2,14 @@
   <div class="separatorset-editor">
     <header class="editor-header">
       <h2>Separator Sets</h2>
-      <button
-        class="btn-primary"
-        @click="addSeparatorSet"
-      >
-        + Add Separator Set
-      </button>
+      <button class="btn-primary" @click="addSeparatorSet">+ Add Separator Set</button>
     </header>
 
-    <div
-      v-if="separatorSets.length === 0"
-      class="empty-state"
-    >
+    <div v-if="separatorSets.length === 0" class="empty-state">
       <p>No separator sets yet. Add your first separator set to format lists naturally.</p>
     </div>
 
-    <div
-      v-else
-      class="separatorset-list"
-    >
+    <div v-else class="separatorset-list">
       <div
         v-for="sepSet in separatorSets"
         :key="sepSet.id"
@@ -45,15 +34,12 @@
     </div>
 
     <!-- Separator Set Editor Panel -->
-    <div
-      v-if="editingSeparatorSet"
-      class="separatorset-details"
-    >
+    <div v-if="editingSeparatorSet" class="separatorset-details">
       <h3>Edit Separator Set</h3>
 
       <div class="form-group">
         <label>ID: <span class="required">*</span></label>
-        <div style="display: flex; gap: 0.5rem; align-items: start;">
+        <div style="display: flex; gap: 0.5rem; align-items: start">
           <input
             v-model="editingSeparatorSet.id"
             placeholder="e.g., comma_and"
@@ -61,7 +47,7 @@
             :disabled="!!originalId"
             @input="markDirty"
             @blur="validateSeparatorSetId"
-          >
+          />
           <button
             v-if="originalId"
             type="button"
@@ -72,16 +58,10 @@
             Rename
           </button>
         </div>
-        <p
-          v-if="originalId"
-          class="hint"
-        >
+        <p v-if="originalId" class="hint">
           IDs are immutable while editing. Use Rename for a safe key change.
         </p>
-        <p
-          v-if="idError"
-          class="error"
-        >
+        <p v-if="idError" class="error">
           {{ idError }}
         </p>
       </div>
@@ -92,31 +72,22 @@
           v-model="editingSeparatorSet.name"
           placeholder="e.g., Comma And"
           @input="markDirty"
-        >
+        />
       </div>
 
       <div class="separator-fields">
         <div class="form-group">
           <label>Primary Separator: <span class="required">*</span></label>
-          <input
-            v-model="editingSeparatorSet.primary"
-            placeholder="&quot;, &quot;"
-            @input="markDirty"
-          >
-          <p class="hint">
-            Used between items in lists of 3+ (e.g., ", " for "a, b, c")
-          </p>
+          <input v-model="editingSeparatorSet.primary" placeholder='", "' @input="markDirty" />
+          <p class="hint">Used between items in lists of 3+ (e.g., ", " for "a, b, c")</p>
         </div>
 
         <div class="form-group">
           <label>Secondary Separator: <span class="required">*</span></label>
-          <input
-            v-model="editingSeparatorSet.secondary"
-            placeholder="&quot; and &quot;"
-            @input="markDirty"
-          >
+          <input v-model="editingSeparatorSet.secondary" placeholder='" and "' @input="markDirty" />
           <p class="hint">
-            Used for exactly 2 items and before last item (e.g., " and " for "a and b" or "a, b and c")
+            Used for exactly 2 items and before last item (e.g., " and " for "a and b" or "a, b and
+            c")
           </p>
         </div>
 
@@ -124,12 +95,10 @@
           <label>Tertiary Separator (optional):</label>
           <input
             v-model="editingSeparatorSet.tertiary"
-            placeholder="Optional (e.g., &quot;; &quot;)"
+            placeholder='Optional (e.g., "; ")'
             @input="markDirty"
-          >
-          <p class="hint">
-            Alternative for complex lists (rarely used)
-          </p>
+          />
+          <p class="hint">Alternative for complex lists (rarely used)</p>
         </div>
       </div>
 
@@ -151,71 +120,45 @@
           </div>
           <div class="preview-item">
             <span class="preview-label">4 items:</span>
-            <span class="preview-result">{{ formatPreview(['red', 'blue', 'green', 'yellow']) }}</span>
+            <span class="preview-result">{{
+              formatPreview(['red', 'blue', 'green', 'yellow'])
+            }}</span>
           </div>
         </div>
       </div>
 
-      <div
-        v-if="validationError"
-        class="error-message"
-      >
+      <div v-if="validationError" class="error-message">
         {{ validationError }}
       </div>
 
-      <div
-        v-if="saveMessage"
-        class="success-message"
-      >
+      <div v-if="saveMessage" class="success-message">
         {{ saveMessage }}
       </div>
 
       <div class="editor-actions">
-        <button
-          :disabled="!canSave"
-          class="btn-primary"
-          @click="saveSeparatorSet"
-        >
+        <button :disabled="!canSave" class="btn-primary" @click="saveSeparatorSet">
           Save Changes
         </button>
-        <button
-          class="btn-secondary"
-          @click="cancelEdit"
-        >
-          Cancel
-        </button>
+        <button class="btn-secondary" @click="cancelEdit">Cancel</button>
       </div>
     </div>
 
     <!-- Rename Modal -->
-    <div
-      v-if="isRenameModalOpen"
-      class="modal-overlay"
-      @click.self="closeRenameModal"
-    >
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="rename-modal-title"
-      >
+    <div v-if="isRenameModalOpen" class="modal-overlay" @click.self="closeRenameModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-modal-title">
         <div class="modal-header">
-          <h3 id="rename-modal-title">
-            Rename Separator Set
-          </h3>
+          <h3 id="rename-modal-title">Rename Separator Set</h3>
         </div>
 
         <div class="modal-body">
           <p class="modal-subtitle">
-            Renaming changes the separator set ID (the key used to reference it). This may affect references.
+            Renaming changes the separator set ID (the key used to reference it). This may affect
+            references.
           </p>
 
           <div class="form-group">
             <label>Current ID</label>
-            <input
-              :value="renameModalCurrentId"
-              disabled
-            >
+            <input :value="renameModalCurrentId" disabled />
           </div>
 
           <div class="form-group">
@@ -225,24 +168,15 @@
               placeholder="e.g., comma_and_v2"
               @keydown.enter.prevent="applyRename"
               @keydown.escape="closeRenameModal"
-            >
-            <p
-              v-if="renameModalError"
-              class="error"
-            >
+            />
+            <p v-if="renameModalError" class="error">
               {{ renameModalError }}
             </p>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="closeRenameModal"
-          >
-            Cancel
-          </button>
+          <button type="button" class="btn-cancel" @click="closeRenameModal">Cancel</button>
           <button
             type="button"
             class="btn-primary"
@@ -272,7 +206,7 @@ const emit = defineEmits<{
 }>();
 
 const selectedSeparatorSetId = ref<string | null>(null);
-const editingSeparatorSet = ref<SeparatorSet & { id: string } | null>(null);
+const editingSeparatorSet = ref<(SeparatorSet & { id: string }) | null>(null);
 const originalId = ref<string | null>(null);
 const isDirty = ref(false);
 const idError = ref('');
@@ -393,7 +327,8 @@ function validateSeparatorSetId() {
   }
 
   if (!/^[a-z][a-z0-9_]*$/.test(id)) {
-    idError.value = 'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
+    idError.value =
+      'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
     return;
   }
 
@@ -799,4 +734,3 @@ function applyRename() {
   color: #666;
 }
 </style>
-

@@ -124,4 +124,3 @@ export interface IRenderingService {
     seed: number
   ): Promise<RenderResult>;
 }
-

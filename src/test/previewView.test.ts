@@ -16,4 +16,3 @@ describe('PreviewView Module', () => {
     expect(typeof renderingService.renderRulebook).toBe('function');
   });
 });
-

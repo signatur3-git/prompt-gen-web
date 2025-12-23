@@ -35,8 +35,16 @@ const FEATURED_COMMON_PACKAGE = {
         weather_conditions: {
           name: 'weather_conditions',
           values: [
-            { text: 'in clear weather', weight: 1, tags: { article: 'a', weather: 'clear', visibility: 'high' } },
-            { text: 'during a rainstorm', weight: 1, tags: { article: 'a', weather: 'rain', dramatic: true } },
+            {
+              text: 'in clear weather',
+              weight: 1,
+              tags: { article: 'a', weather: 'clear', visibility: 'high' },
+            },
+            {
+              text: 'during a rainstorm',
+              weight: 1,
+              tags: { article: 'a', weather: 'rain', dramatic: true },
+            },
           ],
         },
         times_of_day: {
@@ -82,7 +90,9 @@ async function loadPackageThroughUI(page: any) {
   await page.click('button:has-text("Load Package")');
   await page.waitForSelector('.modal', { timeout: 5000 });
 
-  const pkgRow = page.locator('.package-item-content').filter({ hasText: 'Featured Common Package' });
+  const pkgRow = page
+    .locator('.package-item-content')
+    .filter({ hasText: 'Featured Common Package' });
   await pkgRow.waitFor({ state: 'visible', timeout: 5000 });
   await pkgRow.click();
 
@@ -110,7 +120,9 @@ function shuffle<T>(arr: T[]) {
 }
 
 test.describe('Featured common package - random datatype clicking', () => {
-  test('random order clicking should always select the clicked datatype (verify ID input)', async ({ page }) => {
+  test('random order clicking should always select the clicked datatype (verify ID input)', async ({
+    page,
+  }) => {
     await loadPackageThroughUI(page);
 
     const idInput = page.locator('input[placeholder="e.g., character_class"]');
@@ -132,7 +144,9 @@ test.describe('Featured common package - random datatype clicking', () => {
       console.log(`\n=== ROUND ${round}/${ROUNDS} ===`);
 
       for (const dt of order) {
-        const header = page.locator('.datatype-item', { hasText: dt.displayName }).locator('.datatype-header');
+        const header = page
+          .locator('.datatype-item', { hasText: dt.displayName })
+          .locator('.datatype-header');
         await header.waitFor({ state: 'visible', timeout: 5000 });
 
         await header.click();

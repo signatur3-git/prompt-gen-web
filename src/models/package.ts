@@ -136,8 +136,8 @@ export interface Reference {
  */
 export interface SeparatorSet {
   name: string;
-  primary: string;      // ", "
-  secondary: string;    // " and "
+  primary: string; // ", "
+  secondary: string; // " and "
   tertiary?: string;
 }
 
@@ -247,4 +247,3 @@ export function createEmptyNamespace(id: string): Namespace {
     rulebooks: {},
   };
 }
-

@@ -227,7 +227,8 @@ describe('DatatypeEditor - Click Behavior', () => {
     });
 
     it('should not show confirm when clicking same datatype with changes', async () => {
-      const findColorsRow = () => wrapper.findAll('.datatype-item').find((w: any) => w.text().includes('Colors'));
+      const findColorsRow = () =>
+        wrapper.findAll('.datatype-item').find((w: any) => w.text().includes('Colors'));
 
       const firstColors = findColorsRow();
       expect(firstColors).toBeTruthy();
@@ -333,12 +334,16 @@ describe('DatatypeEditor - Click Behavior', () => {
 
         // FAIL if editor didn't open at all
         if (!editorOpened) {
-          throw new Error(`FAIL: Datatype "${datatypeName}" - Editor never opened after ${MAX_CLICKS} clicks!`);
+          throw new Error(
+            `FAIL: Datatype "${datatypeName}" - Editor never opened after ${MAX_CLICKS} clicks!`
+          );
         }
 
         // FAIL if it took more than 1 click
         if (clicksRequired > 1) {
-          throw new Error(`FAIL: Datatype "${datatypeName}" - Required ${clicksRequired} clicks (should be 1). This is the swallowed click bug!`);
+          throw new Error(
+            `FAIL: Datatype "${datatypeName}" - Required ${clicksRequired} clicks (should be 1). This is the swallowed click bug!`
+          );
         }
 
         console.log(`  ✓ SUCCESS: Opened on first click`);
@@ -404,7 +409,7 @@ describe('DatatypeEditor - Click Behavior', () => {
 
     it('STRESS TEST: Click each datatype 5 times and track when it actually opens', async () => {
       const datatypeItems = wrapper.findAll('.datatype-item');
-      const results: Array<{name: string, openedOnClick: number}> = [];
+      const results: Array<{ name: string; openedOnClick: number }> = [];
 
       for (let i = 0; i < datatypeItems.length; i++) {
         const datatype = datatypeItems[i];
@@ -447,8 +452,8 @@ describe('DatatypeEditor - Click Behavior', () => {
 
         throw new Error(
           `SWALLOWED CLICK BUG DETECTED!\n` +
-          `${failedDatatypes.length} datatype(s) required multiple clicks:\n` +
-          failureReport
+            `${failedDatatypes.length} datatype(s) required multiple clicks:\n` +
+            failureReport
         );
       }
 
@@ -538,4 +543,3 @@ describe('DatatypeEditor - Click Behavior', () => {
     });
   });
 });
-

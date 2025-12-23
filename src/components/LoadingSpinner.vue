@@ -1,13 +1,7 @@
 <template>
-  <div
-    class="loading-spinner"
-    :class="{ inline }"
-  >
+  <div class="loading-spinner" :class="{ inline }">
     <div class="spinner" />
-    <p
-      v-if="message"
-      class="loading-message"
-    >
+    <p v-if="message" class="loading-message">
       {{ message }}
     </p>
   </div>
@@ -51,8 +45,12 @@ defineProps<{
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-message {
@@ -65,4 +63,3 @@ defineProps<{
   margin-top: 0;
 }
 </style>
-

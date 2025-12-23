@@ -1,10 +1,7 @@
 // M11: Web Application - LocalStorage Platform Implementation
 // Uses browser localStorage for package persistence (MVP, no cloud sync)
 
-import type {
-  IPlatformService,
-  PackageInfo,
-} from './platform';
+import type { IPlatformService, PackageInfo } from './platform';
 import type { Package } from '../models/package';
 import * as yaml from 'js-yaml';
 import { normalizePackageReferences } from './packageNormalizer';
@@ -134,4 +131,3 @@ export class LocalStoragePlatformService implements IPlatformService {
  * Singleton instance
  */
 export const platformService = new LocalStoragePlatformService();
-

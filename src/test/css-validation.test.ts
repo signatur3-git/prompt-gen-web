@@ -12,4 +12,3 @@ describe.skip('CSS Syntax Validation', () => {
     // Run `npm test` to execute CSS validation tests
   });
 });
-

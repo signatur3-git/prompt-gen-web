@@ -2,25 +2,14 @@
   <div class="datatype-editor">
     <header class="editor-header">
       <h2>Datatypes</h2>
-      <button
-        class="btn-primary"
-        @click="addDatatype"
-      >
-        + Add Datatype
-      </button>
+      <button class="btn-primary" @click="addDatatype">+ Add Datatype</button>
     </header>
 
-    <div
-      v-if="datatypes.length === 0"
-      class="empty-state"
-    >
+    <div v-if="datatypes.length === 0" class="empty-state">
       <p>No datatypes yet. Add your first datatype to get started.</p>
     </div>
 
-    <div
-      v-else
-      class="datatype-list"
-    >
+    <div v-else class="datatype-list">
       <div
         v-for="datatype in datatypes"
         :key="datatype.id"
@@ -43,10 +32,7 @@
     </div>
 
     <!-- Datatype Editor Panel -->
-    <div
-      v-if="editingDatatype"
-      class="datatype-details"
-    >
+    <div v-if="editingDatatype" class="datatype-details">
       <h3>Edit Datatype</h3>
 
       <div class="form-group">
@@ -59,7 +45,7 @@
             :disabled="!!originalId"
             @input="markDirty"
             @blur="validateDatatypeId"
-          >
+          />
           <button
             v-if="originalId"
             type="button"
@@ -70,16 +56,10 @@
             Rename
           </button>
         </div>
-        <p
-          v-if="originalId"
-          class="hint"
-        >
+        <p v-if="originalId" class="hint">
           IDs are immutable while editing. Use Rename for a safe key change.
         </p>
-        <p
-          v-if="idError"
-          class="error"
-        >
+        <p v-if="idError" class="error">
           {{ idError }}
         </p>
       </div>
@@ -90,18 +70,13 @@
           v-model="editingDatatype.name"
           placeholder="e.g., Character Classes"
           @input="markDirty"
-        >
+        />
       </div>
 
       <div class="values-section">
         <div class="section-header">
           <h4>Values <span class="required">*</span></h4>
-          <button
-            class="btn-sm"
-            @click="addValue"
-          >
-            + Add Value
-          </button>
+          <button class="btn-sm" @click="addValue">+ Add Value</button>
         </div>
 
         <div
@@ -111,23 +86,12 @@
           No values yet. Add at least one value.
         </div>
 
-        <div
-          v-else
-          class="values-list"
-        >
-          <div
-            v-for="(value, index) in editingDatatype.values"
-            :key="index"
-            class="value-item"
-          >
+        <div v-else class="values-list">
+          <div v-for="(value, index) in editingDatatype.values" :key="index" class="value-item">
             <div class="value-fields">
               <div class="field-group">
                 <label>Text: <span class="required">*</span></label>
-                <input
-                  v-model="value.text"
-                  placeholder="e.g., warrior"
-                  @input="markDirty"
-                >
+                <input v-model="value.text" placeholder="e.g., warrior" @input="markDirty" />
               </div>
 
               <div class="field-group field-small">
@@ -139,7 +103,7 @@
                   step="0.1"
                   placeholder="1.0"
                   @input="markDirty"
-                >
+                />
               </div>
 
               <div class="field-group field-tags">
@@ -155,14 +119,14 @@
                       placeholder="key"
                       class="tag-key"
                       @input="markDirty"
-                    >
+                    />
                     <span class="separator">:</span>
                     <input
                       v-model="value.tagsObject[tagKey]!.value"
                       placeholder="value"
                       class="tag-value"
                       @input="markDirty"
-                    >
+                    />
                     <button
                       class="btn-remove-tag"
                       type="button"
@@ -172,22 +136,14 @@
                       ✕
                     </button>
                   </div>
-                  <button
-                    class="btn-add-tag"
-                    type="button"
-                    @click="addTag(index)"
-                  >
+                  <button class="btn-add-tag" type="button" @click="addTag(index)">
                     + Add Tag
                   </button>
                 </div>
               </div>
             </div>
 
-            <button
-              class="btn-delete-small"
-              title="Delete value"
-              @click="deleteValue(index)"
-            >
+            <button class="btn-delete-small" title="Delete value" @click="deleteValue(index)">
               ✕
             </button>
           </div>
@@ -195,64 +151,34 @@
       </div>
 
       <div class="button-group">
-        <button
-          class="btn-primary"
-          :disabled="!canSave"
-          @click="saveDatatype"
-        >
-          Save Changes
-        </button>
-        <button
-          class="btn-cancel"
-          @click="cancelEdit"
-        >
-          Cancel
-        </button>
+        <button class="btn-primary" :disabled="!canSave" @click="saveDatatype">Save Changes</button>
+        <button class="btn-cancel" @click="cancelEdit">Cancel</button>
       </div>
 
-      <p
-        v-if="saveMessage"
-        class="success"
-      >
+      <p v-if="saveMessage" class="success">
         {{ saveMessage }}
       </p>
-      <p
-        v-if="validationError"
-        class="error"
-      >
+      <p v-if="validationError" class="error">
         {{ validationError }}
       </p>
     </div>
 
     <!-- Rename Modal -->
-    <div
-      v-if="isRenameModalOpen"
-      class="modal-overlay"
-      @click.self="closeRenameModal"
-    >
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="rename-modal-title"
-      >
+    <div v-if="isRenameModalOpen" class="modal-overlay" @click.self="closeRenameModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-modal-title">
         <div class="modal-header">
-          <h3 id="rename-modal-title">
-            Rename Datatype
-          </h3>
+          <h3 id="rename-modal-title">Rename Datatype</h3>
         </div>
 
         <div class="modal-body">
           <p class="modal-subtitle">
-            Renaming changes the datatype ID (the key used to reference it). This may affect references in the future.
+            Renaming changes the datatype ID (the key used to reference it). This may affect
+            references in the future.
           </p>
 
           <div class="form-group">
             <label>Current ID</label>
-            <input
-              :value="renameModalCurrentId"
-              disabled
-            >
+            <input :value="renameModalCurrentId" disabled />
           </div>
 
           <div class="form-group">
@@ -261,24 +187,15 @@
               v-model="renameModalNextId"
               placeholder="e.g., colors_v2"
               @keydown.enter.prevent="applyRename"
-            >
-            <p
-              v-if="renameModalError"
-              class="error"
-            >
+            />
+            <p v-if="renameModalError" class="error">
               {{ renameModalError }}
             </p>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="closeRenameModal"
-          >
-            Cancel
-          </button>
+          <button type="button" class="btn-cancel" @click="closeRenameModal">Cancel</button>
           <button
             type="button"
             class="btn-primary"
@@ -382,7 +299,6 @@ async function selectDatatype(id: string) {
   // Set immediately to avoid races with rapid clicking/tests
   selectedDatatypeId.value = id;
 
-
   // Load the datatype
   console.log('  → CALLING loadDatatype');
   await loadDatatype(id);
@@ -410,24 +326,25 @@ async function loadDatatype(id: string) {
   const newEditingDatatype: EditingDatatype = {
     id,
     name: datatype.name,
-    values: datatype.values?.map(v => {
-      // Convert tags object to editable format
-      const tagsObject: Record<string, { key: string; value: any }> = {};
+    values:
+      datatype.values?.map(v => {
+        // Convert tags object to editable format
+        const tagsObject: Record<string, { key: string; value: any }> = {};
 
-      if (v.tags && typeof v.tags === 'object' && !Array.isArray(v.tags)) {
-        let index = 0;
-        for (const [key, value] of Object.entries(v.tags)) {
-          tagsObject[index.toString()] = { key, value };
-          index++;
+        if (v.tags && typeof v.tags === 'object' && !Array.isArray(v.tags)) {
+          let index = 0;
+          for (const [key, value] of Object.entries(v.tags)) {
+            tagsObject[index.toString()] = { key, value };
+            index++;
+          }
         }
-      }
 
-      return {
-        text: v.text,
-        weight: v.weight || 1.0,
-        tagsObject,
-      };
-    }) || [],
+        return {
+          text: v.text,
+          weight: v.weight || 1.0,
+          tagsObject,
+        };
+      }) || [],
   };
 
   // Set it
@@ -481,7 +398,6 @@ function addValue() {
   });
   isDirty.value = true;
 }
-
 
 function addTag(valueIndex: number) {
   if (!editingDatatype.value?.values[valueIndex]) return;

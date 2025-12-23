@@ -1,20 +1,10 @@
 <template>
   <Teleport to="body">
     <Transition name="toast">
-      <div
-        v-if="visible"
-        class="toast"
-        :class="type"
-      >
+      <div v-if="visible" class="toast" :class="type">
         <span class="toast-icon">{{ icon }}</span>
         <span class="toast-message">{{ message }}</span>
-        <button
-          class="toast-close"
-          aria-label="Close"
-          @click="close"
-        >
-          ×
-        </button>
+        <button class="toast-close" aria-label="Close" @click="close">×</button>
       </div>
     </Transition>
   </Teleport>
@@ -23,16 +13,19 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 
-const props = withDefaults(defineProps<{
-  message: string;
-  type?: 'success' | 'error' | 'warning' | 'info';
-  duration?: number;
-  show?: boolean;
-}>(), {
-  type: 'info',
-  duration: 3000,
-  show: false,
-});
+const props = withDefaults(
+  defineProps<{
+    message: string;
+    type?: 'success' | 'error' | 'warning' | 'info';
+    duration?: number;
+    show?: boolean;
+  }>(),
+  {
+    type: 'info',
+    duration: 3000,
+    show: false,
+  }
+);
 
 const emit = defineEmits<{
   close: [];
@@ -43,11 +36,16 @@ let timeoutId: number | null = null;
 
 const icon = computed(() => {
   switch (props.type) {
-    case 'success': return '✓';
-    case 'error': return '✕';
-    case 'warning': return '⚠';
-    case 'info': return 'ℹ';
-    default: return 'ℹ';
+    case 'success':
+      return '✓';
+    case 'error':
+      return '✕';
+    case 'warning':
+      return '⚠';
+    case 'info':
+      return 'ℹ';
+    default:
+      return 'ℹ';
   }
 });
 
@@ -70,13 +68,16 @@ function openToast() {
   }
 }
 
-watch(() => props.show, (newShow) => {
-  if (newShow) {
-    openToast();
-  } else {
-    close();
+watch(
+  () => props.show,
+  newShow => {
+    if (newShow) {
+      openToast();
+    } else {
+      close();
+    }
   }
-});
+);
 
 onMounted(() => {
   if (props.show) {

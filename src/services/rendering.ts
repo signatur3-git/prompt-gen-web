@@ -1,7 +1,13 @@
 // M11: Web Application - Rendering Service (Simplified MVP)
 // TypeScript implementation for browser-based rendering
 
-import type { Package, Namespace, PromptSection, Reference, DatatypeValue } from '../models/package';
+import type {
+  Package,
+  Namespace,
+  PromptSection,
+  Reference,
+  DatatypeValue,
+} from '../models/package';
 import type { IRenderingService, RenderResult } from './platform';
 import { SeededRandom } from '../utils/seededRandom';
 import { parseTemplate } from '../utils/templateParser';
@@ -120,13 +126,13 @@ export class RenderingService implements IRenderingService {
     if (!rulebook.entry_points || rulebook.entry_points.length === 0) {
       throw new Error(
         `Rulebook ${namespaceName}:${rulebookName} has no entry points defined. ` +
-        `Please add at least one entry point in the editor.`
+          `Please add at least one entry point in the editor.`
       );
     }
 
     // Select random entry point (weighted if specified)
     const rng = new SeededRandom(seed);
-    const weights = rulebook.entry_points.map((ep) => ep.weight || 1.0);
+    const weights = rulebook.entry_points.map(ep => ep.weight || 1.0);
     const index = rng.weightedChoice(weights);
     const entryPoint = rulebook.entry_points[index];
 
@@ -135,7 +141,7 @@ export class RenderingService implements IRenderingService {
     if (!entryPoint) {
       throw new Error(
         `No entry point found at index ${index} in rulebook: ${namespaceName}:${rulebookName}. ` +
-        `Total entry points: ${rulebook.entry_points.length}`
+          `Total entry points: ${rulebook.entry_points.length}`
       );
     }
 
@@ -145,15 +151,13 @@ export class RenderingService implements IRenderingService {
     if (!target) {
       throw new Error(
         `Entry point in rulebook ${namespaceName}:${rulebookName} has no target defined. ` +
-        `Entry point data: ${JSON.stringify(entryPoint)}. ` +
-        `Please edit the rulebook and ensure all entry points have a valid target or prompt_section field.`
+          `Entry point data: ${JSON.stringify(entryPoint)}. ` +
+          `Please edit the rulebook and ensure all entry points have a valid target or prompt_section field.`
       );
     }
 
     // Parse target (format: namespace:promptsection or just promptsection)
-    const parts = target.includes(':')
-      ? target.split(':')
-      : [namespaceName, target];
+    const parts = target.includes(':') ? target.split(':') : [namespaceName, target];
 
     const targetNs = parts[0];
     const targetPs = parts[1];
@@ -234,7 +238,9 @@ export class RenderingService implements IRenderingService {
       if (token.type === 'reference' && token.name) {
         const ref = promptSection.references[token.name];
         if (!ref) {
-          throw new Error(`Reference not found: ${token.name} in ${namespace.id}:${promptSection.name}`);
+          throw new Error(
+            `Reference not found: ${token.name} in ${namespace.id}:${promptSection.name}`
+          );
         }
 
         const count = rng.genRange(token.min || ref.min || 1, token.max || ref.max || 1);
@@ -327,7 +333,9 @@ export class RenderingService implements IRenderingService {
       const value = context.get(contextKey);
 
       if (value === undefined) {
-        throw new Error(`Context variable not found: ${contextKey}. Make sure it's set by a previous reference or rule.`);
+        throw new Error(
+          `Context variable not found: ${contextKey}. Make sure it's set by a previous reference or rule.`
+        );
       }
 
       // If it's a SelectedValue, return it
@@ -345,9 +353,7 @@ export class RenderingService implements IRenderingService {
     }
 
     // Parse target (format: namespace:name or just name)
-    const parts = ref.target.includes(':')
-      ? ref.target.split(':')
-      : [namespace.id, ref.target];
+    const parts = ref.target.includes(':') ? ref.target.split(':') : [namespace.id, ref.target];
 
     const targetNs = parts[0];
     const targetName = parts[1];
@@ -404,7 +410,7 @@ export class RenderingService implements IRenderingService {
 
     // Apply exclusion filter
     if (excludeTexts) {
-      values = values.filter((v) => !excludeTexts.includes(v.text));
+      values = values.filter(v => !excludeTexts.includes(v.text));
     }
 
     // Apply tag filter (simplified - just check tag existence for MVP)
@@ -417,7 +423,7 @@ export class RenderingService implements IRenderingService {
     }
 
     // Weighted selection
-    const weights = values.map((v) => v.weight || 1.0);
+    const weights = values.map(v => v.weight || 1.0);
     const index = rng.weightedChoice(weights);
     const selected = values[index];
 
@@ -433,11 +439,7 @@ export class RenderingService implements IRenderingService {
     };
   }
 
-  private applyFilter(
-    values: DatatypeValue[],
-    filter: string,
-    _context: Context
-  ): DatatypeValue[] {
+  private applyFilter(values: DatatypeValue[], filter: string, _context: Context): DatatypeValue[] {
     // Simplified filter implementation for MVP
     // TODO: Full tag expression evaluation
 
@@ -445,7 +447,7 @@ export class RenderingService implements IRenderingService {
     const tagMatch = filter.match(/tags\.(\w+)/);
     if (tagMatch && tagMatch[1]) {
       const tagKey = tagMatch[1];
-      return values.filter((v) => tagKey in v.tags);
+      return values.filter(v => tagKey in v.tags);
     }
 
     // For now, return all values if filter is not recognized
@@ -477,7 +479,11 @@ export class RenderingService implements IRenderingService {
     }
   }
 
-  private formatList(values: string[], separatorName: string | undefined, namespace: Namespace): string {
+  private formatList(
+    values: string[],
+    separatorName: string | undefined,
+    namespace: Namespace
+  ): string {
     if (values.length === 0) return '';
     if (values.length === 1) return values[0] || '';
 
@@ -503,4 +509,3 @@ export class RenderingService implements IRenderingService {
 }
 
 export const renderingService = new RenderingService();
-

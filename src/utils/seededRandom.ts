@@ -28,7 +28,7 @@ export class SeededRandom {
     this.state ^= this.state << 17n;
 
     // Keep it within 64-bit range
-    this.state = this.state & 0xFFFFFFFFFFFFFFFFn;
+    this.state = this.state & 0xffffffffffffffffn;
 
     return this.state;
   }
@@ -103,4 +103,3 @@ export class SeededRandom {
     return weights.length - 1;
   }
 }
-

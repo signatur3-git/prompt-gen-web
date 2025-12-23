@@ -20,9 +20,10 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcut[]) {
       const altMatch = shortcut.alt ? event.altKey : !event.altKey;
 
       // Handle Ctrl/Cmd interchangeably
-      const modifierMatch = shortcut.ctrl || shortcut.meta
-        ? (event.ctrlKey || event.metaKey)
-        : (!event.ctrlKey && !event.metaKey);
+      const modifierMatch =
+        shortcut.ctrl || shortcut.meta
+          ? event.ctrlKey || event.metaKey
+          : !event.ctrlKey && !event.metaKey;
 
       if (
         event.key.toLowerCase() === shortcut.key.toLowerCase() &&
@@ -56,4 +57,3 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcut[]) {
 export function getModifierKeyName(): string {
   return navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl';
 }
-

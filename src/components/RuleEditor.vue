@@ -2,28 +2,18 @@
   <div class="rule-editor">
     <header class="editor-header">
       <h2>Rules</h2>
-      <button
-        class="btn-primary"
-        @click="addRule"
-      >
-        + Add Rule
-      </button>
+      <button class="btn-primary" @click="addRule">+ Add Rule</button>
     </header>
 
-    <div
-      v-if="rules.length === 0"
-      class="empty-state"
-    >
+    <div v-if="rules.length === 0" class="empty-state">
       <p>No rules yet. Add rules to coordinate values between datatype selections.</p>
       <p class="hint-text">
-        Rules extract tags from selected values and store them in context for use by other references.
+        Rules extract tags from selected values and store them in context for use by other
+        references.
       </p>
     </div>
 
-    <div
-      v-else
-      class="rule-list"
-    >
+    <div v-else class="rule-list">
       <div
         v-for="rule in rules"
         :key="rule.id"
@@ -37,26 +27,17 @@
             when: {{ rule.when || '(none)' }} → set: {{ rule.set || '(none)' }}
           </span>
         </div>
-        <button
-          class="btn-delete"
-          title="Delete rule"
-          @click.stop="deleteRule(rule.id)"
-        >
-          🗑️
-        </button>
+        <button class="btn-delete" title="Delete rule" @click.stop="deleteRule(rule.id)">🗑️</button>
       </div>
     </div>
 
     <!-- Rule Editor Panel -->
-    <div
-      v-if="editingRule"
-      class="rule-details"
-    >
+    <div v-if="editingRule" class="rule-details">
       <h3>Edit Rule</h3>
 
       <div class="form-group">
         <label>ID: <span class="required">*</span></label>
-        <div style="display: flex; gap: 0.5rem; align-items: start;">
+        <div style="display: flex; gap: 0.5rem; align-items: start">
           <input
             v-model="editingRule.id"
             placeholder="e.g., compute_article"
@@ -64,7 +45,7 @@
             :disabled="!!originalId"
             @input="markDirty"
             @blur="validateRuleId"
-          >
+          />
           <button
             v-if="originalId"
             type="button"
@@ -75,21 +56,13 @@
             Rename
           </button>
         </div>
-        <p
-          v-if="originalId"
-          class="hint"
-        >
+        <p v-if="originalId" class="hint">
           IDs are immutable while editing. Use Rename for a safe key change.
         </p>
-        <p
-          v-if="idError"
-          class="error"
-        >
+        <p v-if="idError" class="error">
           {{ idError }}
         </p>
-        <p class="hint">
-          Unique identifier for this rule
-        </p>
+        <p class="hint">Unique identifier for this rule</p>
       </div>
 
       <div class="form-group">
@@ -98,10 +71,8 @@
           v-model="editingRule.when"
           placeholder="e.g., ref:creature.tags.article"
           @input="markDirty"
-        >
-        <p class="hint">
-          Field path that triggers this rule (e.g., ref:datatype.tags.tagname)
-        </p>
+        />
+        <p class="hint">Field path that triggers this rule (e.g., ref:datatype.tags.tagname)</p>
       </div>
 
       <div class="form-group">
@@ -110,10 +81,8 @@
           v-model="editingRule.logic"
           placeholder="Optional expression (leave empty to check field exists)"
           @input="markDirty"
-        >
-        <p class="hint">
-          Optional condition expression. Empty means "field exists"
-        </p>
+        />
+        <p class="hint">Optional condition expression. Empty means "field exists"</p>
       </div>
 
       <div class="form-group">
@@ -122,10 +91,8 @@
           v-model="editingRule.set"
           placeholder="e.g., context.prompt.article"
           @input="markDirty"
-        >
-        <p class="hint">
-          Context field to write to (e.g., context.prompt.fieldname)
-        </p>
+        />
+        <p class="hint">Context field to write to (e.g., context.prompt.fieldname)</p>
       </div>
 
       <div class="form-group">
@@ -134,85 +101,49 @@
           v-model="editingRule.value"
           placeholder="e.g., ref:creature.tags.article"
           @input="markDirty"
-        >
-        <p class="hint">
-          Value to write (literal string or reference path)
-        </p>
+        />
+        <p class="hint">Value to write (literal string or reference path)</p>
       </div>
 
       <!-- Example Section -->
       <div class="example-section">
         <h4>💡 Example: Article Selection</h4>
         <div class="example-content">
-          <p><strong>Problem:</strong> Select correct article ("a" vs "an") based on word phonetics</p>
+          <p>
+            <strong>Problem:</strong> Select correct article ("a" vs "an") based on word phonetics
+          </p>
           <div class="example-code">
-            <div class="code-line">
-              <strong>When:</strong> ref:creature.tags.article
-            </div>
-            <div class="code-line">
-              <strong>Logic:</strong> (empty - just check if tag exists)
-            </div>
-            <div class="code-line">
-              <strong>Set:</strong> context.prompt.article
-            </div>
-            <div class="code-line">
-              <strong>Value:</strong> ref:creature.tags.article
-            </div>
+            <div class="code-line"><strong>When:</strong> ref:creature.tags.article</div>
+            <div class="code-line"><strong>Logic:</strong> (empty - just check if tag exists)</div>
+            <div class="code-line"><strong>Set:</strong> context.prompt.article</div>
+            <div class="code-line"><strong>Value:</strong> ref:creature.tags.article</div>
           </div>
           <p class="example-result">
-            <strong>Result:</strong> When "creature" is selected, if it has an "article" tag,
-            copy that value to context so the {article} reference can use it.
+            <strong>Result:</strong> When "creature" is selected, if it has an "article" tag, copy
+            that value to context so the {article} reference can use it.
           </p>
         </div>
       </div>
 
-      <div
-        v-if="validationError"
-        class="error-message"
-      >
+      <div v-if="validationError" class="error-message">
         {{ validationError }}
       </div>
 
-      <div
-        v-if="saveMessage"
-        class="success-message"
-      >
+      <div v-if="saveMessage" class="success-message">
         {{ saveMessage }}
       </div>
 
       <div class="editor-actions">
-        <button
-          :disabled="!canSave"
-          class="btn-primary"
-          @click="saveRule"
-        >
-          Save Changes
-        </button>
-        <button
-          class="btn-secondary"
-          @click="cancelEdit"
-        >
-          Cancel
-        </button>
+        <button :disabled="!canSave" class="btn-primary" @click="saveRule">Save Changes</button>
+        <button class="btn-secondary" @click="cancelEdit">Cancel</button>
       </div>
     </div>
 
     <!-- Rename Modal -->
-    <div
-      v-if="isRenameModalOpen"
-      class="modal-overlay"
-      @click.self="closeRenameModal"
-    >
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="rename-modal-title"
-      >
+    <div v-if="isRenameModalOpen" class="modal-overlay" @click.self="closeRenameModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-modal-title">
         <div class="modal-header">
-          <h3 id="rename-modal-title">
-            Rename Rule
-          </h3>
+          <h3 id="rename-modal-title">Rename Rule</h3>
         </div>
 
         <div class="modal-body">
@@ -222,10 +153,7 @@
 
           <div class="form-group">
             <label>Current ID</label>
-            <input
-              :value="renameModalCurrentId"
-              disabled
-            >
+            <input :value="renameModalCurrentId" disabled />
           </div>
 
           <div class="form-group">
@@ -235,24 +163,15 @@
               placeholder="e.g., compute_article_v2"
               @keydown.enter.prevent="applyRename"
               @keydown.escape="closeRenameModal"
-            >
-            <p
-              v-if="renameModalError"
-              class="error"
-            >
+            />
+            <p v-if="renameModalError" class="error">
               {{ renameModalError }}
             </p>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="closeRenameModal"
-          >
-            Cancel
-          </button>
+          <button type="button" class="btn-cancel" @click="closeRenameModal">Cancel</button>
           <button
             type="button"
             class="btn-primary"
@@ -282,7 +201,7 @@ const emit = defineEmits<{
 }>();
 
 const selectedRuleId = ref<string | null>(null);
-const editingRule = ref<Rule & { id: string } | null>(null);
+const editingRule = ref<(Rule & { id: string }) | null>(null);
 const originalId = ref<string | null>(null);
 const isDirty = ref(false);
 const idError = ref('');
@@ -404,7 +323,8 @@ function validateRuleId() {
   }
 
   if (!/^[a-z][a-z0-9_]*$/.test(id)) {
-    idError.value = 'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
+    idError.value =
+      'ID must start with lowercase letter and contain only lowercase letters, numbers, and underscores';
     return;
   }
 
@@ -807,4 +727,3 @@ function applyRename() {
   color: #666;
 }
 </style>
-

@@ -40,38 +40,21 @@
     </header>
 
     <!-- Save status message -->
-    <div
-      v-if="saveMessage"
-      class="save-message"
-      :class="saveMessage.type"
-    >
+    <div v-if="saveMessage" class="save-message" :class="saveMessage.type">
       {{ saveMessage.text }}
     </div>
 
-    <div
-      v-if="!currentPackage"
-      class="empty-state"
-    >
+    <div v-if="!currentPackage" class="empty-state">
       <p>No package loaded. Please create or load a package.</p>
-      <button
-        class="btn-primary"
-        @click="router.push('/')"
-      >
-        Go to Home
-      </button>
+      <button class="btn-primary" @click="router.push('/')">Go to Home</button>
     </div>
 
-    <div
-      v-else
-      class="editor-container"
-    >
+    <div v-else class="editor-container">
       <aside class="sidebar">
         <h2>Package Structure</h2>
         <div class="package-info">
           <h3>{{ currentPackage.metadata.name || 'Untitled' }}</h3>
-          <p class="version">
-            v{{ currentPackage.version }}
-          </p>
+          <p class="version">v{{ currentPackage.version }}</p>
         </div>
 
         <div class="section">
@@ -86,16 +69,10 @@
 
         <div class="section">
           <h3>Namespaces</h3>
-          <div
-            v-if="Object.keys(currentPackage.namespaces).length === 0"
-            class="empty-hint"
-          >
+          <div v-if="Object.keys(currentPackage.namespaces).length === 0" class="empty-hint">
             No namespaces yet
           </div>
-          <div
-            v-else
-            class="namespace-list"
-          >
+          <div v-else class="namespace-list">
             <button
               v-for="(ns, id) in currentPackage.namespaces"
               :key="id"
@@ -136,27 +113,16 @@
               </span>
             </button>
           </div>
-          <button
-            class="btn-add"
-            @click="addNamespace"
-          >
-            + Add Namespace
-          </button>
+          <button class="btn-add" @click="addNamespace">+ Add Namespace</button>
         </div>
       </aside>
 
       <main class="editor-main">
         <!-- Validation Panel -->
-        <ValidationPanel
-          :result="validationResult"
-          @jump-to="handleJumpToLocation"
-        />
+        <ValidationPanel :result="validationResult" @jump-to="handleJumpToLocation" />
 
         <!-- Show namespace management when namespace selected but no metadata -->
-        <div
-          v-if="selectedNamespace && selectedSection !== 'metadata'"
-          class="namespace-header"
-        >
+        <div v-if="selectedNamespace && selectedSection !== 'metadata'" class="namespace-header">
           <div class="namespace-actions">
             <button
               class="btn-secondary"
@@ -165,11 +131,7 @@
             >
               ✏️ Rename
             </button>
-            <button
-              class="btn-delete"
-              title="Delete namespace"
-              @click="deleteNamespace"
-            >
+            <button class="btn-delete" title="Delete namespace" @click="deleteNamespace">
               🗑️ Delete
             </button>
           </div>
@@ -179,31 +141,19 @@
           <h2>Package Metadata</h2>
           <div class="form-group">
             <label>Package ID:</label>
-            <input
-              v-model="currentPackage.id"
-              placeholder="e.g., my.awesome.package"
-            >
+            <input v-model="currentPackage.id" placeholder="e.g., my.awesome.package" />
           </div>
           <div class="form-group">
             <label>Name:</label>
-            <input
-              v-model="currentPackage.metadata.name"
-              placeholder="e.g., My Awesome Package"
-            >
+            <input v-model="currentPackage.metadata.name" placeholder="e.g., My Awesome Package" />
           </div>
           <div class="form-group">
             <label>Version:</label>
-            <input
-              v-model="currentPackage.version"
-              placeholder="e.g., 1.0.0"
-            >
+            <input v-model="currentPackage.version" placeholder="e.g., 1.0.0" />
           </div>
           <div class="form-group">
             <label>Description:</label>
-            <textarea
-              v-model="currentPackage.metadata.description"
-              rows="3"
-            />
+            <textarea v-model="currentPackage.metadata.description" rows="3" />
           </div>
           <div class="form-group">
             <label>Authors (one per line):</label>
@@ -306,67 +256,33 @@
     </div>
 
     <!-- Export Dialog -->
-    <div
-      v-if="showExportDialog"
-      class="modal"
-      @click.self="showExportDialog = false"
-    >
+    <div v-if="showExportDialog" class="modal" @click.self="showExportDialog = false">
       <div class="modal-content">
         <h2>Export Package</h2>
         <div class="form-group">
           <label>Format:</label>
           <select v-model="exportFormat">
-            <option value="yaml">
-              YAML
-            </option>
-            <option value="json">
-              JSON
-            </option>
+            <option value="yaml">YAML</option>
+            <option value="json">JSON</option>
           </select>
         </div>
         <div class="form-group">
           <label>Package Content:</label>
-          <textarea
-            v-model="exportContent"
-            rows="15"
-            readonly
-          />
+          <textarea v-model="exportContent" rows="15" readonly />
         </div>
         <div class="button-group">
-          <button
-            class="btn-primary"
-            @click="copyToClipboard"
-          >
-            Copy to Clipboard
-          </button>
-          <button
-            class="btn-cancel"
-            @click="showExportDialog = false"
-          >
-            Close
-          </button>
+          <button class="btn-primary" @click="copyToClipboard">Copy to Clipboard</button>
+          <button class="btn-cancel" @click="showExportDialog = false">Close</button>
         </div>
-        <p
-          v-if="exportMessage"
-          class="success"
-        >
+        <p v-if="exportMessage" class="success">
           {{ exportMessage }}
         </p>
       </div>
     </div>
 
     <!-- Namespace Modal (Add/Rename) -->
-    <div
-      v-if="isNamespaceModalOpen"
-      class="modal-overlay"
-      @click.self="closeNamespaceModal"
-    >
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="namespace-modal-title"
-      >
+    <div v-if="isNamespaceModalOpen" class="modal-overlay" @click.self="closeNamespaceModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="namespace-modal-title">
         <div class="modal-header">
           <h3 id="namespace-modal-title">
             {{ namespaceModalMode === 'add' ? 'Add Namespace' : 'Rename Namespace' }}
@@ -374,51 +290,34 @@
         </div>
 
         <div class="modal-body">
-          <p
-            v-if="namespaceModalMode === 'rename'"
-            class="modal-subtitle"
-          >
+          <p v-if="namespaceModalMode === 'rename'" class="modal-subtitle">
             Renaming changes the namespace ID. References in other namespaces may need updating.
           </p>
 
-          <div
-            v-if="namespaceModalMode === 'rename'"
-            class="form-group"
-          >
+          <div v-if="namespaceModalMode === 'rename'" class="form-group">
             <label>Current ID</label>
-            <input
-              :value="namespaceModalCurrentId"
-              disabled
-            >
+            <input :value="namespaceModalCurrentId" disabled />
           </div>
 
           <div class="form-group">
-            <label>{{ namespaceModalMode === 'add' ? 'Namespace ID' : 'New ID' }} <span class="required">*</span></label>
+            <label
+              >{{ namespaceModalMode === 'add' ? 'Namespace ID' : 'New ID' }}
+              <span class="required">*</span></label
+            >
             <input
               v-model="namespaceModalNextId"
               placeholder="e.g., core or my_namespace"
               @keydown.enter.prevent="applyNamespaceModal"
-            >
-            <p class="hint">
-              Use lowercase letters, numbers, dots, and underscores only
-            </p>
-            <p
-              v-if="namespaceModalError"
-              class="error"
-            >
+            />
+            <p class="hint">Use lowercase letters, numbers, dots, and underscores only</p>
+            <p v-if="namespaceModalError" class="error">
               {{ namespaceModalError }}
             </p>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-cancel"
-            @click="closeNamespaceModal"
-          >
-            Cancel
-          </button>
+          <button type="button" class="btn-cancel" @click="closeNamespaceModal">Cancel</button>
           <button
             type="button"
             class="btn-primary"
@@ -479,7 +378,8 @@ const canApplyNamespaceModal = computed(() => {
   if (!nextId) return false;
   // Allow lowercase letters, numbers, dots, and underscores
   if (!/^[a-z][a-z0-9_.]*$/.test(nextId)) return false;
-  if (namespaceModalMode.value === 'rename' && nextId === namespaceModalCurrentId.value) return false;
+  if (namespaceModalMode.value === 'rename' && nextId === namespaceModalCurrentId.value)
+    return false;
   if (currentPackage.value?.namespaces[nextId]) return false;
   return true;
 });
@@ -490,15 +390,23 @@ const namespace = computed(() => {
 });
 
 // Auto-select first namespace when package loads
-watch(currentPackage, (newPkg) => {
-  if (newPkg && Object.keys(newPkg.namespaces).length > 0 && !selectedNamespace.value) {
-    const firstNamespace = Object.keys(newPkg.namespaces)[0];
-    if (firstNamespace) selectNamespace(firstNamespace);
-  }
-}, { immediate: true });
+watch(
+  currentPackage,
+  newPkg => {
+    if (newPkg && Object.keys(newPkg.namespaces).length > 0 && !selectedNamespace.value) {
+      const firstNamespace = Object.keys(newPkg.namespaces)[0];
+      if (firstNamespace) selectNamespace(firstNamespace);
+    }
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
-  if (currentPackage.value && Object.keys(currentPackage.value.namespaces).length > 0 && !selectedNamespace.value) {
+  if (
+    currentPackage.value &&
+    Object.keys(currentPackage.value.namespaces).length > 0 &&
+    !selectedNamespace.value
+  ) {
     const firstNamespace = Object.keys(currentPackage.value.namespaces)[0];
     if (firstNamespace) selectNamespace(firstNamespace);
   }
@@ -581,7 +489,8 @@ function validateNamespaceModal(): boolean {
     return false;
   }
   if (!/^[a-z][a-z0-9_.]*$/.test(nextId)) {
-    namespaceModalError.value = 'ID must start with lowercase letter and contain only lowercase letters, numbers, dots, and underscores';
+    namespaceModalError.value =
+      'ID must start with lowercase letter and contain only lowercase letters, numbers, dots, and underscores';
     return false;
   }
   if (namespaceModalMode.value === 'rename' && nextId === namespaceModalCurrentId.value) {
@@ -700,14 +609,18 @@ function handleJumpToLocation(location: string | undefined) {
 }
 
 // Watch for changes and trigger validation (only when package exists)
-watch(currentPackage, (newPkg) => {
-  if (newPkg) {
-    scheduleValidation();
-  } else {
-    // Clear validation when package is cleared
-    validationResult.value = createValidationResult();
-  }
-}, { deep: true });
+watch(
+  currentPackage,
+  newPkg => {
+    if (newPkg) {
+      scheduleValidation();
+    } else {
+      // Clear validation when package is cleared
+      validationResult.value = createValidationResult();
+    }
+  },
+  { deep: true }
+);
 
 // Keyboard shortcuts
 useKeyboardShortcuts([
@@ -774,7 +687,7 @@ async function savePackage() {
   } catch (error) {
     saveMessage.value = {
       text: error instanceof Error ? error.message : 'Failed to save package',
-      type: 'error'
+      type: 'error',
     };
   } finally {
     isSaving.value = false;
@@ -1100,7 +1013,9 @@ function updateAuthors(event: Event) {
   padding: 4rem 2rem;
 }
 
-.btn-primary, .btn-secondary, .btn-cancel {
+.btn-primary,
+.btn-secondary,
+.btn-cancel {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -1372,4 +1287,3 @@ function updateAuthors(event: Event) {
   }
 }
 </style>
-

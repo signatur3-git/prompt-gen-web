@@ -1,58 +1,25 @@
 <template>
-  <div
-    class="validation-panel"
-    :class="{ collapsed: isCollapsed }"
-  >
-    <div
-      class="validation-header"
-      @click="toggleCollapsed"
-    >
+  <div class="validation-panel" :class="{ collapsed: isCollapsed }">
+    <div class="validation-header" @click="toggleCollapsed">
       <div class="validation-title">
-        <span
-          class="validation-icon"
-          :class="severityClass"
-        >
+        <span class="validation-icon" :class="severityClass">
           {{ severityIcon }}
         </span>
         <span>Validation Issues</span>
-        <span
-          v-if="totalCount > 0"
-          class="validation-count"
-        >
-          ({{ totalCount }})
-        </span>
+        <span v-if="totalCount > 0" class="validation-count"> ({{ totalCount }}) </span>
       </div>
-      <button
-        class="collapse-btn"
-        :aria-label="isCollapsed ? 'Expand' : 'Collapse'"
-      >
+      <button class="collapse-btn" :aria-label="isCollapsed ? 'Expand' : 'Collapse'">
         {{ isCollapsed ? '▲' : '▼' }}
       </button>
     </div>
 
-    <div
-      v-if="!isCollapsed"
-      class="validation-content"
-    >
-      <div
-        v-if="totalCount === 0"
-        class="validation-empty"
-      >
-        ✅ No validation issues
-      </div>
+    <div v-if="!isCollapsed" class="validation-content">
+      <div v-if="totalCount === 0" class="validation-empty">✅ No validation issues</div>
 
-      <div
-        v-else
-        class="validation-list"
-      >
+      <div v-else class="validation-list">
         <!-- Errors -->
-        <div
-          v-if="errors.length > 0"
-          class="validation-section"
-        >
-          <div class="validation-section-header error-header">
-            ❌ Errors ({{ errors.length }})
-          </div>
+        <div v-if="errors.length > 0" class="validation-section">
+          <div class="validation-section-header error-header">❌ Errors ({{ errors.length }})</div>
           <div
             v-for="(error, index) in errors"
             :key="`error-${index}`"
@@ -62,26 +29,15 @@
             <div class="validation-message">
               {{ error.message }}
             </div>
-            <div
-              v-if="error.location"
-              class="validation-location"
-            >
-              📍 {{ error.location }}
-            </div>
-            <div
-              v-if="error.suggestion"
-              class="validation-suggestion"
-            >
+            <div v-if="error.location" class="validation-location">📍 {{ error.location }}</div>
+            <div v-if="error.suggestion" class="validation-suggestion">
               💡 {{ error.suggestion }}
             </div>
           </div>
         </div>
 
         <!-- Warnings -->
-        <div
-          v-if="warnings.length > 0"
-          class="validation-section"
-        >
+        <div v-if="warnings.length > 0" class="validation-section">
           <div class="validation-section-header warning-header">
             ⚠️ Warnings ({{ warnings.length }})
           </div>
@@ -94,16 +50,8 @@
             <div class="validation-message">
               {{ warning.message }}
             </div>
-            <div
-              v-if="warning.location"
-              class="validation-location"
-            >
-              📍 {{ warning.location }}
-            </div>
-            <div
-              v-if="warning.suggestion"
-              class="validation-suggestion"
-            >
+            <div v-if="warning.location" class="validation-location">📍 {{ warning.location }}</div>
+            <div v-if="warning.suggestion" class="validation-suggestion">
               💡 {{ warning.suggestion }}
             </div>
           </div>
@@ -324,4 +272,3 @@ function toggleCollapsed() {
   }
 }
 </style>
-

@@ -148,9 +148,7 @@ describe('PackageValidator', () => {
     it('should validate cross-package references with dependencies', () => {
       const mainPkg = createPackage({
         id: 'game.package',
-        dependencies: [
-          { package: 'base.package', version: '^1.0.0' },
-        ],
+        dependencies: [{ package: 'base.package', version: '^1.0.0' }],
         namespaces: {
           game: createNamespace({
             id: 'game',
@@ -462,7 +460,9 @@ describe('PackageValidator', () => {
 
       const result = PackageValidator.validate(pkg);
       expect(result.warnings.length).toBeGreaterThan(0);
-      expect(result.warnings.some(w => w.type === ValidationWarningType.UNUSED_DATATYPE)).toBe(true);
+      expect(result.warnings.some(w => w.type === ValidationWarningType.UNUSED_DATATYPE)).toBe(
+        true
+      );
     });
 
     it('should warn about large weight sums', () => {
@@ -493,7 +493,9 @@ describe('PackageValidator', () => {
 
       const result = PackageValidator.validate(pkg);
       expect(result.warnings.length).toBeGreaterThan(0);
-      expect(result.warnings.some(w => w.type === ValidationWarningType.LARGE_WEIGHT_SUM)).toBe(true);
+      expect(result.warnings.some(w => w.type === ValidationWarningType.LARGE_WEIGHT_SUM)).toBe(
+        true
+      );
     });
   });
 
@@ -515,9 +517,7 @@ describe('PackageValidator', () => {
 
     it('should validate dependency version format', () => {
       const pkg = createPackage({
-        dependencies: [
-          { package: 'base.package', version: 'invalid-version' },
-        ],
+        dependencies: [{ package: 'base.package', version: 'invalid-version' }],
         namespaces: {
           test: createNamespace(),
         },
@@ -556,9 +556,7 @@ describe('PackageValidator', () => {
             rulebooks: {
               scenes: {
                 name: 'Scenes',
-                entry_points: [
-                  { target: 'non_existent_scene', weight: 1.0 },
-                ],
+                entry_points: [{ target: 'non_existent_scene', weight: 1.0 }],
               },
             },
           }),
@@ -571,4 +569,3 @@ describe('PackageValidator', () => {
     });
   });
 });
-

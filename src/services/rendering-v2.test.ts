@@ -39,9 +39,7 @@ describe('RenderingEngineV2', () => {
         rulebooks: {
           test_book: {
             name: 'Test Book',
-            entry_points: [
-              { prompt_section: 'test.ns:simple', weight: 1.0 },
-            ],
+            entry_points: [{ prompt_section: 'test.ns:simple', weight: 1.0 }],
           },
         },
       },
@@ -81,4 +79,3 @@ describe('RenderingEngineV2', () => {
     expect(result1.text).toBe(result2.text);
   });
 });
-

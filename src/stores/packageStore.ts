@@ -11,7 +11,9 @@ import { fixInvalidRulebookEntryPoints } from '../utils/rulebookFixer';
 export const usePackageStore = defineStore('package', () => {
   // State
   const currentPackage = ref<Package | null>(null);
-  const packages = ref<Array<{ id: string; name: string; version: string; description?: string }>>([]);
+  const packages = ref<Array<{ id: string; name: string; version: string; description?: string }>>(
+    []
+  );
   const loadedPackages = ref<Package[]>([]); // All loaded packages (for dependency resolution)
   const isLoading = ref(false);
   const error = ref<string | null>(null);
@@ -169,4 +171,3 @@ export const usePackageStore = defineStore('package', () => {
     exportPackageToString,
   };
 });
-

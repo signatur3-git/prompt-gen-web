@@ -3,6 +3,7 @@
 ## Important Note: Field Name Compatibility
 
 The web application now supports **both field names** for entry points:
+
 - `target` (used by web application internally)
 - `prompt_section` (used by desktop application YAML files)
 
@@ -11,11 +12,13 @@ Both are valid and will work correctly. The application automatically detects wh
 ## When You Load the Application
 
 ### Step 1: Open Browser Console
+
 - Press **F12**
 - Go to the **Console** tab
 - Keep it open while testing
 
 ### Step 2: Load Your Package
+
 - Go to Editor and select your package
 - Or reload the page if already loaded
 
@@ -36,6 +39,7 @@ Rulebook inspection results: [
 **Note:** The inspector shows "target=" in the output, even if your YAML uses "prompt_section". This is normal - the application handles both field names automatically.
 
 **If there's an issue**, you'll see something like:
+
 ```
 "common.styles:fantasy_focused - Entry point 2 has no target or prompt_section field. Entry point: {\"weight\":1.0}"
 ```
@@ -43,6 +47,7 @@ Rulebook inspection results: [
 ## When You Try to Generate Prompts
 
 ### Step 4: Go to Preview
+
 - Navigate to the Preview tab
 - Select your rulebook (`common.styles:fantasy_focused`)
 - Click **Generate**
@@ -50,6 +55,7 @@ Rulebook inspection results: [
 ### Step 5: Check Console Output
 
 Before the error, you'll see:
+
 ```
 Rendering rulebook common.styles:fantasy_focused
 Entry points: [{target: "scene1", weight: 1.0}, {target: "scene2", weight: 2.0}]
@@ -58,6 +64,7 @@ Selected entry point index 1: {target: "scene2", weight: 2.0}
 ```
 
 This shows:
+
 1. Which rulebook is being rendered
 2. The complete array of entry points
 3. How many entry points exist
@@ -69,6 +76,7 @@ This shows:
 ### Scenario A: All Entry Points Valid
 
 **Console shows:**
+
 ```
 Rulebook inspection results: [
   "SUMMARY common.styles:fantasy_focused: All 2 entry points are valid ✓"
@@ -86,6 +94,7 @@ Selected entry point index 0: {target: "scene1", weight: 1.0}
 ### Scenario B: Entry Point Missing Target
 
 **Console shows:**
+
 ```
 Rulebook inspection results: [
   "common.styles:fantasy_focused - Entry point 1 is VALID: target=\"scene1\", weight=1.0",
@@ -106,6 +115,7 @@ ERROR: Entry point has no target defined. Entry point data: {"weight":2.0}
 ### Scenario C: Target Points to Non-Existent Prompt Section
 
 **Console shows:**
+
 ```
 Rulebook inspection results: [
   "common.styles:fantasy_focused - Entry point 1 is VALID: target=\"missing_scene\", weight=1.0",
@@ -143,4 +153,3 @@ After reviewing the console output:
 ## No Data Modification
 
 Remember: The system **only inspects and reports**. Your data will not be modified. All changes must be made manually through the editor or by re-importing corrected data.
-

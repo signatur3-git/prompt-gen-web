@@ -161,7 +161,7 @@ function parseReference(refText: string): TemplateToken {
     // Parse key=value pairs separated by , or &
     const params = paramsText.split(/[,&]/);
     for (const param of params) {
-      const [key, value] = param.split('=').map((s) => s.trim());
+      const [key, value] = param.split('=').map(s => s.trim());
       if (!key || !value) continue;
 
       if (key === 'min') {
@@ -194,4 +194,3 @@ function parseReference(refText: string): TemplateToken {
 export function isContextReference(refName: string): boolean {
   return refName.startsWith('context.');
 }
-

@@ -20,8 +20,17 @@ const router = createRouter({
       name: 'preview',
       component: () => import('../views/PreviewView.vue'),
     },
+    {
+      path: '/marketplace',
+      name: 'marketplace',
+      component: () => import('../views/MarketplaceView.vue'),
+    },
+    {
+      path: '/oauth/callback',
+      name: 'oauth-callback',
+      component: () => import('../views/OAuthCallback.vue'),
+    },
   ],
 });
 
 export default router;
-

@@ -4,6 +4,7 @@ import tseslint from 'typescript-eslint';
 import pluginVue from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
 import globals from 'globals';
+import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
   {
@@ -28,6 +29,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
+  prettierConfig, // Disable ESLint rules that conflict with Prettier
   {
     files: ['**/*.ts', '**/*.vue'],
     languageOptions: {
@@ -50,6 +52,18 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'vue/multi-word-component-names': 'off',
+
+      // Disable Vue formatting rules that conflict with Prettier
+      'vue/max-attributes-per-line': 'off',
+      'vue/html-self-closing': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/multiline-html-element-content-newline': 'off',
+      'vue/html-indent': 'off',
+      'vue/attributes-order': 'off',
+      'vue/attribute-hyphenation': 'off',
+      'vue/mustache-interpolation-spacing': 'off',
+      'vue/html-closing-bracket-newline': 'off',
+      'vue/html-closing-bracket-spacing': 'off',
     },
   },
   {

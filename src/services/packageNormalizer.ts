@@ -42,4 +42,3 @@ export function normalizePackageReferences(pkg: Package): void {
     }
   }
 }
-

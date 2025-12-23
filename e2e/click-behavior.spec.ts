@@ -85,7 +85,9 @@ async function loadTestPackage(page: any) {
   await page.waitForSelector('.modal', { timeout: 5000 });
   await page.waitForSelector('.package-list', { timeout: 5000 });
 
-  const packageItem = page.locator('.package-item-content').filter({ hasText: 'Click Test Package' });
+  const packageItem = page
+    .locator('.package-item-content')
+    .filter({ hasText: 'Click Test Package' });
   await packageItem.waitFor({ state: 'visible', timeout: 5000 });
   await packageItem.click();
 
@@ -105,10 +107,15 @@ async function loadTestPackage(page: any) {
   };
 }
 
-async function clickDatatypeAndWaitForId(page: any, opts: { displayName: string; expectedId: string; idInput: any; editorPanel: any }) {
+async function clickDatatypeAndWaitForId(
+  page: any,
+  opts: { displayName: string; expectedId: string; idInput: any; editorPanel: any }
+) {
   const { displayName, expectedId, idInput, editorPanel } = opts;
 
-  const header = page.locator('.datatype-item', { hasText: displayName }).locator('.datatype-header');
+  const header = page
+    .locator('.datatype-item', { hasText: displayName })
+    .locator('.datatype-header');
   await header.waitFor({ state: 'visible', timeout: 5000 });
 
   await header.click({ timeout: 5000 });
@@ -118,7 +125,9 @@ async function clickDatatypeAndWaitForId(page: any, opts: { displayName: string;
 }
 
 test.describe('DatatypeEditor Click Behavior - REAL BROWSER', () => {
-  test('Clicking a datatype should always select it (single click, correct ID)', async ({ page }) => {
+  test('Clicking a datatype should always select it (single click, correct ID)', async ({
+    page,
+  }) => {
     const { idInput, editorPanel } = await loadTestPackage(page);
 
     const cases = [

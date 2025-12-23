@@ -17,7 +17,7 @@ export const ValidationErrorType = {
   INVALID_DEPENDENCY_VERSION: 'INVALID_DEPENDENCY_VERSION',
 } as const;
 
-export type ValidationErrorType = typeof ValidationErrorType[keyof typeof ValidationErrorType];
+export type ValidationErrorType = (typeof ValidationErrorType)[keyof typeof ValidationErrorType];
 
 export const ValidationWarningType = {
   UNUSED_DATATYPE: 'UNUSED_DATATYPE',
@@ -30,7 +30,8 @@ export const ValidationWarningType = {
   FLEXIBLE_DEPENDENCY: 'FLEXIBLE_DEPENDENCY',
 } as const;
 
-export type ValidationWarningType = typeof ValidationWarningType[keyof typeof ValidationWarningType];
+export type ValidationWarningType =
+  (typeof ValidationWarningType)[keyof typeof ValidationWarningType];
 
 export interface ValidationError {
   type: ValidationErrorType;
@@ -138,10 +139,7 @@ export function createUniqueConstraintInfeasibleError(
   };
 }
 
-export function createInvalidDependencyError(
-  packageId: string,
-  reason: string
-): ValidationError {
+export function createInvalidDependencyError(packageId: string, reason: string): ValidationError {
   return {
     type: ValidationErrorType.INVALID_DEPENDENCY,
     message: `Invalid dependency: package '${packageId}' - ${reason}`,
@@ -186,14 +184,10 @@ export function createUnusedReferenceWarning(
   };
 }
 
-export function createLargeWeightSumWarning(
-  datatype: string,
-  sum: number
-): ValidationWarning {
+export function createLargeWeightSumWarning(datatype: string, sum: number): ValidationWarning {
   return {
     type: ValidationWarningType.LARGE_WEIGHT_SUM,
     message: `Large weight sum in datatype '${datatype}': ${sum.toFixed(2)} (consider normalizing)`,
     location: datatype,
   };
 }
-

@@ -162,4 +162,3 @@ describe('RenderingService - Backwards Compatibility', () => {
     expect(result.text).not.toContain('Wrong');
   });
 });
-

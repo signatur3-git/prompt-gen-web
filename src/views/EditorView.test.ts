@@ -73,9 +73,9 @@ describe('EditorView - Namespace Modal', () => {
     await input.setValue('my.test.namespace');
 
     // Add button should be enabled (not disabled)
-    const modalAddButton = wrapper.findAll('.modal-footer button').find(btn => 
-      btn.text().includes('Add')
-    );
+    const modalAddButton = wrapper
+      .findAll('.modal-footer button')
+      .find(btn => btn.text().includes('Add'));
     expect(modalAddButton?.attributes('disabled')).toBeUndefined();
   });
 
@@ -106,9 +106,9 @@ describe('EditorView - Namespace Modal', () => {
     await input.setValue('my_test_namespace');
 
     // Add button should be enabled
-    const modalAddButton = wrapper.findAll('.modal-footer button').find(btn => 
-      btn.text().includes('Add')
-    );
+    const modalAddButton = wrapper
+      .findAll('.modal-footer button')
+      .find(btn => btn.text().includes('Add'));
     expect(modalAddButton?.attributes('disabled')).toBeUndefined();
   });
 
@@ -139,9 +139,9 @@ describe('EditorView - Namespace Modal', () => {
     await input.setValue('MyNamespace');
 
     // Add button should be disabled
-    const modalAddButton = wrapper.findAll('.modal-footer button').find(btn => 
-      btn.text().includes('Add')
-    );
+    const modalAddButton = wrapper
+      .findAll('.modal-footer button')
+      .find(btn => btn.text().includes('Add'));
     expect(modalAddButton?.attributes('disabled')).toBeDefined();
   });
 
@@ -172,9 +172,9 @@ describe('EditorView - Namespace Modal', () => {
     await input.setValue('my-namespace');
 
     // Add button should be disabled
-    const modalAddButton = wrapper.findAll('.modal-footer button').find(btn => 
-      btn.text().includes('Add')
-    );
+    const modalAddButton = wrapper
+      .findAll('.modal-footer button')
+      .find(btn => btn.text().includes('Add'));
     expect(modalAddButton?.attributes('disabled')).toBeDefined();
   });
 
@@ -301,9 +301,9 @@ describe('EditorView - Namespace Modal', () => {
     await input.setValue('test.namespace');
 
     // Click Add button
-    const modalAddButton = wrapper.findAll('.modal-footer button').find(btn => 
-      btn.text().includes('Add')
-    );
+    const modalAddButton = wrapper
+      .findAll('.modal-footer button')
+      .find(btn => btn.text().includes('Add'));
     await modalAddButton?.trigger('click');
 
     // Namespace should be created
@@ -314,4 +314,3 @@ describe('EditorView - Namespace Modal', () => {
     expect(wrapper.find('.modal-overlay').exists()).toBe(false);
   });
 });
-

@@ -25,9 +25,7 @@ export function fixInvalidRulebookEntryPoints(pkg: Package): {
       rulebook.entry_points.forEach((ep, index) => {
         if (!ep) {
           hasIssues = true;
-          changes.push(
-            `${nsId}:${rbId} - Entry point ${index + 1} is null/undefined`
-          );
+          changes.push(`${nsId}:${rbId} - Entry point ${index + 1} is null/undefined`);
         } else {
           // Handle both 'target' and 'prompt_section' field names (backwards compatibility)
           const target = ep.target || (ep as any).prompt_section;
@@ -60,13 +58,9 @@ export function fixInvalidRulebookEntryPoints(pkg: Package): {
 
       if (validCount !== originalLength) {
         hasIssues = true;
-        changes.push(
-          `SUMMARY ${nsId}:${rbId}: ${validCount}/${originalLength} valid entry points`
-        );
+        changes.push(`SUMMARY ${nsId}:${rbId}: ${validCount}/${originalLength} valid entry points`);
       } else {
-        changes.push(
-          `SUMMARY ${nsId}:${rbId}: All ${originalLength} entry points are valid ✓`
-        );
+        changes.push(`SUMMARY ${nsId}:${rbId}: All ${originalLength} entry points are valid ✓`);
       }
     }
   }
@@ -93,4 +87,3 @@ export function hasInvalidRulebookEntryPoints(pkg: Package): boolean {
   }
   return false;
 }
-

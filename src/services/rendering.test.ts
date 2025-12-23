@@ -152,9 +152,9 @@ describe('RenderingService', () => {
         },
       };
 
-      await expect(
-        service.render(pkg, 'test', 'broken', 99999)
-      ).rejects.toThrow(/Context variable 'missing' not found/);
+      await expect(service.render(pkg, 'test', 'broken', 99999)).rejects.toThrow(
+        /Context variable 'missing' not found/
+      );
     });
   });
 
@@ -199,6 +199,3 @@ describe('RenderingService', () => {
     });
   });
 });
-
-
-

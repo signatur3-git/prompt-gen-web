@@ -3,34 +3,27 @@
     <!-- Hero Section -->
     <div class="hero">
       <h1>Random Prompt Generator</h1>
-      <p class="hero-subtitle">
-        Create dynamic, randomized prompts for AI image generation
-      </p>
+      <p class="hero-subtitle">Create dynamic, randomized prompts for AI image generation</p>
       <p class="hero-description">
-        Build complex prompt templates with datatypes, rules, and dependencies.
-        Generate deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art tools.
+        Build complex prompt templates with datatypes, rules, and dependencies. Generate
+        deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art
+        tools.
       </p>
-      <button
-        class="btn-hero"
-        @click="router.push('/preview')"
-      >
-        ⚡ Start Generating Prompts
-      </button>
+      <button class="btn-hero" @click="router.push('/preview')">⚡ Start Generating Prompts</button>
     </div>
 
     <!-- Getting Started Section -->
     <section class="getting-started">
       <h2>✨ Getting Started</h2>
-      <p class="section-intro">
-        New here? Try the sample package to see what this tool can do!
-      </p>
+      <p class="section-intro">New here? Try the sample package to see what this tool can do!</p>
 
       <div class="action-card action-card-hero">
-        <div class="card-icon">
-          🎁
-        </div>
+        <div class="card-icon">🎁</div>
         <h3>Load Sample Package</h3>
-        <p>Explore featured.common with ready-to-use rulebooks for fantasy scenes, lighting, characters, and more</p>
+        <p>
+          Explore featured.common with ready-to-use rulebooks for fantasy scenes, lighting,
+          characters, and more
+        </p>
         <button
           class="btn-primary btn-large"
           :disabled="isLoadingSample"
@@ -44,21 +37,27 @@
     <!-- Quick Actions Section -->
     <section class="quick-actions">
       <h2>🚀 Generate Prompts</h2>
-      <p class="section-intro">
-        Use your packages to create randomized prompts
-      </p>
+      <p class="section-intro">Use your packages to create randomized prompts</p>
 
       <div class="action-card action-card-primary">
-        <div class="card-icon">
-          ⚡
-        </div>
+        <div class="card-icon">⚡</div>
         <h3>Preview & Generate</h3>
         <p>Generate prompts from any rulebook in your collection</p>
-        <button
-          class="btn-primary"
-          @click="router.push('/preview')"
-        >
-          Open Generator
+        <button class="btn-primary" @click="router.push('/preview')">Open Generator</button>
+      </div>
+    </section>
+
+    <!-- Marketplace Section -->
+    <section class="marketplace-section">
+      <h2>🏪 Community Marketplace</h2>
+      <p class="section-intro">Discover and install packages from the community</p>
+
+      <div class="action-card action-card-marketplace">
+        <div class="card-icon">🌐</div>
+        <h3>Browse Marketplace</h3>
+        <p>Connect to the marketplace to browse, download, and publish packages</p>
+        <button class="btn-marketplace" @click="router.push('/marketplace')">
+          Open Marketplace
         </button>
       </div>
     </section>
@@ -66,112 +65,64 @@
     <!-- Package Management Section -->
     <section class="package-management">
       <h2>📦 Package Management</h2>
-      <p class="section-intro">
-        Create, import, and edit your prompt generation packages
-      </p>
+      <p class="section-intro">Create, import, and edit your prompt generation packages</p>
 
       <div class="actions-grid">
         <div class="action-card">
-          <div class="card-icon">
-            ➕
-          </div>
+          <div class="card-icon">➕</div>
           <h3>Create New Package</h3>
           <p>Start building a package from scratch</p>
-          <button
-            class="btn-secondary"
-            @click="createNew"
-          >
-            Create Package
-          </button>
+          <button class="btn-secondary" @click="createNew">Create Package</button>
         </div>
 
         <div class="action-card">
-          <div class="card-icon">
-            📂
-          </div>
+          <div class="card-icon">📂</div>
           <h3>Load Existing Package</h3>
           <p>Edit packages from your storage</p>
-          <button
-            class="btn-secondary"
-            @click="openLoadDialog"
-          >
-            Load Package
-          </button>
+          <button class="btn-secondary" @click="openLoadDialog">Load Package</button>
         </div>
 
         <div class="action-card">
-          <div class="card-icon">
-            📥
-          </div>
+          <div class="card-icon">📥</div>
           <h3>Import Package(s)</h3>
           <p>Import YAML/JSON files with dependencies</p>
-          <button
-            class="btn-secondary"
-            @click="showImportDialog = true"
-          >
-            Import Files
-          </button>
+          <button class="btn-secondary" @click="showImportDialog = true">Import Files</button>
         </div>
       </div>
     </section>
 
     <!-- Load Dialog -->
-    <div
-      v-if="showLoadDialog"
-      class="modal"
-      @click.self="showLoadDialog = false"
-    >
+    <div v-if="showLoadDialog" class="modal" @click.self="showLoadDialog = false">
       <div class="modal-content">
         <h2>Load Package</h2>
-        <div
-          v-if="packages.length === 0"
-          class="empty-state"
-        >
+        <div v-if="packages.length === 0" class="empty-state">
           <p>No packages found in storage</p>
         </div>
-        <div
-          v-else
-          class="package-list"
-        >
+        <div v-else class="package-list">
           <div
             v-for="pkg in packages"
             :key="pkg.id"
             class="package-item"
             :class="{ 'is-dependency': pkg.isBasePackage }"
           >
-            <div
-              class="package-item-content"
-              @click="loadPackage(pkg.id)"
-            >
+            <div class="package-item-content" @click="loadPackage(pkg.id)">
               <div class="package-header">
                 <h3>{{ pkg.name }}</h3>
-                <span
-                  v-if="pkg.isBasePackage"
-                  class="badge badge-base"
-                >Base Package</span>
+                <span v-if="pkg.isBasePackage" class="badge badge-base">Base Package</span>
                 <span
                   v-if="pkg.dependencyCount > 0 && pkg.missingDependencies.length === 0"
                   class="badge badge-deps"
                 >
-                  {{ pkg.dependencyCount }} {{ pkg.dependencyCount === 1 ? 'dependency' : 'dependencies' }} ✓
+                  {{ pkg.dependencyCount }}
+                  {{ pkg.dependencyCount === 1 ? 'dependency' : 'dependencies' }} ✓
                 </span>
-                <span
-                  v-if="pkg.missingDependencies.length > 0"
-                  class="badge badge-error"
-                >
+                <span v-if="pkg.missingDependencies.length > 0" class="badge badge-error">
                   {{ pkg.missingDependencies.length }} MISSING!
                 </span>
               </div>
-              <p class="package-version">
-                v{{ pkg.version }}
-              </p>
-              <p class="package-id">
-                ID: {{ pkg.id }}
-              </p>
-              <p
-                v-if="pkg.description"
-                class="package-description"
-              >
+              <p class="package-version">v{{ pkg.version }}</p>
+              <p class="package-id">ID: {{ pkg.id }}</p>
+              <p v-if="pkg.description" class="package-description">
                 {{ pkg.description }}
               </p>
 
@@ -188,8 +139,10 @@
                 v-if="pkg.missingDependencies && pkg.missingDependencies.length > 0"
                 class="package-deps-missing"
               >
-                ❌ MISSING: {{ pkg.missingDependencies.join(', ') }}
-                <br><span class="warning-text">⚠️ Package cannot be used until these are imported!</span>
+                ❌ MISSING: {{ pkg.missingDependencies.join(', ') }} <br /><span
+                  class="warning-text"
+                  >⚠️ Package cannot be used until these are imported!</span
+                >
               </div>
             </div>
             <div class="package-actions">
@@ -203,25 +156,17 @@
             </div>
           </div>
         </div>
-        <button
-          class="btn-cancel"
-          @click="showLoadDialog = false"
-        >
-          Cancel
-        </button>
+        <button class="btn-cancel" @click="showLoadDialog = false">Cancel</button>
       </div>
     </div>
 
     <!-- Delete Confirmation Dialog -->
-    <div
-      v-if="showDeleteConfirm"
-      class="modal"
-      @click.self="cancelDelete"
-    >
+    <div v-if="showDeleteConfirm" class="modal" @click.self="cancelDelete">
       <div class="modal-content modal-small">
         <h2>⚠️ Delete Package?</h2>
         <p class="delete-warning">
-          Are you sure you want to delete <strong>{{ packageToDelete?.name }}</strong>?
+          Are you sure you want to delete <strong>{{ packageToDelete?.name }}</strong
+          >?
         </p>
         <p class="delete-id">
           Package ID: <code>{{ packageToDelete?.id }}</code>
@@ -230,28 +175,14 @@
           ⚠️ This action cannot be undone. If other packages depend on this one, they will break.
         </p>
         <div class="button-group">
-          <button
-            class="btn-danger"
-            @click="deletePackageConfirmed"
-          >
-            Delete Package
-          </button>
-          <button
-            class="btn-cancel"
-            @click="cancelDelete"
-          >
-            Cancel
-          </button>
+          <button class="btn-danger" @click="deletePackageConfirmed">Delete Package</button>
+          <button class="btn-cancel" @click="cancelDelete">Cancel</button>
         </div>
       </div>
     </div>
 
     <!-- Import Dialog -->
-    <div
-      v-if="showImportDialog"
-      class="modal"
-      @click.self="showImportDialog = false"
-    >
+    <div v-if="showImportDialog" class="modal" @click.self="showImportDialog = false">
       <div class="modal-content">
         <h2>Import Package</h2>
 
@@ -273,10 +204,7 @@
         </div>
 
         <!-- File Import Mode -->
-        <div
-          v-if="importMode === 'file'"
-          class="import-mode"
-        >
+        <div v-if="importMode === 'file'" class="import-mode">
           <div class="form-group">
             <label>Select Package File(s):</label>
             <input
@@ -285,62 +213,41 @@
               multiple
               class="file-input"
               @change="handleFileSelect"
-            >
+            />
             <p class="hint">
-              💡 Tip: Just select your main package file - dependencies will be automatically resolved from your selection and storage!
+              💡 Tip: Just select your main package file - dependencies will be automatically
+              resolved from your selection and storage!
             </p>
           </div>
 
-          <div
-            v-if="selectedFiles.length > 0"
-            class="file-list"
-          >
+          <div v-if="selectedFiles.length > 0" class="file-list">
             <h4>Selected Files ({{ selectedFiles.length }}):</h4>
-            <div
-              v-for="(file, index) in selectedFiles"
-              :key="index"
-              class="file-item"
-            >
+            <div v-for="(file, index) in selectedFiles" :key="index" class="file-item">
               <span class="file-name">{{ file.name }}</span>
               <span class="file-size">({{ formatFileSize(file.size) }})</span>
-              <button
-                class="btn-remove"
-                @click="removeFile(index)"
-              >
-                ✕
-              </button>
+              <button class="btn-remove" @click="removeFile(index)">✕</button>
             </div>
           </div>
 
           <div class="form-group">
             <label>
-              <input
-                v-model="checkDependencies"
-                type="checkbox"
-              >
+              <input v-model="checkDependencies" type="checkbox" />
               Check for missing dependencies (recommended)
             </label>
             <p class="hint">
               <strong>Packages with missing dependencies cannot be used!</strong>
-              <br>If checked, you'll be warned immediately about what's needed.
+              <br />If checked, you'll be warned immediately about what's needed.
             </p>
           </div>
         </div>
 
         <!-- Text Import Mode -->
-        <div
-          v-if="importMode === 'text'"
-          class="import-mode"
-        >
+        <div v-if="importMode === 'text'" class="import-mode">
           <div class="form-group">
             <label>Format:</label>
             <select v-model="importFormat">
-              <option value="yaml">
-                YAML
-              </option>
-              <option value="json">
-                JSON
-              </option>
+              <option value="yaml">YAML</option>
+              <option value="json">JSON</option>
             </select>
           </div>
           <div class="form-group">
@@ -354,32 +261,17 @@
         </div>
 
         <div class="button-group">
-          <button
-            class="btn-primary"
-            :disabled="!canImport"
-            @click="importPackage"
-          >
+          <button class="btn-primary" :disabled="!canImport" @click="importPackage">
             Import {{ selectedFiles.length > 1 ? `(${selectedFiles.length} files)` : '' }}
           </button>
-          <button
-            class="btn-cancel"
-            @click="closeImportDialog"
-          >
-            Cancel
-          </button>
+          <button class="btn-cancel" @click="closeImportDialog">Cancel</button>
         </div>
 
-        <div
-          v-if="importProgress"
-          class="progress-info"
-        >
+        <div v-if="importProgress" class="progress-info">
           {{ importProgress }}
         </div>
 
-        <p
-          v-if="importError"
-          class="error"
-        >
+        <p v-if="importError" class="error">
           {{ importError }}
         </p>
         <div
@@ -407,17 +299,19 @@ const showImportDialog = ref(false);
 const showDeleteConfirm = ref(false);
 const packageToDelete = ref<{ id: string; name: string } | null>(null);
 const isLoadingSample = ref(false);
-const packages = ref<Array<{
-  id: string;
-  name: string;
-  version: string;
-  description?: string;
-  isBasePackage: boolean;
-  dependencyCount: number;
-  dependencies: string[];
-  presentDependencies: string[];
-  missingDependencies: string[];
-}>>([]);
+const packages = ref<
+  Array<{
+    id: string;
+    name: string;
+    version: string;
+    description?: string;
+    isBasePackage: boolean;
+    dependencyCount: number;
+    dependencies: string[];
+    presentDependencies: string[];
+    missingDependencies: string[];
+  }>
+>([]);
 const importContent = ref('');
 const importFormat = ref<'yaml' | 'json'>('yaml');
 const importError = ref('');
@@ -448,12 +342,15 @@ async function loadPackageMetadata() {
   const allPackageIds = new Set(packageStore.packages.map(p => p.id));
 
   const allPackages = await Promise.all(
-    packageStore.packages.map(async (pkgInfo) => {
+    packageStore.packages.map(async pkgInfo => {
       try {
         const fullPkg = await platformService.loadPackage(pkgInfo.id);
 
         // Handle both 'package' and 'package' field names
-        const depIds = fullPkg.dependencies?.map(d => (d as any).package || (d as any).package).filter(Boolean) || [];
+        const depIds =
+          fullPkg.dependencies
+            ?.map(d => (d as any).package || (d as any).package)
+            .filter(Boolean) || [];
         const presentDeps = depIds.filter(depId => allPackageIds.has(depId));
         const missingDeps = depIds.filter(depId => !allPackageIds.has(depId));
 
@@ -461,7 +358,7 @@ async function loadPackageMetadata() {
           hasDeps: !!fullPkg.dependencies,
           depCount: depIds.length,
           present: presentDeps,
-          missing: missingDeps
+          missing: missingDeps,
         });
 
         return {
@@ -520,7 +417,9 @@ async function loadSamplePackage() {
   isLoadingSample.value = true;
   try {
     // Fetch the featured.common.yaml from the desktop app repo
-    const response = await fetch('https://raw.githubusercontent.com/signatur3-git/prompt-gen-desktop/main/packages/featured.common/featured.common.yaml');
+    const response = await fetch(
+      'https://raw.githubusercontent.com/signatur3-git/prompt-gen-desktop/main/packages/featured.common/featured.common.yaml'
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch sample package: ${response.statusText}`);
@@ -539,11 +438,14 @@ async function loadSamplePackage() {
     await loadPackageMetadata();
 
     // Show success message
-    alert('✅ Sample package "featured.common" loaded successfully!\n\nThis package includes:\n• Fantasy scenes & characters\n• Lighting & atmosphere\n• Landscape & nature\n• Style variations\n\nGo to Preview to generate prompts!');
-
+    alert(
+      '✅ Sample package "featured.common" loaded successfully!\n\nThis package includes:\n• Fantasy scenes & characters\n• Lighting & atmosphere\n• Landscape & nature\n• Style variations\n\nGo to Preview to generate prompts!'
+    );
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Failed to load sample package';
-    alert(`❌ ${errorMsg}\n\nYou can manually download featured.common.yaml from:\nhttps://github.com/signatur3-git/prompt-gen-desktop`);
+    alert(
+      `❌ ${errorMsg}\n\nYou can manually download featured.common.yaml from:\nhttps://github.com/signatur3-git/prompt-gen-desktop`
+    );
   } finally {
     isLoadingSample.value = false;
   }
@@ -628,7 +530,7 @@ async function importFromFiles() {
   // Read and parse files
   importProgress.value = 'Reading files...';
   const fileContents = await Promise.all(
-    selectedFiles.value.map(async (file) => {
+    selectedFiles.value.map(async file => {
       const text = await file.text();
       const format = file.name.endsWith('.json') ? 'json' : 'yaml';
       return { file, text, format };
@@ -660,11 +562,18 @@ async function importFromFiles() {
         for (const dep of pkg.dependencies) {
           // Handle both 'package' and 'package' field names
           const depId = dep.package || dep.package;
-          console.log('Checking dependency:', dep, 'depId:', depId, 'exists:', existingIds.has(depId));
+          console.log(
+            'Checking dependency:',
+            dep,
+            'depId:',
+            depId,
+            'exists:',
+            existingIds.has(depId)
+          );
           if (depId && !existingIds.has(depId)) {
             missingDeps.push({
               packageId: depId,
-              requiredBy: pkg.id
+              requiredBy: pkg.id,
             });
             console.log('Added missing dependency:', depId, 'required by:', pkg.id);
           }
@@ -707,7 +616,10 @@ async function importFromFiles() {
   if (missingDeps.length > 0) {
     const uniqueMissing = Array.from(new Set(missingDeps.map(d => d.packageId)));
     console.log('Unique missing dependencies:', uniqueMissing);
-    console.log('uniqueMissing array:', uniqueMissing.map(id => `"${id}"`));
+    console.log(
+      'uniqueMissing array:',
+      uniqueMissing.map(id => `"${id}"`)
+    );
     successMsg += `\n\n❌ ERROR: ${uniqueMissing.length} REQUIRED ${uniqueMissing.length === 1 ? 'DEPENDENCY' : 'DEPENDENCIES'} MISSING!`;
     successMsg += `\n   Missing: ${uniqueMissing.join(', ')}`;
     successMsg += '\n   ⚠️ This package CANNOT be used until dependencies are imported.';
@@ -717,10 +629,13 @@ async function importFromFiles() {
   importSuccess.value = successMsg;
   importProgress.value = '';
 
-  setTimeout(() => {
-    showImportDialog.value = false;
-    router.push('/editor');
-  }, missingDeps.length > 0 ? 5000 : 2000); // Show error longer
+  setTimeout(
+    () => {
+      showImportDialog.value = false;
+      router.push('/editor');
+    },
+    missingDeps.length > 0 ? 5000 : 2000
+  ); // Show error longer
 }
 
 function closeImportDialog() {
@@ -867,6 +782,47 @@ section h2 {
   font-size: 1.05rem;
 }
 
+/* Marketplace Section - Special Card */
+.marketplace-section .action-card {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.action-card-marketplace {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  padding: 2.5rem;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.action-card-marketplace h3 {
+  color: white;
+  font-size: 1.6rem;
+}
+
+.action-card-marketplace p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.05rem;
+}
+
+.btn-marketplace {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+  background: white;
+  color: #667eea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-marketplace:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 /* Actions Grid */
 .actions-grid {
   display: grid;
@@ -919,7 +875,9 @@ section h2 {
   font-weight: 600;
 }
 
-.btn-primary, .btn-secondary, .btn-cancel {
+.btn-primary,
+.btn-secondary,
+.btn-cancel {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -1009,7 +967,7 @@ section h2 {
 
 .package-item:hover {
   border-color: #42b983;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .package-item.is-dependency {
@@ -1159,8 +1117,13 @@ section h2 {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .package-version {
@@ -1534,4 +1497,3 @@ section h2 {
   }
 }
 </style>
-

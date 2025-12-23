@@ -48,12 +48,14 @@ For detailed instructions, see the [User Guide](./USER_GUIDE.md).
 - npm
 
 ### Setup
+
 ```bash
 npm install
 npm run dev
 ```
 
 ### Production Build
+
 ```bash
 npm run build
 npm run preview
@@ -92,6 +94,7 @@ The default configuration deploys to GitHub Pages. You may need to update the `b
 ## Architecture
 
 This is a frontend-only Vue 3 application that:
+
 - Uses **Vite** for blazing-fast development and optimized production builds
 - Stores all data in **browser localStorage** (no backend required)
 - Implements the **Random Prompt Generator specification**
@@ -121,5 +124,3 @@ See [LICENSE](./LICENSE) file for details.
 ---
 
 **Built with ❤️ using Vue 3, TypeScript, and Vite**
-
-

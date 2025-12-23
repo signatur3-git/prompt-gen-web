@@ -6,9 +6,7 @@
  */
 
 import type { Package } from '../models/package';
-import type {
-  ValidationResult,
-} from './types';
+import type { ValidationResult } from './types';
 import {
   createValidationResult,
   addError,
@@ -138,23 +136,23 @@ export class PackageValidator {
     if (!pkg.dependencies) return;
 
     for (const dep of pkg.dependencies) {
-            const packageId = dep.package;
+      const packageId = dep.package;
 
       // Validate package ID exists
       if (!packageId || typeof packageId !== 'string') {
-        addError(result, createInvalidDependencyError(
-          packageId || '(missing)',
-          'package field is required (DEC-0012)'
-        ));
+        addError(
+          result,
+          createInvalidDependencyError(
+            packageId || '(missing)',
+            'package field is required (DEC-0012)'
+          )
+        );
         continue;
       }
 
       // Validate version format
       if (!dep.version || typeof dep.version !== 'string') {
-        addError(result, createInvalidDependencyError(
-          packageId,
-          'version field is required'
-        ));
+        addError(result, createInvalidDependencyError(packageId, 'version field is required'));
         continue;
       }
 
@@ -201,12 +199,20 @@ export class PackageValidator {
 
           // Check if target exists (in package or dependencies)
           if (!this.referenceExistsWithDeps(pkg, dependencies, targetNs, targetName)) {
-            const suggestion = this.findSimilarNameWithDeps(pkg, dependencies, targetNs, targetName);
-            addError(result, createReferenceNotFoundError(
-              target,
-              `${nsId}:${psName}.references.${refName}`,
-              suggestion
-            ));
+            const suggestion = this.findSimilarNameWithDeps(
+              pkg,
+              dependencies,
+              targetNs,
+              targetName
+            );
+            addError(
+              result,
+              createReferenceNotFoundError(
+                target,
+                `${nsId}:${psName}.references.${refName}`,
+                suggestion
+              )
+            );
           }
         }
       }
@@ -337,11 +343,14 @@ export class PackageValidator {
         // Check each reference in template is defined
         for (const refName of templateRefs) {
           if (!promptSection.references?.[refName]) {
-            addError(result, createReferenceNotFoundError(
-              refName,
-              `${nsId}:${psName}`,
-              `Add reference definition for '${refName}' in the references section`
-            ));
+            addError(
+              result,
+              createReferenceNotFoundError(
+                refName,
+                `${nsId}:${psName}`,
+                `Add reference definition for '${refName}' in the references section`
+              )
+            );
           }
         }
 
@@ -468,10 +477,13 @@ export class PackageValidator {
 
             const sepNsObj = pkg.namespaces?.[sepNs];
             if (!sepNsObj?.separator_sets?.[sepName]) {
-              addError(result, createSeparatorNotFoundError(
-                reference.separator,
-                `${nsId}:${psName}.references.${refName}`
-              ));
+              addError(
+                result,
+                createSeparatorNotFoundError(
+                  reference.separator,
+                  `${nsId}:${psName}.references.${refName}`
+                )
+              );
             }
           }
         }
@@ -490,11 +502,10 @@ export class PackageValidator {
           const max = reference.max ?? 1;
 
           if (min > max) {
-            addError(result, createMinMaxInvalidError(
-              min,
-              max,
-              `${nsId}:${psName}.references.${refName}`
-            ));
+            addError(
+              result,
+              createMinMaxInvalidError(min, max, `${nsId}:${psName}.references.${refName}`)
+            );
           }
         }
       }
@@ -522,11 +533,10 @@ export class PackageValidator {
             if (datatype) {
               const available = datatype.values?.length ?? 0;
               if (max > available) {
-                addError(result, createUniqueConstraintInfeasibleError(
-                  max,
-                  available,
-                  `${targetNs}:${targetName}`
-                ));
+                addError(
+                  result,
+                  createUniqueConstraintInfeasibleError(max, available, `${targetNs}:${targetName}`)
+                );
               }
             }
           }
@@ -556,13 +566,16 @@ export class PackageValidator {
 
         // Validate each entry point target exists
         for (const entryPoint of rulebook.entry_points || []) {
-                    const target = entryPoint.target || (entryPoint as any).prompt_section;
+          const target = entryPoint.target || (entryPoint as any).prompt_section;
 
           // Skip if target is undefined or null
           if (!target || typeof target !== 'string') {
-            const targetInfo = target === undefined ? 'undefined' :
-                              target === null ? 'null' :
-                              `type: ${typeof target}, value: ${JSON.stringify(target)}`;
+            const targetInfo =
+              target === undefined
+                ? 'undefined'
+                : target === null
+                  ? 'null'
+                  : `type: ${typeof target}, value: ${JSON.stringify(target)}`;
             addError(result, {
               type: 'INVALID_NAMING' as any,
               message: `Entry point in rulebook '${nsId}:${rbName}' has invalid or missing target (found: ${targetInfo}). Use 'target' or 'prompt_section' field.`,
@@ -592,12 +605,16 @@ export class PackageValidator {
           }
 
           if (!this.referenceExistsWithDeps(pkg, dependencies, targetNs, targetName)) {
-            const suggestion = this.findSimilarNameWithDeps(pkg, dependencies, targetNs, targetName);
-            addError(result, createReferenceNotFoundError(
-              target,
-              `${nsId}:${rbName}.entry_points`,
-              suggestion
-            ));
+            const suggestion = this.findSimilarNameWithDeps(
+              pkg,
+              dependencies,
+              targetNs,
+              targetName
+            );
+            addError(
+              result,
+              createReferenceNotFoundError(target, `${nsId}:${rbName}.entry_points`, suggestion)
+            );
           }
         }
       }
@@ -635,7 +652,8 @@ export class PackageValidator {
 
           if (reference.separator && typeof reference.separator === 'string') {
             const sepParts = reference.separator.split(':');
-            const sepFull = sepParts.length === 2 ? reference.separator : `${nsId}:${reference.separator}`;
+            const sepFull =
+              sepParts.length === 2 ? reference.separator : `${nsId}:${reference.separator}`;
             usedSeparatorSets.add(sepFull);
           }
         }
@@ -689,4 +707,3 @@ export class PackageValidator {
     }
   }
 }
-
