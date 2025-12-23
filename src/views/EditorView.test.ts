@@ -10,6 +10,21 @@ import EditorView from './EditorView.vue';
 import { usePackageStore } from '../stores/packageStore';
 import { createEmptyPackage } from '../models/package';
 
+// Shared test configuration
+const createMountOptions = () => ({
+  global: {
+    stubs: {
+      AppNav: true,
+      ValidationPanel: true,
+      DatatypeEditor: true,
+      PromptSectionEditor: true,
+      SeparatorSetEditor: true,
+      RuleEditor: true,
+      RulebookEditor: true,
+    },
+  },
+});
+
 describe('EditorView - Namespace Modal', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -21,18 +36,7 @@ describe('EditorView - Namespace Modal', () => {
     packageStore.currentPackage.id = 'test.package';
     packageStore.currentPackage.metadata.name = 'Test Package';
 
-    const wrapper = mount(EditorView, {
-      global: {
-        stubs: {
-          ValidationPanel: true,
-          DatatypeEditor: true,
-          PromptSectionEditor: true,
-          SeparatorSetEditor: true,
-          RuleEditor: true,
-          RulebookEditor: true,
-        },
-      },
-    });
+    const wrapper = mount(EditorView, createMountOptions());
 
     // Find and click the "Add Namespace" button
     const addButton = wrapper.find('button.btn-add');

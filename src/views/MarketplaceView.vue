@@ -11,87 +11,87 @@
         <p v-else class="auth-notice success">✅ Connected to marketplace</p>
       </div>
 
-    <!-- Connection Panel -->
-    <div v-if="!isAuthenticated" class="connection-panel">
-      <div class="panel-content">
-        <h2>Connect to Marketplace</h2>
-        <p>Browse and install packages from the Prompt Gen community.</p>
-        <ul class="features-list">
-          <li>🔍 Discover community packages</li>
-          <li>📦 Install packages with one click</li>
-          <li>🚀 Publish your own packages</li>
-          <li>🔐 Secure OAuth authentication</li>
-        </ul>
-        <button @click="connect" :disabled="connecting" class="btn-connect">
-          {{ connecting ? 'Connecting...' : 'Connect to Marketplace' }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Marketplace Content (when authenticated) -->
-    <div v-else class="marketplace-content">
-      <!-- Search Bar -->
-      <div class="search-section">
-        <div class="search-bar">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search packages..."
-            @keyup.enter="search"
-            class="search-input"
-          />
-          <button @click="search" class="btn-search">Search</button>
+      <!-- Connection Panel -->
+      <div v-if="!isAuthenticated" class="connection-panel">
+        <div class="panel-content">
+          <h2>Connect to Marketplace</h2>
+          <p>Browse and install packages from the Prompt Gen community.</p>
+          <ul class="features-list">
+            <li>🔍 Discover community packages</li>
+            <li>📦 Install packages with one click</li>
+            <li>🚀 Publish your own packages</li>
+            <li>🔐 Secure OAuth authentication</li>
+          </ul>
+          <button @click="connect" :disabled="connecting" class="btn-connect">
+            {{ connecting ? 'Connecting...' : 'Connect to Marketplace' }}
+          </button>
         </div>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="loading-section">
-        <div class="spinner"></div>
-        <p>Loading packages...</p>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="loadError" class="error-section">
-        <p class="error-message">❌ {{ loadError }}</p>
-        <button @click="loadPackages" class="btn-retry">Retry</button>
-      </div>
-
-      <!-- Packages List -->
-      <div v-else class="packages-section">
-        <div class="packages-header">
-          <h2>Available Packages</h2>
-          <span class="package-count">{{ packages.length }} packages</span>
+      <!-- Marketplace Content (when authenticated) -->
+      <div v-else class="marketplace-content">
+        <!-- Search Bar -->
+        <div class="search-section">
+          <div class="search-bar">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search packages..."
+              @keyup.enter="search"
+              class="search-input"
+            />
+            <button @click="search" class="btn-search">Search</button>
+          </div>
         </div>
 
-        <div v-if="packages.length === 0" class="empty-state">
-          <p>No packages found.</p>
-          <p class="hint">Try a different search or be the first to publish!</p>
+        <!-- Loading State -->
+        <div v-if="loading" class="loading-section">
+          <div class="spinner"></div>
+          <p>Loading packages...</p>
         </div>
 
-        <div v-else class="packages-grid">
-          <div v-for="pkg in packages" :key="pkg.id" class="package-card">
-            <div class="package-header">
-              <h3 class="package-name">{{ pkg.namespace }}/{{ pkg.name }}</h3>
-              <span class="package-version">v{{ pkg.version }}</span>
-            </div>
-            <p class="package-description">
-              {{ pkg.description || 'No description available' }}
-            </p>
-            <div class="package-footer">
-              <span class="package-author">by {{ pkg.author || 'Unknown' }}</span>
-              <button
-                @click="downloadPackage(pkg)"
-                class="btn-download"
-                :disabled="downloading[pkg.id]"
-              >
-                {{ downloading[pkg.id] ? 'Downloading...' : 'Download' }}
-              </button>
+        <!-- Error State -->
+        <div v-else-if="loadError" class="error-section">
+          <p class="error-message">❌ {{ loadError }}</p>
+          <button @click="loadPackages" class="btn-retry">Retry</button>
+        </div>
+
+        <!-- Packages List -->
+        <div v-else class="packages-section">
+          <div class="packages-header">
+            <h2>Available Packages</h2>
+            <span class="package-count">{{ packages.length }} packages</span>
+          </div>
+
+          <div v-if="packages.length === 0" class="empty-state">
+            <p>No packages found.</p>
+            <p class="hint">Try a different search or be the first to publish!</p>
+          </div>
+
+          <div v-else class="packages-grid">
+            <div v-for="pkg in packages" :key="pkg.id" class="package-card">
+              <div class="package-header">
+                <h3 class="package-name">{{ pkg.namespace }}/{{ pkg.name }}</h3>
+                <span class="package-version">v{{ pkg.version }}</span>
+              </div>
+              <p class="package-description">
+                {{ pkg.description || 'No description available' }}
+              </p>
+              <div class="package-footer">
+                <span class="package-author">by {{ pkg.author || 'Unknown' }}</span>
+                <button
+                  @click="downloadPackage(pkg)"
+                  class="btn-download"
+                  :disabled="downloading[pkg.id]"
+                >
+                  {{ downloading[pkg.id] ? 'Downloading...' : 'Download' }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Close marketplace-content-wrapper -->
+      <!-- Close marketplace-content-wrapper -->
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <template>
   <div class="editor-view">
+    <AppNav />
     <header class="editor-header">
       <h1>Package Editor</h1>
       <div class="header-actions">
@@ -337,6 +338,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePackageStore } from '../stores/packageStore';
 import { createEmptyNamespace } from '../models/package';
+import AppNav from '../components/AppNav.vue';
 import DatatypeEditor from '../components/DatatypeEditor.vue';
 import PromptSectionEditor from '../components/PromptSectionEditor.vue';
 import SeparatorSetEditor from '../components/SeparatorSetEditor.vue';

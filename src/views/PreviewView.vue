@@ -1,5 +1,6 @@
 <template>
   <div class="preview-view">
+    <AppNav />
     <header class="preview-header">
       <h1>Prompt Generator</h1>
       <div class="header-actions">
@@ -119,6 +120,7 @@ import { useRouter } from 'vue-router';
 import { usePackageStore } from '../stores/packageStore';
 import { platformService } from '../services/localStorage';
 import { RenderingEngineV2 } from '../services/rendering-v2';
+import AppNav from '../components/AppNav.vue';
 import type { RenderResult } from '../services/platform';
 import type { Package } from '../models/package';
 

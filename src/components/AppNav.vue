@@ -7,17 +7,21 @@
       </div>
 
       <div class="nav-links">
-        <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">
+        <router-link to="/" class="nav-link" :class="{ active: $route?.path === '/' }">
           <span class="nav-icon">🏠</span>
           <span class="nav-text">Home</span>
         </router-link>
 
-        <router-link to="/preview" class="nav-link" :class="{ active: $route.path === '/preview' }">
+        <router-link
+          to="/preview"
+          class="nav-link"
+          :class="{ active: $route?.path === '/preview' }"
+        >
           <span class="nav-icon">⚡</span>
           <span class="nav-text">Generate</span>
         </router-link>
 
-        <router-link to="/editor" class="nav-link" :class="{ active: $route.path === '/editor' }">
+        <router-link to="/editor" class="nav-link" :class="{ active: $route?.path === '/editor' }">
           <span class="nav-icon">✏️</span>
           <span class="nav-text">Editor</span>
         </router-link>
@@ -25,7 +29,7 @@
         <router-link
           to="/marketplace"
           class="nav-link"
-          :class="{ active: $route.path === '/marketplace' }"
+          :class="{ active: $route?.path === '/marketplace' }"
         >
           <span class="nav-icon">🏪</span>
           <span class="nav-text">Marketplace</span>
