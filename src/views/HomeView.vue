@@ -9,11 +9,11 @@
         deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art
         tools.
       </p>
-      <button class="btn-hero" @click="router.push('/preview')">⚡ Start Generating Prompts</button>
+      <button v-if="packages.length > 0" class="btn-hero" @click="router.push('/preview')">⚡ Start Generating Prompts</button>
     </div>
 
     <!-- Getting Started Section -->
-    <section class="getting-started">
+    <section v-if="packages.length === 0" class="getting-started">
       <h2>✨ Getting Started</h2>
       <p class="section-intro">New here? Try the sample package to see what this tool can do!</p>
 
