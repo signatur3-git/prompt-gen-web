@@ -52,8 +52,19 @@
 
         <!-- Error State -->
         <div v-else-if="loadError" class="error-section">
-          <p class="error-message">❌ {{ loadError }}</p>
-          <button @click="loadPackages" class="btn-retry">Retry</button>
+          <div class="error-icon">⚠️</div>
+          <h3>Cannot Connect to Marketplace</h3>
+          <p class="error-message">{{ loadError }}</p>
+          <div class="error-help">
+            <p><strong>To use the marketplace:</strong></p>
+            <ol>
+              <li>Open a terminal in the marketplace project directory</li>
+              <li>Run: <code>npm run dev</code></li>
+              <li>Wait for it to start on <code>http://localhost:5174</code></li>
+              <li>Click "Retry" below</li>
+            </ol>
+          </div>
+          <button @click="loadPackages" class="btn-retry">Retry Connection</button>
         </div>
 
         <!-- Packages List -->
@@ -152,7 +163,15 @@ async function loadPackages() {
     console.log('[Marketplace] Loaded', packages.value.length, 'packages');
   } catch (error) {
     console.error('[Marketplace] Failed to load packages:', error);
-    loadError.value = error instanceof Error ? error.message : 'Failed to load packages';
+
+    // Check if it's a connection error (marketplace not running)
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      loadError.value =
+        'Cannot connect to marketplace server. ' +
+        'Make sure the marketplace is running on http://localhost:5174';
+    } else {
+      loadError.value = error instanceof Error ? error.message : 'Failed to load packages';
+    }
   } finally {
     loading.value = false;
   }
@@ -327,6 +346,80 @@ async function downloadPackage(pkg: Package) {
 .error-section {
   text-align: center;
   padding: 3rem;
+}
+
+.error-section {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #dc2626;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-help {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.error-help p {
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+.error-help strong {
+  color: #1e293b;
+}
+
+.error-help ol {
+  margin: 1rem 0 0 1.5rem;
+  color: #475569;
+}
+
+.error-help li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.error-help code {
+  background: #e2e8f0;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.btn-retry {
+  padding: 0.75rem 1.5rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-retry:hover {
+  background: #5568d3;
 }
 
 .spinner {
