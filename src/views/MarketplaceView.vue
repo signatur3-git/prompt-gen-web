@@ -146,13 +146,6 @@ async function connect() {
   }
 }
 
-async function disconnect() {
-  if (confirm('Are you sure you want to disconnect from the marketplace?')) {
-    await oauthService.logout();
-    isAuthenticated.value = false;
-    packages.value = [];
-  }
-}
 
 async function loadPackages() {
   loading.value = true;
