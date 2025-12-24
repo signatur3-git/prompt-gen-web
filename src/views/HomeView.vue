@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <AppNav />
     <!-- Hero Section -->
     <div class="hero">
       <h1>Random Prompt Generator</h1>
@@ -35,7 +36,7 @@
     </section>
 
     <!-- Quick Actions Section -->
-    <section class="quick-actions">
+    <section v-if="packages.length > 0" class="quick-actions">
       <h2>🚀 Generate Prompts</h2>
       <p class="section-intro">Use your packages to create randomized prompts</p>
 
@@ -290,6 +291,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePackageStore } from '../stores/packageStore';
 import { platformService } from '../services/localStorage';
+import AppNav from '../components/AppNav.vue';
 
 const router = useRouter();
 const packageStore = usePackageStore();
@@ -651,9 +653,9 @@ function closeImportDialog() {
 
 <style scoped>
 .home {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Hero Section */
@@ -661,10 +663,10 @@ function closeImportDialog() {
   text-align: center;
   padding: 3rem 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  border-radius: 0;
   color: white;
-  margin-bottom: 4rem;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  margin-bottom: 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
 .hero h1 {
@@ -715,6 +717,14 @@ function closeImportDialog() {
 /* Sections */
 section {
   margin-bottom: 4rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem;
+}
+
+section:first-of-type {
+  padding-top: 3rem;
 }
 
 section h2 {

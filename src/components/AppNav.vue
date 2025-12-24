@@ -7,10 +7,6 @@
       </div>
 
       <div class="nav-links">
-        <router-link to="/" class="nav-link" :class="{ active: $route?.path === '/' }">
-          <span class="nav-icon">🏠</span>
-          <span class="nav-text">Home</span>
-        </router-link>
 
         <router-link
           to="/preview"
