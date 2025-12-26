@@ -7,7 +7,6 @@
       </div>
 
       <div class="nav-links">
-
         <router-link
           to="/preview"
           class="nav-link"
@@ -19,7 +18,16 @@
 
         <router-link to="/editor" class="nav-link" :class="{ active: $route?.path === '/editor' }">
           <span class="nav-icon">✏️</span>
-          <span class="nav-text">Editor</span>
+          <span class="nav-text">Edit</span>
+        </router-link>
+
+        <router-link
+          to="/library"
+          class="nav-link"
+          :class="{ active: $route?.path === '/library' }"
+        >
+          <span class="nav-icon">📚</span>
+          <span class="nav-text">Library</span>
         </router-link>
 
         <router-link
@@ -70,12 +78,48 @@ async function handleDisconnect() {
 
 <style scoped>
 .app-nav {
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  .app-nav {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-title {
+    color: #f1f5f9;
+  }
+
+  .nav-link {
+    color: #94a3b8;
+  }
+
+  .nav-link:hover {
+    background: #334155;
+    color: #f1f5f9;
+  }
+
+  .nav-link.active {
+    color: #818cf8;
+    background: #312e81;
+  }
+
+  .nav-status {
+    background: #14532d;
+    color: #86efac;
+  }
+
+  .nav-status:hover {
+    background: #166534;
+  }
 }
 
 .nav-container {

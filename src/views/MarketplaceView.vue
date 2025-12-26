@@ -83,13 +83,48 @@
             <div v-for="pkg in packages" :key="pkg.id" class="package-card">
               <div class="package-header">
                 <h3 class="package-name">{{ pkg.namespace }}/{{ pkg.name }}</h3>
-                <span class="package-version">v{{ pkg.version }}</span>
+                <span class="package-version" v-if="pkg.latest_version || pkg.version">
+                  v{{ pkg.latest_version || pkg.version }}
+                </span>
               </div>
               <p class="package-description">
                 {{ pkg.description || 'No description available' }}
               </p>
+              <!-- Entity badges (M12 spec) -->
+              <div v-if="pkg.content_counts" class="entity-badges">
+                <span
+                  v-if="pkg.content_counts.rulebooks > 0"
+                  class="entity-badge entity-badge-rb"
+                  title="Rulebooks"
+                  >RB:{{ pkg.content_counts.rulebooks }}</span
+                >
+                <span
+                  v-if="pkg.content_counts.rules > 0"
+                  class="entity-badge entity-badge-r"
+                  title="Rules"
+                  >R:{{ pkg.content_counts.rules }}</span
+                >
+                <span
+                  v-if="pkg.content_counts.prompt_sections > 0"
+                  class="entity-badge entity-badge-ps"
+                  title="Prompt Sections"
+                  >PS:{{ pkg.content_counts.prompt_sections }}</span
+                >
+                <span
+                  v-if="pkg.content_counts.datatypes > 0"
+                  class="entity-badge entity-badge-dt"
+                  title="Datatypes"
+                  >DT:{{ pkg.content_counts.datatypes }}</span
+                >
+              </div>
+              <!-- Debug: Show if content_counts is missing -->
+              <div v-else class="debug-notice">
+                ⚠️ API not returning content_counts (check console for details)
+              </div>
               <div class="package-footer">
-                <span class="package-author">by {{ pkg.author || 'Unknown' }}</span>
+                <span class="package-author"
+                  >by {{ pkg.author_persona?.name || pkg.author || 'Unknown' }}</span
+                >
                 <button
                   @click="downloadPackage(pkg)"
                   class="btn-download"
@@ -146,7 +181,6 @@ async function connect() {
   }
 }
 
-
 async function loadPackages() {
   loading.value = true;
   loadError.value = '';
@@ -154,6 +188,13 @@ async function loadPackages() {
     const result = await marketplaceClient.searchPackages(searchQuery.value);
     packages.value = result.packages || [];
     console.log('[Marketplace] Loaded', packages.value.length, 'packages');
+
+    // Debug: Log first package structure to see what API returns
+    const firstPkg = packages.value[0];
+    if (firstPkg) {
+      console.log('[Marketplace] First package structure:', JSON.stringify(firstPkg, null, 2));
+      console.log('[Marketplace] Has content_counts?', !!firstPkg.content_counts);
+    }
   } catch (error) {
     console.error('[Marketplace] Failed to load packages:', error);
 
@@ -205,7 +246,7 @@ async function downloadPackage(pkg: Package) {
 <style scoped>
 .marketplace-view {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--color-background);
 }
 
 .marketplace-content-wrapper {
@@ -225,34 +266,37 @@ async function downloadPackage(pkg: Package) {
 }
 
 .auth-notice {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 1.1rem;
 }
 
 .auth-notice.success {
-  color: #38a169;
+  color: var(--color-success);
   font-weight: 600;
 }
 
 /* Connection Panel */
 .connection-panel {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   padding: 3rem;
   color: white;
   text-align: center;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
 .panel-content h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  line-height: 1.3;
 }
 
 .panel-content p {
   font-size: 1.2rem;
   margin-bottom: 2rem;
   opacity: 0.9;
+  line-height: 1.5;
 }
 
 .features-list {
@@ -269,16 +313,17 @@ async function downloadPackage(pkg: Package) {
   font-size: 1.1rem;
   margin-bottom: 1rem;
   padding-left: 0.5rem;
+  line-height: 1.5;
 }
 
 .btn-connect {
-  background: white;
-  color: #667eea;
+  background: var(--color-surface);
+  color: var(--color-primary);
   border: none;
-  padding: 1rem 2rem;
+  padding: 1rem 2.5rem;
   font-size: 1.1rem;
   font-weight: 600;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -293,9 +338,23 @@ async function downloadPackage(pkg: Package) {
   cursor: not-allowed;
 }
 
+/* Marketplace Content Container */
+.marketplace-content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
 /* Search Section */
 .search-section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   margin-bottom: 2rem;
+  box-shadow: none;
 }
 
 .search-bar {
@@ -307,24 +366,25 @@ async function downloadPackage(pkg: Package) {
 
 .search-input {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.25rem;
   font-size: 1rem;
   border: 2px solid #e2e8f0;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   transition: border-color 0.2s;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .btn-search {
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.75rem;
   background: #667eea;
   color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -332,6 +392,8 @@ async function downloadPackage(pkg: Package) {
 
 .btn-search:hover {
   background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 /* Loading/Error States */
@@ -366,15 +428,17 @@ async function downloadPackage(pkg: Package) {
 .error-help {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   padding: 1.5rem;
   text-align: left;
   margin-bottom: 1.5rem;
+  overflow: hidden;
 }
 
 .error-help p {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   color: #475569;
+  line-height: 1.6;
 }
 
 .error-help strong {
@@ -383,18 +447,20 @@ async function downloadPackage(pkg: Package) {
 
 .error-help ol {
   margin: 1rem 0 0 1.5rem;
+  padding-left: 0.5rem;
   color: #475569;
 }
 
 .error-help li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   line-height: 1.6;
+  padding-left: 0.25rem;
 }
 
 .error-help code {
   background: #e2e8f0;
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
   color: #1e293b;
@@ -457,19 +523,19 @@ async function downloadPackage(pkg: Package) {
 }
 
 .package-count {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
 .empty-state {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .hint {
   font-size: 0.9rem;
-  color: #999;
+  color: var(--color-text-tertiary);
   margin-top: 0.5rem;
 }
 
@@ -480,22 +546,25 @@ async function downloadPackage(pkg: Package) {
 }
 
 .package-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
   padding: 1.5rem;
   transition: all 0.2s;
+  overflow: hidden;
 }
 
 .package-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
+  border-color: var(--color-border-hover);
 }
 
 .package-header {
   display: flex;
   justify-content: space-between;
   align-items: start;
+  gap: 1rem;
   margin-bottom: 0.75rem;
 }
 
@@ -504,20 +573,73 @@ async function downloadPackage(pkg: Package) {
   color: #2d3748;
   margin: 0;
   word-break: break-word;
+  flex: 1;
+  line-height: 1.4;
 }
 
 .package-version {
   background: #667eea;
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.375rem;
   font-size: 0.8rem;
   white-space: nowrap;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .package-description {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* Entity badges (M12 spec) */
+.entity-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.entity-badge {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.entity-badge-rb {
+  background: #667eea;
+  color: white;
+}
+
+.entity-badge-r {
+  background: #48bb78;
+  color: white;
+}
+
+.entity-badge-ps {
+  background: #ed8936;
+  color: white;
+}
+
+.entity-badge-dt {
+  background: #38b2ac;
+  color: white;
+}
+
+.debug-notice {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
   margin-bottom: 1rem;
   line-height: 1.5;
 }
@@ -526,20 +648,22 @@ async function downloadPackage(pkg: Package) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 0.5rem;
 }
 
 .package-author {
   color: #999;
   font-size: 0.85rem;
+  line-height: 1.5;
 }
 
 .btn-download {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.25rem;
   background: #48bb78;
   color: white;
   border: none;
-  border-radius: 0.25rem;
-  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -547,6 +671,8 @@ async function downloadPackage(pkg: Package) {
 
 .btn-download:hover:not(:disabled) {
   background: #38a169;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
 }
 
 .btn-download:disabled {

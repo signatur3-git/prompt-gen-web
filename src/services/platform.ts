@@ -46,6 +46,7 @@ export interface PackageInfo {
   name: string;
   version: string;
   description?: string;
+  source?: 'created' | 'imported' | 'marketplace';
 }
 
 /**

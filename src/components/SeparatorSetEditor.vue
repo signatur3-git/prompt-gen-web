@@ -496,7 +496,7 @@ function applyRename() {
 }
 </script>
 
-<style scoped>
+<style>
 .separatorset-editor {
   display: flex;
   flex-direction: column;
@@ -509,12 +509,12 @@ function applyRename() {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .editor-header h2 {
   margin: 0;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .separatorset-list {
@@ -528,21 +528,21 @@ function applyRename() {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .separatorset-item:hover {
-  background: #e9ecef;
-  border-color: #adb5bd;
+  background: var(--color-border);
+  border-color: var(--color-border-hover);
 }
 
 .separatorset-item.active {
-  background: #e3f2fd;
-  border-color: #42b983;
+  background: var(--color-primary-light);
+  border-color: var(--color-success);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.1);
 }
 
@@ -555,18 +555,18 @@ function applyRename() {
 
 .separatorset-name {
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .separatorset-meta {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--color-text-secondary);
   font-family: monospace;
 }
 
 .separatorset-details {
-  background: white;
-  border: 1px solid #dee2e6;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
@@ -576,7 +576,7 @@ function applyRename() {
 
 .separatorset-details h3 {
   margin: 0;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .form-group {
@@ -587,33 +587,28 @@ function applyRename() {
 
 .form-group label {
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-primary);
   font-size: 0.9rem;
 }
 
+/* Keep only layout; global form-control baseline handles colors */
 .form-group input {
   padding: 0.5rem;
-  border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 1rem;
   font-family: monospace;
 }
 
-.separator-fields {
-  display: grid;
-  gap: 1rem;
-}
-
 .preview-section {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 1rem;
 }
 
 .preview-section h4 {
   margin: 0 0 1rem 0;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .preview-examples {
@@ -630,56 +625,56 @@ function applyRename() {
 
 .preview-label {
   font-weight: 600;
-  color: #666;
+  color: var(--color-text-secondary);
   min-width: 5rem;
 }
 
 .preview-result {
   font-family: monospace;
-  color: #333;
-  background: white;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
   padding: 0.25rem 0.5rem;
   border-radius: 3px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--color-border);
 }
 
 .hint {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
 .required {
-  color: #dc3545;
+  color: var(--color-danger);
 }
 
 .error {
-  color: #dc3545;
+  color: var(--color-danger);
   margin: 0;
   font-size: 0.875rem;
 }
 
 .error-message {
   padding: 0.75rem;
-  background: #f8d7da;
-  border: 1px solid #f5c2c7;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-danger);
   border-radius: 4px;
-  color: #842029;
+  color: var(--color-danger);
 }
 
 .success-message {
   padding: 0.75rem;
-  background: #d1e7dd;
-  border: 1px solid #badbcc;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-success);
   border-radius: 4px;
-  color: #0f5132;
+  color: var(--color-success);
 }
 
 .editor-actions {
   display: flex;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid var(--color-border);
 }
 
 .btn-primary,
@@ -695,42 +690,103 @@ function applyRename() {
 }
 
 .btn-primary {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #3aa876;
+  background: var(--color-success-hover);
 }
 
 .btn-primary:disabled {
-  background: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .btn-secondary {
-  background: #6c757d;
-  color: white;
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-  background: #5c636a;
+  background: var(--color-border);
 }
 
 .btn-delete {
-  background: #dc3545;
+  background: var(--color-danger);
   color: white;
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
 }
 
 .btn-delete:hover {
-  background: #bb2d3b;
+  background: var(--color-danger-hover);
 }
 
 .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: var(--color-text-secondary);
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: 8px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-subtitle {
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.modal-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.btn-cancel {
+  padding: 0.5rem 1rem;
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: var(--color-border);
 }
 </style>

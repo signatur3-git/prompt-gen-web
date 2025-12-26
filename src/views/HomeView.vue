@@ -10,7 +10,9 @@
         deterministic, seeded prompts perfect for Stable Diffusion, Midjourney, and other AI art
         tools.
       </p>
-      <button v-if="packages.length > 0" class="btn-hero" @click="router.push('/preview')">⚡ Start Generating Prompts</button>
+      <button v-if="packages.length > 0" class="btn-hero" @click="router.push('/preview')">
+        ⚡ Start Generating Prompts
+      </button>
     </div>
 
     <!-- Getting Started Section -->
@@ -66,29 +68,16 @@
     <!-- Package Management Section -->
     <section class="package-management">
       <h2>📦 Package Management</h2>
-      <p class="section-intro">Create, import, and edit your prompt generation packages</p>
+      <p class="section-intro">All your package management tools in one place</p>
 
-      <div class="actions-grid">
-        <div class="action-card">
-          <div class="card-icon">➕</div>
-          <h3>Create New Package</h3>
-          <p>Start building a package from scratch</p>
-          <button class="btn-secondary" @click="createNew">Create Package</button>
-        </div>
-
-        <div class="action-card">
-          <div class="card-icon">📂</div>
-          <h3>Load Existing Package</h3>
-          <p>Edit packages from your storage</p>
-          <button class="btn-secondary" @click="openLoadDialog">Load Package</button>
-        </div>
-
-        <div class="action-card">
-          <div class="card-icon">📥</div>
-          <h3>Import Package(s)</h3>
-          <p>Import YAML/JSON files with dependencies</p>
-          <button class="btn-secondary" @click="showImportDialog = true">Import Files</button>
-        </div>
+      <div class="action-card">
+        <div class="card-icon">📚</div>
+        <h3>Library</h3>
+        <p>
+          View, organize, and manage all your packages. Create new packages, import from files, or
+          browse marketplace packages.
+        </p>
+        <button class="btn-secondary" @click="router.push('/library')">Go to Library</button>
       </div>
     </section>
 
@@ -393,18 +382,6 @@ async function loadPackageMetadata() {
   packages.value = allPackages;
 }
 
-function createNew() {
-  packageStore.createNewPackage();
-  router.push('/editor');
-}
-
-async function openLoadDialog() {
-  // Refresh package list when opening dialog
-  await packageStore.loadPackageList();
-  await loadPackageMetadata();
-  showLoadDialog.value = true;
-}
-
 async function loadPackage(id: string) {
   try {
     await packageStore.loadPackage(id);
@@ -693,8 +670,8 @@ function closeImportDialog() {
 }
 
 .btn-hero {
-  background: white;
-  color: #667eea;
+  background: var(--color-surface);
+  color: var(--color-primary);
   padding: 1rem 2.5rem;
   font-size: 1.2rem;
   font-weight: 700;
@@ -711,7 +688,7 @@ function closeImportDialog() {
 .btn-hero:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface-hover);
 }
 
 /* Sections */
@@ -823,8 +800,8 @@ section h2 {
   cursor: pointer;
   transition: all 0.3s;
   font-weight: 600;
-  background: white;
-  color: #667eea;
+  background: var(--color-surface);
+  color: var(--color-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -841,11 +818,11 @@ section h2 {
 }
 
 .action-card {
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--color-border);
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
-  background: white;
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -952,7 +929,7 @@ section h2 {
 }
 
 .modal-content {
-  background: white;
+  background: var(--color-surface);
   padding: 2rem;
   border-radius: 8px;
   max-width: 700px;
@@ -1062,10 +1039,10 @@ section h2 {
 
 .delete-id code {
   font-family: 'Courier New', monospace;
-  background: white;
+  background: var(--color-surface-hover);
   padding: 0.25rem 0.5rem;
   border-radius: 3px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--color-border);
 }
 
 .delete-note {
@@ -1330,16 +1307,16 @@ section h2 {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   margin-bottom: 0.5rem;
   transition: all 0.2s;
 }
 
 .file-item:hover {
-  background: #f8f9fa;
-  border-color: #42b983;
+  background: var(--color-surface-hover);
+  border-color: var(--color-success);
 }
 
 .file-name {
@@ -1507,3 +1484,5 @@ section h2 {
   }
 }
 </style>
+
+

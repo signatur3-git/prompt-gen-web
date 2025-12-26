@@ -307,16 +307,18 @@ onMounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--color-background);
 }
 
 .preview-header {
-  background: #2c3e50;
-  color: white;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .preview-header h1 {
@@ -337,8 +339,8 @@ onMounted(() => {
 
 .preview-sidebar {
   width: 400px;
-  background: #f5f5f5;
-  border-right: 1px solid #ddd;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   padding: 1rem;
   overflow-y: auto;
   display: flex;
@@ -354,12 +356,13 @@ onMounted(() => {
 .controls h2 {
   margin: 0;
   font-size: 1.2rem;
+  color: var(--color-text-primary);
 }
 
 .controls h3 {
   margin: 1rem 0 0.5rem 0;
   font-size: 1rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .form-group {
@@ -371,15 +374,18 @@ onMounted(() => {
 .form-group label {
   font-weight: bold;
   font-size: 0.9rem;
+  color: var(--color-text-primary);
 }
 
 .form-group input,
 .form-group select {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-family: inherit;
   font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
 }
 
 .search-input {
@@ -397,22 +403,23 @@ onMounted(() => {
 
 .btn-small {
   padding: 0.5rem 1rem;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
   white-space: nowrap;
+  color: var(--color-text-primary);
 }
 
 .btn-small:hover {
-  background: #e0e0e0;
+  background: var(--color-border);
 }
 
 .empty-state-small {
   padding: 2rem 1rem;
   text-align: center;
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -430,8 +437,8 @@ onMounted(() => {
 }
 
 .rulebook-item {
-  background: white;
-  border: 2px solid #ddd;
+  background: var(--color-surface-hover);
+  border: 2px solid var(--color-border);
   border-radius: 6px;
   padding: 0.75rem;
   cursor: pointer;
@@ -439,20 +446,20 @@ onMounted(() => {
 }
 
 .rulebook-item:hover {
-  border-color: #42b983;
-  background: #f8f9fa;
+  border-color: var(--color-success);
+  background: var(--color-border);
 }
 
 .rulebook-item.active {
-  border-color: #42b983;
-  background: #e8f5f0;
+  border-color: var(--color-success);
+  background: var(--color-primary-light);
 }
 
 .rulebook-name {
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: var(--color-text-primary);
 }
 
 .rulebook-meta {
@@ -483,30 +490,32 @@ onMounted(() => {
 
 .entry-points-info {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin-top: 0.25rem;
 }
 
 .generation-settings {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 2px solid #ddd;
+  border-top: 2px solid var(--color-border);
 }
 
 .preview-main {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  background: var(--color-background);
 }
 
 .preview-main h2 {
   margin: 0 0 1.5rem 0;
+  color: var(--color-text-primary);
 }
 
 .empty-results {
   text-align: center;
   padding: 4rem 2rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .results {
@@ -516,11 +525,11 @@ onMounted(() => {
 }
 
 .result-card {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .result-header {
@@ -529,40 +538,41 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .result-number {
   font-weight: bold;
-  color: #42b983;
+  color: var(--color-success);
   font-size: 1.1rem;
 }
 
 .result-seed {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
 .btn-copy {
   padding: 0.4rem 0.75rem;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
+  color: var(--color-text-primary);
   transition: all 0.2s;
 }
 
 .btn-copy:hover {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
-  border-color: #42b983;
+  border-color: var(--color-success);
 }
 
 .result-text {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #2c3e50;
+  color: var(--color-text-primary);
   white-space: pre-wrap;
 }
 
@@ -571,7 +581,7 @@ onMounted(() => {
   gap: 1rem;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 2px solid #eee;
+  border-top: 2px solid var(--color-border);
 }
 
 .btn-primary,
@@ -585,36 +595,170 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
   width: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #359268;
+  background: var(--color-success-hover);
 }
 
 .btn-primary:disabled {
-  background: #ccc;
+  background: var(--color-text-tertiary);
   cursor: not-allowed;
 }
 
 .btn-secondary {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
   flex: 1;
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--color-border);
 }
 
 .error {
-  color: #e74c3c;
+  color: var(--color-danger);
   margin-top: 1rem;
   padding: 1rem;
-  background: #fef2f2;
+  background: var(--color-surface);
   border-radius: 4px;
-  border: 1px solid #fee;
+  background: var(--color-border);
+}
+
+/* Dark Theme - Explicit overrides for scoped styles */
+@media (prefers-color-scheme: dark) {
+  .preview-view {
+    background: #0f172a;
+  }
+
+  .preview-header {
+    background: #1e293b;
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+  }
+
+  .preview-sidebar {
+    background: #1e293b;
+    border-right-color: #334155;
+  }
+
+  .controls h2,
+  .controls h3 {
+    color: #f1f5f9;
+  }
+
+  .form-group label {
+    color: #cbd5e1;
+  }
+
+  .search-input,
+  .seed-input,
+  .form-group input,
+  .form-group select {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .btn-small {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .btn-small:hover {
+    background: #475569;
+  }
+
+  .empty-state-small {
+    color: #cbd5e1;
+  }
+
+  .rulebook-item {
+    background: #334155;
+    border-color: #475569;
+  }
+
+  .rulebook-item:hover {
+    background: #475569;
+  }
+
+  .rulebook-item.active {
+    background: #312e81;
+    border-color: #6366f1;
+  }
+
+  .rulebook-name {
+    color: #f1f5f9;
+  }
+
+  .entry-points-info {
+    color: #cbd5e1;
+  }
+
+  .generation-settings {
+    border-top-color: #334155;
+  }
+
+  .preview-main {
+    background: #0f172a;
+    color: #f1f5f9;
+  }
+
+  .preview-main h2 {
+    color: #f1f5f9;
+  }
+
+  .empty-results {
+    color: #cbd5e1;
+  }
+
+  .result-card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .result-header {
+    border-bottom-color: #334155;
+  }
+
+  .result-seed {
+    color: #cbd5e1;
+  }
+
+  .btn-copy {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .btn-copy:hover {
+    background: #10b981;
+  }
+
+  .result-text {
+    color: #f1f5f9;
+  }
+
+  .results-actions {
+    border-top-color: #334155;
+  }
+
+  .btn-secondary {
+    background: #334155;
+    color: #f1f5f9;
+  }
+
+  .btn-secondary:hover {
+    background: #475569;
+  }
+
+  .error {
+    background: #1e293b;
+    border-color: #dc2626;
+  }
 }
 </style>

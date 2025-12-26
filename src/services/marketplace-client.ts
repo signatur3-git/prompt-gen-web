@@ -4,15 +4,34 @@
 import { oauthService } from './oauth.service';
 import { marketplaceConfig } from '../config/marketplace.config';
 
+export interface PublicPersonaInfo {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  bio: string | null;
+  website: string | null;
+}
+
 export interface Package {
   id: string;
   namespace: string;
   name: string;
   version: string;
   description?: string;
-  author?: string;
+  author?: string; // Kept for backward compatibility, use author_persona.name
+  author_persona_id?: string;
+  author_persona?: PublicPersonaInfo; // NEW: Enriched author info from API
+  version_count?: number; // NEW: Total number of versions
+  latest_version?: string; // NEW: Latest version string
   created_at: string;
   updated_at: string;
+  // Content counts for package cards display (M12 spec) - from marketplace API
+  content_counts?: {
+    rulebooks: number;
+    rules: number;
+    prompt_sections: number;
+    datatypes: number;
+  };
 }
 
 export interface PackageVersion {

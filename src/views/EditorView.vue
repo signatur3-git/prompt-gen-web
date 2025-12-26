@@ -724,20 +724,22 @@ function updateAuthors(event: Event) {
 }
 </script>
 
-<style scoped>
+<style>
 .editor-view {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--color-background);
 }
 
 .editor-header {
-  background: #2c3e50;
-  color: white;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .editor-header h1 {
@@ -758,8 +760,8 @@ function updateAuthors(event: Event) {
 
 .sidebar {
   width: 300px;
-  background: #f5f5f5;
-  border-right: 1px solid #ddd;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   padding: 1rem;
   overflow-y: auto;
 }
@@ -767,21 +769,24 @@ function updateAuthors(event: Event) {
 .sidebar h2 {
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
+  color: var(--color-text-primary);
 }
 
 .package-info {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: white;
+  background: var(--color-surface-hover);
   border-radius: 4px;
+  border: 1px solid var(--color-border);
 }
 
 .package-info h3 {
   margin: 0 0 0.5rem 0;
+  color: var(--color-text-primary);
 }
 
 .version {
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -792,7 +797,7 @@ function updateAuthors(event: Event) {
 .section h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .namespace-list {
@@ -808,22 +813,23 @@ function updateAuthors(event: Event) {
   gap: 0.25rem;
   text-align: left;
   padding: 0.75rem;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  color: var(--color-text-primary);
 }
 
 .namespace-button:hover {
-  background: #f8f9fa;
-  border-color: #42b983;
+  background: var(--color-border);
+  border-color: var(--color-success);
 }
 
 .namespace-button.active {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
-  border-color: #42b983;
+  border-color: var(--color-success);
 }
 
 .namespace-name {
@@ -840,12 +846,12 @@ function updateAuthors(event: Event) {
 .count-badge {
   display: inline-block;
   padding: 0.15rem 0.4rem;
-  background: rgba(66, 185, 131, 0.1);
-  border: 1px solid rgba(66, 185, 131, 0.3);
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
   border-radius: 3px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--color-text-secondary);
 }
 
 .namespace-button.active .count-badge {
@@ -858,30 +864,31 @@ function updateAuthors(event: Event) {
   text-align: left;
   padding: 0.5rem;
   margin-bottom: 0.25rem;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
+  color: var(--color-text-primary);
 }
 
 .section button:not(.namespace-button):hover {
-  background: #e8e8e8;
+  background: var(--color-border);
 }
 
 .section button:not(.namespace-button).active {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
-  border-color: #42b983;
+  border-color: var(--color-success);
 }
 
 .btn-add {
   margin-top: 0.5rem;
-  color: #42b983;
+  color: var(--color-success);
   font-weight: bold;
 }
 
 .empty-hint {
-  color: #999;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   padding: 0.5rem;
 }
@@ -890,6 +897,11 @@ function updateAuthors(event: Event) {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  background: var(--color-background);
+}
+
+.editor-main h2 {
+  color: var(--color-text-primary);
 }
 
 .form-group {
@@ -900,19 +912,25 @@ function updateAuthors(event: Event) {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  color: var(--color-text-primary);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-family: inherit;
+  /* Colors/borders come from global form-control baseline via CSS vars */
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  /* Placeholder color comes from global baseline */
 }
 
 .hint {
-  color: #666;
+  color: var(--color-text-secondary);
   font-style: italic;
   margin-bottom: 1rem;
 }
@@ -925,8 +943,8 @@ function updateAuthors(event: Event) {
 }
 
 .stat-card {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1rem;
   text-align: center;
@@ -935,12 +953,12 @@ function updateAuthors(event: Event) {
 .stat-card h3 {
   margin: 0;
   font-size: 2rem;
-  color: #42b983;
+  color: var(--color-success);
 }
 
 .stat-card p {
   margin: 0.5rem 0 0 0;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .welcome {
@@ -950,10 +968,11 @@ function updateAuthors(event: Event) {
 
 .welcome h2 {
   margin-bottom: 1rem;
+  color: var(--color-text-primary);
 }
 
 .welcome p {
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .entity-tabs {
@@ -961,49 +980,50 @@ function updateAuthors(event: Event) {
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--color-border);
   overflow-x: auto;
 }
 
 .entity-tabs button {
   padding: 0.75rem 1.5rem;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
   border-radius: 4px 4px 0 0;
   cursor: pointer;
   font-weight: 500;
-  color: #666;
+  color: var(--color-text-secondary);
   white-space: nowrap;
   transition: all 0.2s;
 }
 
 .entity-tabs button:hover {
-  background: #f8f9fa;
-  color: #2c3e50;
+  background: var(--color-border);
+  color: var(--color-text-primary);
 }
 
 .entity-tabs button.active {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
-  border-color: #42b983;
+  border-color: var(--color-success);
 }
 
 .entity-editor {
-  background: white;
+  background: var(--color-surface);
   border-radius: 4px;
-  padding: 1rem;
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
   min-height: 400px;
 }
 
 .coming-soon {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .coming-soon h3 {
   margin-bottom: 1rem;
-  color: #2c3e50;
+  color: var(--color-text-primary);
 }
 
 .coming-soon p {
@@ -1013,6 +1033,7 @@ function updateAuthors(event: Event) {
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
+  color: var(--color-text-secondary);
 }
 
 .btn-primary,
@@ -1026,16 +1047,16 @@ function updateAuthors(event: Event) {
 }
 
 .btn-primary {
-  background: #42b983;
+  background: var(--color-success);
   color: white;
 }
 
 .btn-primary:hover {
-  background: #359268;
+  background: var(--color-success-hover);
 }
 
 .btn-primary:disabled {
-  background: #9ec9b3;
+  background: var(--color-text-tertiary);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -1050,13 +1071,13 @@ function updateAuthors(event: Event) {
 .save-message.success {
   background: #d4edda;
   color: #155724;
-  border-bottom: 2px solid #28a745;
+  border-bottom: 2px solid var(--color-success);
 }
 
 .save-message.error {
   background: #f8d7da;
   color: #721c24;
-  border-bottom: 2px solid #dc3545;
+  border-bottom: 2px solid var(--color-danger);
 }
 
 @keyframes slideDown {
@@ -1071,17 +1092,17 @@ function updateAuthors(event: Event) {
 }
 
 .btn-secondary {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--color-border);
 }
 
 .btn-cancel {
-  background: #ddd;
-  color: #333;
+  background: var(--color-border);
+  color: var(--color-text-primary);
 }
 
 .modal {
@@ -1098,13 +1119,14 @@ function updateAuthors(event: Event) {
 }
 
 .modal-content {
-  background: white;
+  background: var(--color-surface);
   padding: 2rem;
   border-radius: 8px;
   max-width: 800px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  color: var(--color-text-primary);
 }
 
 .modal-overlay {
@@ -1120,7 +1142,7 @@ function updateAuthors(event: Event) {
 
 .modal-overlay .modal {
   position: relative;
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   max-width: 600px;
@@ -1129,33 +1151,30 @@ function updateAuthors(event: Event) {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  color: var(--color-text-primary);
 }
 
 .modal-header {
   padding: 1rem 1rem 0.5rem 1rem;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.modal-header h3 {
-  margin: 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-body {
   padding: 1rem;
   overflow-y: auto;
   flex: 1;
-  background: white;
+  background: var(--color-surface);
 }
 
 .modal-subtitle {
   margin-top: 0;
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
 .modal-footer {
   padding: 1rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -1163,7 +1182,7 @@ function updateAuthors(event: Event) {
 
 .hint {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0.25rem 0 0 0;
 }
 
@@ -1181,9 +1200,9 @@ function updateAuthors(event: Event) {
   display: flex;
   justify-content: flex-end;
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-border);
   margin-bottom: 1rem;
-  background: #f8f9fa;
+  background: var(--color-surface-hover);
 }
 
 .namespace-actions {
@@ -1202,7 +1221,7 @@ function updateAuthors(event: Event) {
     width: 100%;
     max-width: 100%;
     border-right: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .entity-tabs {
@@ -1289,3 +1308,4 @@ function updateAuthors(event: Event) {
   }
 }
 </style>
+
