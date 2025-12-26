@@ -88,7 +88,7 @@ function goHome() {
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  background: white;
+  background: var(--color-surface);
   border-radius: 1rem;
   padding: 3rem;
   max-width: 500px;

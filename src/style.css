@@ -3,9 +3,42 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light;
-  color: #2c3e50;
-  background-color: #f5f7fa;
+  color-scheme: light dark;
+
+  /* Light theme variables (default) */
+  --color-background: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8f9fa;
+  --color-text-primary: #2c3e50;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+
+  --color-primary: #667eea;
+  --color-primary-hover: #5568d3;
+  --color-primary-light: #eef2ff;
+
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-warning: #fbbf24;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+
+  /* Form controls - use direct values */
+  --control-bg: #ffffff;
+  --control-text: #2c3e50;
+  --control-border: #e2e8f0;
+  --control-border-focus: #667eea;
+  --control-placeholder: #94a3b8;
+  --control-focus-ring: rgba(102, 126, 234, 0.25);
+
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,13 +46,100 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+  Theme strategy:
+  - Default theme comes from OS (`prefers-color-scheme`).
+  - You can force a theme by setting `document.documentElement.dataset.theme = 'dark' | 'light'`.
+  - Form controls get a global baseline so scoped SFCs don't need to restyle them.
+*/
+
+/* Manual override hooks */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-background: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8f9fa;
+  --color-text-primary: #2c3e50;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+
+  --color-primary: #667eea;
+  --color-primary-hover: #5568d3;
+  --color-primary-light: #eef2ff;
+
+  --control-bg: #ffffff;
+  --control-text: #2c3e50;
+  --control-border: #e2e8f0;
+  --control-border-focus: #667eea;
+  --control-placeholder: #94a3b8;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-hover: #334155;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
+  --color-border: #334155;
+  --color-border-hover: #475569;
+
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-light: #312e81;
+
+  --control-bg: #1e293b;
+  --control-text: #f1f5f9;
+  --control-border: #475569;
+  --control-border-focus: #6366f1;
+  --control-placeholder: #94a3b8;
+}
+
+/* Strong form-control baseline.
+   We intentionally bump specificity to beat most component rules.
+   Component CSS should not set input background/text colors; use variables instead. */
+:root input,
+:root textarea,
+:root select {
+  background-color: var(--control-bg) !important;
+  color: var(--control-text) !important;
+  border-color: var(--control-border) !important;
+}
+
+:root input::placeholder,
+:root textarea::placeholder {
+  color: var(--control-placeholder) !important;
+}
+
+/* Autofill (Chrome/Edge) can force white/yellow backgrounds unless overridden */
+:root input:-webkit-autofill,
+:root textarea:-webkit-autofill,
+:root select:-webkit-autofill {
+  -webkit-text-fill-color: var(--control-text) !important;
+  box-shadow: 0 0 0px 1000px var(--control-bg) inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Optional debug mode:
+   set `window.__THEME_DEBUG__ = true` in devtools and reload.
+   This adds outlines so you can see if an input is using the intended variables.
+*/
+html[data-theme-debug="true"] input,
+html[data-theme-debug="true"] textarea,
+html[data-theme-debug="true"] select {
+  outline: 2px dashed #f59e0b !important;
+}
+
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--color-primary);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--color-primary-hover);
 }
 
 body {
@@ -42,11 +162,13 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s;
 }
 button:hover {
-  opacity: 0.9;
+  background-color: var(--color-surface-hover);
 }
 button:focus,
 button:focus-visible {
@@ -64,10 +186,92 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #f5f7fa;
+    color-scheme: light;
+    --color-background: #f5f7fa;
+    --color-surface: #ffffff;
+    --color-surface-hover: #f8f9fa;
+    --color-text-primary: #2c3e50;
+    --color-text-secondary: #64748b;
+    --color-text-tertiary: #94a3b8;
+    --color-border: #e2e8f0;
+    --color-border-hover: #cbd5e1;
+
+    --color-primary: #667eea;
+    --color-primary-hover: #5568d3;
+    --color-primary-light: #eef2ff;
+
+    --control-bg: #ffffff;
+    --control-text: #2c3e50;
+    --control-border: #e2e8f0;
+    --control-border-focus: #667eea;
+    --control-placeholder: #94a3b8;
+
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
   }
-  a:hover {
-    color: #747bff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-background: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-hover: #334155;
+    --color-text-primary: #f1f5f9;
+    --color-text-secondary: #cbd5e1;
+    --color-text-tertiary: #94a3b8;
+    --color-border: #334155;
+    --color-border-hover: #475569;
+
+    --color-primary: #6366f1;
+    --color-primary-hover: #4f46e5;
+    --color-primary-light: #312e81;
+
+    --control-bg: #1e293b;
+    --control-text: #f1f5f9;
+    --control-border: #475569;
+    --control-border-focus: #6366f1;
+    --control-placeholder: #94a3b8;
+
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
   }
+}
+
+/* Global form-control baseline.
+   This is intentionally global (not scoped) so all SFCs inherit it.
+   Individual components should only add layout (padding/width), not colors. */
+input,
+textarea,
+select {
+  background-color: var(--control-bg);
+  color: var(--control-text);
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--control-placeholder);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--control-border-focus);
+  box-shadow: 0 0 0 3px var(--control-focus-ring);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+input[readonly],
+textarea[readonly] {
+  opacity: 0.9;
 }

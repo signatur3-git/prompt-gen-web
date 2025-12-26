@@ -18,8 +18,8 @@ body {
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  background: #f8f9fa;
+  color: var(--color-text-primary);
+  background: var(--color-background);
 }
 
 #app {

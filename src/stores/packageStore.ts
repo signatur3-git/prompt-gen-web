@@ -7,13 +7,20 @@ import type { Package } from '../models/package';
 import { createEmptyPackage } from '../models/package';
 import { platformService } from '../services/localStorage';
 import { fixInvalidRulebookEntryPoints } from '../utils/rulebookFixer';
+import { calculateContentCounts, type ContentCounts } from '../utils/packageUtils';
 
 export const usePackageStore = defineStore('package', () => {
   // State
   const currentPackage = ref<Package | null>(null);
-  const packages = ref<Array<{ id: string; name: string; version: string; description?: string }>>(
-    []
-  );
+  const packages = ref<
+    Array<{
+      id: string;
+      name: string;
+      version: string;
+      description?: string;
+      content_counts?: ContentCounts;
+    }>
+  >([]);
   const loadedPackages = ref<Package[]>([]); // All loaded packages (for dependency resolution)
   const isLoading = ref(false);
   const error = ref<string | null>(null);
@@ -35,7 +42,26 @@ export const usePackageStore = defineStore('package', () => {
     try {
       isLoading.value = true;
       error.value = null;
-      packages.value = await platformService.listPackages();
+      const basicList = await platformService.listPackages();
+
+      // Load full package data to calculate content_counts
+      const enrichedList = await Promise.all(
+        basicList.map(async item => {
+          try {
+            const fullPackage = await platformService.loadPackage(item.id);
+            const content_counts = calculateContentCounts(fullPackage);
+            return {
+              ...item,
+              content_counts,
+            };
+          } catch (err) {
+            console.warn(`Failed to load package ${item.id} for content counts:`, err);
+            return item; // Return basic item without content_counts if loading fails
+          }
+        })
+      );
+
+      packages.value = enrichedList;
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to load packages';
       throw e;
@@ -111,8 +137,40 @@ export const usePackageStore = defineStore('package', () => {
     currentPackage.value = createEmptyPackage();
   }
 
+  // Alias for compatibility with LibraryView
+  function createNew() {
+    createNewPackage();
+  }
+
   function clearPackage() {
     currentPackage.value = null;
+  }
+
+  async function loadPackageData(id: string): Promise<Package> {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      return await platformService.loadPackage(id);
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : `Failed to load package: ${id}`;
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function importPackage(pkg: Package) {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      await platformService.savePackage(pkg);
+      await loadPackageList();
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Failed to import package';
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   async function importPackageFromString(content: string, format: 'yaml' | 'json') {
@@ -163,10 +221,13 @@ export const usePackageStore = defineStore('package', () => {
     // Actions
     loadPackageList,
     loadPackage,
+    loadPackageData,
     savePackage,
     deletePackage,
     createNewPackage,
+    createNew,
     clearPackage,
+    importPackage,
     importPackageFromString,
     exportPackageToString,
   };

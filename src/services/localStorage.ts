@@ -70,6 +70,7 @@ export class LocalStoragePlatformService implements IPlatformService {
       name: pkg.metadata.name,
       version: pkg.version,
       description: pkg.metadata.description,
+      source: (pkg as any).source || 'created', // Default to 'created' if not set
     }));
   }
 
