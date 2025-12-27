@@ -128,7 +128,7 @@ function goHome() {
 }
 
 .loading-state p {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 1rem;
 }
 
@@ -155,7 +155,7 @@ function goHome() {
 }
 
 .error-description {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin-bottom: 2rem;
 }
@@ -177,12 +177,12 @@ function goHome() {
 }
 
 .success-state p {
-  color: #666;
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .redirect-message {
-  color: #999;
+  color: var(--color-text-tertiary);
   font-size: 0.9rem;
   font-style: italic;
 }

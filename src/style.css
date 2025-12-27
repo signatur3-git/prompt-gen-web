@@ -54,7 +54,7 @@
 */
 
 /* Manual override hooks */
-:root[data-theme="light"] {
+:root[data-theme='light'] {
   color-scheme: light;
   --color-background: #f5f7fa;
   --color-surface: #ffffff;
@@ -76,7 +76,7 @@
   --control-placeholder: #94a3b8;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   color-scheme: dark;
   --color-background: #0f172a;
   --color-surface: #1e293b;
@@ -127,9 +127,9 @@
    set `window.__THEME_DEBUG__ = true` in devtools and reload.
    This adds outlines so you can see if an input is using the intended variables.
 */
-html[data-theme-debug="true"] input,
-html[data-theme-debug="true"] textarea,
-html[data-theme-debug="true"] select {
+html[data-theme-debug='true'] input,
+html[data-theme-debug='true'] textarea,
+html[data-theme-debug='true'] select {
   outline: 2px dashed #f59e0b !important;
 }
 

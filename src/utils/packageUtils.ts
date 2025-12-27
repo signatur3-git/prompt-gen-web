@@ -34,4 +34,3 @@ export function calculateContentCounts(pkg: Package): ContentCounts {
     datatypes,
   };
 }
-

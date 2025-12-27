@@ -707,14 +707,14 @@ section:first-of-type {
 section h2 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .section-intro {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 1.1rem;
   margin-bottom: 2rem;
 }
@@ -760,12 +760,12 @@ section h2 {
 }
 
 .action-card-primary h3 {
-  color: #2c3e50;
+  color: var(--color-text-primary);
   font-size: 1.6rem;
 }
 
 .action-card-primary p {
-  color: #555;
+  color: var(--color-text-secondary);
   font-size: 1.05rem;
 }
 
@@ -838,11 +838,11 @@ section h2 {
 .action-card h3 {
   font-size: 1.4rem;
   margin-bottom: 0.75rem;
-  color: #2c3e50;
+  color: var(--color-text-primary);
 }
 
 .action-card p {
-  color: #666;
+  color: var(--color-text-secondary);
   line-height: 1.5;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
@@ -1057,7 +1057,7 @@ section h2 {
 }
 
 .package-id {
-  color: #999;
+  color: var(--color-text-tertiary);
   font-size: 0.85rem;
   font-family: 'Courier New', monospace;
   margin: 0.25rem 0 0 0;
@@ -1114,24 +1114,24 @@ section h2 {
 }
 
 .package-version {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin: 0;
 }
 
 .package-description {
-  color: #888;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin: 0.5rem 0 0 0;
 }
 
 .package-deps {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin: 0.5rem 0 0 0;
   font-style: italic;
   padding-left: 1rem;
-  border-left: 2px solid #ddd;
+  border-left: 2px solid var(--color-border);
 }
 
 .package-deps-present {
@@ -1166,7 +1166,7 @@ section h2 {
 .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .form-group {
@@ -1227,7 +1227,7 @@ section h2 {
   line-height: 1.6;
   margin: 0;
   white-space: pre-wrap;
-  color: #2c3e50;
+  color: var(--color-text-primary);
 }
 
 .error-result .result-message {
@@ -1297,7 +1297,7 @@ section h2 {
 .file-list h4 {
   margin: 0 0 0.75rem 0;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -1323,12 +1323,12 @@ section h2 {
   flex: 1;
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
-  color: #2c3e50;
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
 .file-size {
-  color: #999;
+  color: var(--color-text-tertiary);
   font-size: 0.85rem;
 }
 
@@ -1351,7 +1351,7 @@ section h2 {
 
 .hint {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin-top: 0.5rem;
   font-style: italic;
   line-height: 1.4;
@@ -1363,7 +1363,7 @@ section h2 {
   background: #e8f4fd;
   border-left: 4px solid #3498db;
   border-radius: 4px;
-  color: #2c3e50;
+  color: var(--color-text-primary);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -1484,5 +1484,3 @@ section h2 {
   }
 }
 </style>
-
-

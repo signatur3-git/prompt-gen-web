@@ -4,39 +4,54 @@
     <header class="editor-header">
       <h1>Package Editor</h1>
       <div class="header-actions">
-        <button
-          class="btn-primary"
-          :disabled="isSaving"
-          aria-label="Save package (Ctrl+S)"
-          title="Save package (Ctrl+S)"
-          @click="savePackage"
-        >
-          {{ isSaving ? 'Saving...' : 'Save' }}
-        </button>
-        <button
-          class="btn-secondary"
-          aria-label="Export package"
-          title="Export package"
-          @click="exportPackage"
-        >
-          Export
-        </button>
-        <button
-          class="btn-secondary"
-          aria-label="Preview package"
-          title="Preview package"
-          @click="router.push('/preview')"
-        >
-          Preview
-        </button>
-        <button
-          class="btn-secondary"
-          aria-label="Go to home"
-          title="Go to home"
-          @click="router.push('/')"
-        >
-          Home
-        </button>
+        <!-- When no package is loaded: Show Create, Import, Library -->
+        <template v-if="!currentPackage">
+          <button
+            class="btn-primary"
+            aria-label="Create new package"
+            title="Create new package"
+            @click="createNewPackage"
+          >
+            ➕ Create
+          </button>
+          <button
+            class="btn-secondary"
+            aria-label="Import package"
+            title="Import package from file"
+            @click="showImportDialog = true"
+          >
+            📥 Import
+          </button>
+          <button
+            class="btn-secondary"
+            aria-label="Go to library"
+            title="Go to library"
+            @click="router.push('/library')"
+          >
+            📚 Library
+          </button>
+        </template>
+
+        <!-- When package is loaded: Show Save, Export -->
+        <template v-else>
+          <button
+            class="btn-primary"
+            :disabled="isSaving"
+            aria-label="Save package (Ctrl+S)"
+            title="Save package (Ctrl+S)"
+            @click="savePackage"
+          >
+            {{ isSaving ? 'Saving...' : '💾 Save' }}
+          </button>
+          <button
+            class="btn-secondary"
+            aria-label="Export package"
+            title="Export package"
+            @click="exportPackage"
+          >
+            📤 Export
+          </button>
+        </template>
       </div>
     </header>
 
@@ -46,8 +61,15 @@
     </div>
 
     <div v-if="!currentPackage" class="empty-state">
-      <p>No package loaded. Please create or load a package.</p>
-      <button class="btn-primary" @click="router.push('/')">Go to Home</button>
+      <div class="empty-icon">📦</div>
+      <h2>No Package Loaded</h2>
+      <p>Create a new package, import from a file, or load one from your library to get started.</p>
+      <div class="empty-hint">
+        <p>
+          💡 <strong>Tip:</strong> Use the buttons above to begin, or press <kbd>Ctrl+N</kbd> to
+          create a new package.
+        </p>
+      </div>
     </div>
 
     <div v-else class="editor-container">
@@ -281,6 +303,41 @@
       </div>
     </div>
 
+    <!-- Import Dialog -->
+    <div v-if="showImportDialog" class="modal" @click.self="showImportDialog = false">
+      <div class="modal-content">
+        <h2>Import Package</h2>
+        <div class="form-group">
+          <label>Format:</label>
+          <select v-model="importFormat">
+            <option value="yaml">YAML</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Package Content:</label>
+          <textarea
+            v-model="importContent"
+            rows="15"
+            placeholder="Paste your YAML or JSON package content here..."
+          />
+        </div>
+        <p v-if="importError" class="error">
+          {{ importError }}
+        </p>
+        <div class="button-group">
+          <button
+            class="btn-primary"
+            :disabled="!importContent.trim()"
+            @click="importPackageContent"
+          >
+            Import
+          </button>
+          <button class="btn-cancel" @click="closeImportDialog">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Namespace Modal (Add/Rename) -->
     <div v-if="isNamespaceModalOpen" class="modal-overlay" @click.self="closeNamespaceModal">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="namespace-modal-title">
@@ -361,6 +418,11 @@ const showExportDialog = ref(false);
 const exportFormat = ref<'yaml' | 'json'>('yaml');
 const exportContent = ref('');
 const exportMessage = ref('');
+
+const showImportDialog = ref(false);
+const importFormat = ref<'yaml' | 'json'>('yaml');
+const importContent = ref('');
+const importError = ref('');
 
 const isNamespaceModalOpen = ref(false);
 const namespaceModalMode = ref<'add' | 'rename'>('add');
@@ -642,15 +704,19 @@ useKeyboardShortcuts([
     handler: () => {
       if (currentPackage.value) {
         addNamespace();
+      } else {
+        createNewPackage();
       }
     },
-    description: 'Add new namespace',
+    description: 'Add namespace (when package loaded) or create new package',
   },
   {
     key: 'Escape',
     handler: () => {
       if (showExportDialog.value) {
         showExportDialog.value = false;
+      } else if (showImportDialog.value) {
+        closeImportDialog();
       } else if (isNamespaceModalOpen.value) {
         closeNamespaceModal();
       }
@@ -712,6 +778,33 @@ function copyToClipboard() {
   setTimeout(() => {
     exportMessage.value = '';
   }, 2000);
+}
+
+function createNewPackage() {
+  packageStore.createNew();
+  // Auto-select metadata section when creating new package
+  selectedSection.value = 'metadata';
+  selectedNamespace.value = null;
+}
+
+async function importPackageContent() {
+  try {
+    importError.value = '';
+    await packageStore.importPackageFromString(importContent.value, importFormat.value);
+    showImportDialog.value = false;
+    importContent.value = '';
+    // Auto-select metadata section after import
+    selectedSection.value = 'metadata';
+    selectedNamespace.value = null;
+  } catch (error) {
+    importError.value = error instanceof Error ? error.message : 'Failed to import package';
+  }
+}
+
+function closeImportDialog() {
+  showImportDialog.value = false;
+  importContent.value = '';
+  importError.value = '';
 }
 
 function updateAuthors(event: Event) {
@@ -1034,6 +1127,51 @@ function updateAuthors(event: Event) {
   text-align: center;
   padding: 4rem 2rem;
   color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.6;
+}
+
+.empty-state h2 {
+  color: var(--color-text-primary);
+  margin: 0 0 1rem 0;
+  font-size: 1.75rem;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.empty-hint {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.empty-hint p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.empty-hint kbd {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  margin: 0 0.2rem;
 }
 
 .btn-primary,
@@ -1308,4 +1446,3 @@ function updateAuthors(event: Event) {
   }
 }
 </style>
-

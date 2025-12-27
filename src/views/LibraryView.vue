@@ -518,5 +518,4 @@ input[type='file'] {
   background: var(--color-surface);
   color: var(--color-text-primary);
 }
-
 </style>

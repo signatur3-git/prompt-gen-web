@@ -463,7 +463,7 @@ async function downloadPackage(pkg: Package) {
   border-radius: 0.375rem;
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--color-text-primary);
 }
 
 .btn-retry {
@@ -570,7 +570,7 @@ async function downloadPackage(pkg: Package) {
 
 .package-name {
   font-size: 1.1rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 0;
   word-break: break-word;
   flex: 1;
@@ -652,7 +652,7 @@ async function downloadPackage(pkg: Package) {
 }
 
 .package-author {
-  color: #999;
+  color: var(--color-text-tertiary);
   font-size: 0.85rem;
   line-height: 1.5;
 }

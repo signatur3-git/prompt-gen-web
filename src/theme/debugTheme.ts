@@ -20,4 +20,3 @@ export function applyThemeDebugFlags() {
     delete document.documentElement.dataset.themeDebug;
   }
 }
-

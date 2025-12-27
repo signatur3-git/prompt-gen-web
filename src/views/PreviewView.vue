@@ -46,10 +46,8 @@
               :class="{ active: isSelected(rb) }"
               @click="selectRulebook(rb)"
             >
-              <div class="rulebook-name">
-                {{ rb.rulebookId }}
-              </div>
-              <div class="rulebook-meta">
+              <div class="rulebook-name">{{ rb.rulebookId }}</div>
+              <div class="rulebook-badges">
                 <span class="package-badge">{{ rb.packageName }}</span>
                 <span class="namespace-badge">{{ rb.namespaceId }}</span>
               </div>
@@ -58,16 +56,24 @@
               </div>
             </div>
           </div>
+        </div>
+      </aside>
 
-          <!-- Generation settings -->
-          <div v-if="selectedRulebook" class="generation-settings">
-            <h3>Generation Settings</h3>
+      <main class="preview-main">
+        <!-- Generation settings -->
+        <div v-if="selectedRulebook" class="generation-panel">
+          <h2>Generate Prompts</h2>
+          <p class="generation-subtitle">
+            Selected: <strong>{{ selectedRulebook.rulebookId }}</strong> from
+            {{ selectedRulebook.packageName }}
+          </p>
 
+          <div class="generation-controls">
             <div class="form-group">
               <label>Seed:</label>
               <div class="seed-input-group">
                 <input v-model.number="seed" type="number" class="seed-input" />
-                <button class="btn-small" @click="randomSeed">Random</button>
+                <button class="btn-small" @click="randomSeed">🎲 Random</button>
               </div>
             </div>
 
@@ -76,13 +82,18 @@
               <input v-model.number="batchCount" type="number" min="1" max="50" />
             </div>
 
-            <button class="btn-primary" @click="generate">Generate</button>
+            <button class="btn-primary" @click="generate">
+              ✨ Generate {{ batchCount > 1 ? `${batchCount} Prompts` : 'Prompt' }}
+            </button>
           </div>
         </div>
-      </aside>
 
-      <main class="preview-main">
-        <h2>Generated Prompts</h2>
+        <div v-else class="no-selection">
+          <h2>👈 Select a Rulebook</h2>
+          <p>Choose a rulebook from the list on the left to start generating prompts</p>
+        </div>
+
+        <h2 v-if="selectedRulebook" class="results-title">Generated Prompts</h2>
 
         <div v-if="results.length === 0 && !error" class="empty-results">
           <p>Select a rulebook and click Generate to see results</p>
@@ -338,10 +349,10 @@ onMounted(() => {
 }
 
 .preview-sidebar {
-  width: 400px;
+  width: 500px;
   background: var(--color-surface);
   border-right: 1px solid var(--color-border);
-  padding: 1rem;
+  padding: 1.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -430,74 +441,80 @@ onMounted(() => {
 .rulebook-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  max-height: 400px;
+  gap: 0.75rem;
   overflow-y: auto;
   padding: 0.25rem;
 }
 
 .rulebook-item {
   background: var(--color-surface-hover);
-  border: 2px solid var(--color-border);
-  border-radius: 6px;
-  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .rulebook-item:hover {
   border-color: var(--color-success);
-  background: var(--color-border);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .rulebook-item.active {
   border-color: var(--color-success);
   background: var(--color-primary-light);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .rulebook-name {
   font-weight: 600;
   font-size: 1rem;
-  margin-bottom: 0.5rem;
   color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+  word-break: break-word;
 }
 
-.rulebook-meta {
+.rulebook-badges {
   display: flex;
-  gap: 0.5rem;
   flex-wrap: wrap;
-  margin-bottom: 0.25rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .package-badge,
 .namespace-badge {
   display: inline-block;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .package-badge {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .namespace-badge {
-  background: #f3e5f5;
-  color: #7b1fa2;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 }
 
 .entry-points-info {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  font-style: italic;
 }
 
-.generation-settings {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 2px solid var(--color-border);
+.rulebook-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
 }
 
 .preview-main {
@@ -510,6 +527,67 @@ onMounted(() => {
 .preview-main h2 {
   margin: 0 0 1.5rem 0;
   color: var(--color-text-primary);
+}
+
+.generation-panel {
+  background: var(--color-surface);
+  border: 2px solid var(--color-success);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+.generation-panel h2 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+}
+
+.generation-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.generation-subtitle strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.generation-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.generation-controls .btn-primary {
+  width: auto;
+  padding: 0.75rem 2rem;
+  white-space: nowrap;
+}
+
+.no-selection {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--color-text-secondary);
+}
+
+.no-selection h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.no-selection p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.results-title {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--color-border);
 }
 
 .empty-results {
@@ -625,140 +703,6 @@ onMounted(() => {
   padding: 1rem;
   background: var(--color-surface);
   border-radius: 4px;
-  background: var(--color-border);
-}
-
-/* Dark Theme - Explicit overrides for scoped styles */
-@media (prefers-color-scheme: dark) {
-  .preview-view {
-    background: #0f172a;
-  }
-
-  .preview-header {
-    background: #1e293b;
-    color: #f1f5f9;
-    border-bottom-color: #334155;
-  }
-
-  .preview-sidebar {
-    background: #1e293b;
-    border-right-color: #334155;
-  }
-
-  .controls h2,
-  .controls h3 {
-    color: #f1f5f9;
-  }
-
-  .form-group label {
-    color: #cbd5e1;
-  }
-
-  .search-input,
-  .seed-input,
-  .form-group input,
-  .form-group select {
-    background: #334155;
-    border-color: #475569;
-    color: #f1f5f9;
-  }
-
-  .btn-small {
-    background: #334155;
-    border-color: #475569;
-    color: #f1f5f9;
-  }
-
-  .btn-small:hover {
-    background: #475569;
-  }
-
-  .empty-state-small {
-    color: #cbd5e1;
-  }
-
-  .rulebook-item {
-    background: #334155;
-    border-color: #475569;
-  }
-
-  .rulebook-item:hover {
-    background: #475569;
-  }
-
-  .rulebook-item.active {
-    background: #312e81;
-    border-color: #6366f1;
-  }
-
-  .rulebook-name {
-    color: #f1f5f9;
-  }
-
-  .entry-points-info {
-    color: #cbd5e1;
-  }
-
-  .generation-settings {
-    border-top-color: #334155;
-  }
-
-  .preview-main {
-    background: #0f172a;
-    color: #f1f5f9;
-  }
-
-  .preview-main h2 {
-    color: #f1f5f9;
-  }
-
-  .empty-results {
-    color: #cbd5e1;
-  }
-
-  .result-card {
-    background: #1e293b;
-    border-color: #334155;
-  }
-
-  .result-header {
-    border-bottom-color: #334155;
-  }
-
-  .result-seed {
-    color: #cbd5e1;
-  }
-
-  .btn-copy {
-    background: #334155;
-    border-color: #475569;
-    color: #f1f5f9;
-  }
-
-  .btn-copy:hover {
-    background: #10b981;
-  }
-
-  .result-text {
-    color: #f1f5f9;
-  }
-
-  .results-actions {
-    border-top-color: #334155;
-  }
-
-  .btn-secondary {
-    background: #334155;
-    color: #f1f5f9;
-  }
-
-  .btn-secondary:hover {
-    background: #475569;
-  }
-
-  .error {
-    background: #1e293b;
-    border-color: #dc2626;
-  }
+  border: 1px solid var(--color-danger);
 }
 </style>

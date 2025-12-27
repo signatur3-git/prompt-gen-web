@@ -153,7 +153,7 @@ async function handleDisconnect() {
 .nav-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--color-text-primary);
   letter-spacing: -0.025em;
 }
 
@@ -172,15 +172,15 @@ async function handleDisconnect() {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   text-decoration: none;
-  color: #64748b;
+  color: var(--color-text-secondary);
   font-weight: 500;
   transition: all 0.2s;
   position: relative;
 }
 
 .nav-link:hover {
-  background: #f1f5f9;
-  color: #2c3e50;
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
 }
 
 .nav-link.active {
