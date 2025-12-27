@@ -87,14 +87,19 @@ async function loadPackageThroughUI(page: any) {
   await page.reload();
   await page.waitForSelector('text=Random Prompt Generator', { timeout: 10000 });
 
-  await page.click('button:has-text("Load Package")');
-  await page.waitForSelector('.modal', { timeout: 5000 });
+  // Navigate to Library page
+  await page.goto('/library');
+  await page.waitForSelector('text=Library', { timeout: 10000 });
 
-  const pkgRow = page
-    .locator('.package-item-content')
+  // Click on the package card to edit it
+  const packageCard = page
+    .locator('.package-card')
     .filter({ hasText: 'Featured Common Package' });
-  await pkgRow.waitFor({ state: 'visible', timeout: 5000 });
-  await pkgRow.click();
+  await packageCard.waitFor({ state: 'visible', timeout: 10000 });
+
+  // Click the Edit button on the package card
+  const editButton = packageCard.locator('button:has-text("Edit")');
+  await editButton.click();
 
   await page.waitForSelector('text=Package Editor', { timeout: 10000 });
 

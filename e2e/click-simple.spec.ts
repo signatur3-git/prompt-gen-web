@@ -4,17 +4,18 @@ test.describe('Click Bug Test - Simplified', () => {
   test('Verify editor shows and selection updates on first click after manual setup', async ({
     page,
   }) => {
-    // Go to app
+    // Go to app - home page
     await page.goto('/');
     await page.waitForSelector('text=Random Prompt Generator');
 
-    // Create a new package
-    await page.click('button:has-text("Create Package")');
-
-    // Should be in editor - wait for the editor to be fully loaded
+    // Navigate to Editor page
+    await page.goto('/editor');
     await page.waitForSelector('text=Package Editor', { timeout: 10000 });
 
-    // Wait for the "+ Add Namespace" button to be available
+    // Create a new package using the Create button in the editor (when no package is loaded)
+    await page.click('button:has-text("Create")');
+
+    // Wait for the editor to show package content
     await page.waitForSelector('button:has-text("+ Add Namespace")', { timeout: 10000 });
 
     // Add a namespace (will open a modal, not a browser prompt)

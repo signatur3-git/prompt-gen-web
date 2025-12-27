@@ -77,19 +77,19 @@ async function loadTestPackage(page: any) {
   await page.reload();
   await page.waitForSelector('text=Random Prompt Generator', { timeout: 10000 });
 
-  // Load the package through the UI
-  const loadButton = page.locator('button', { hasText: 'Load Package' });
-  await loadButton.waitFor({ state: 'visible', timeout: 10000 });
-  await loadButton.click();
+  // Navigate to Library page
+  await page.goto('/library');
+  await page.waitForSelector('text=Library', { timeout: 10000 });
 
-  await page.waitForSelector('.modal', { timeout: 5000 });
-  await page.waitForSelector('.package-list', { timeout: 5000 });
-
-  const packageItem = page
-    .locator('.package-item-content')
+  // Click on the package card to edit it
+  const packageCard = page
+    .locator('.package-card')
     .filter({ hasText: 'Click Test Package' });
-  await packageItem.waitFor({ state: 'visible', timeout: 5000 });
-  await packageItem.click();
+  await packageCard.waitFor({ state: 'visible', timeout: 10000 });
+
+  // Click the Edit button on the package card
+  const editButton = packageCard.locator('button:has-text("Edit")');
+  await editButton.click();
 
   // Verify we're in the editor
   await page.waitForSelector('text=Package Editor', { timeout: 10000 });
