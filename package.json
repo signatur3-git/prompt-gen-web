@@ -7,7 +7,10 @@
     "dev": "vite",
     "dev:check": "vite & vue-tsc --noEmit --watch",
     "build": "vue-tsc -b && vite build",
+    "build:railway": "npm run build",
     "preview": "vite preview",
+    "start": "serve -s dist -l 5173",
+    "start:railway": "serve -s dist -l $PORT",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -26,6 +29,7 @@
   "dependencies": {
     "js-yaml": "^4.1.1",
     "pinia": "^3.0.4",
+    "serve": "^14.2.1",
     "vue": "^3.5.24",
     "vue-router": "^4.6.4"
   },

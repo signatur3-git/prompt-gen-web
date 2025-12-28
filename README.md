@@ -82,9 +82,14 @@ npm run validate
 
 ## Deployment
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for hosting options and deployment instructions.
+This app supports multiple deployment targets:
 
-The default configuration deploys to GitHub Pages. You may need to update the `base` path in `vite.config.ts` based on your repository name.
+- **GitHub Pages** (default): Free hosting with automatic deployment on release tags
+- **Railway**: Fast deployment with custom domains and environment management
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) and [RAILWAY_DEPLOYMENT_GUIDE.md](./RAILWAY_DEPLOYMENT_GUIDE.md) for detailed instructions.
+
+The `vite.config.ts` automatically detects the deployment target and configures the base path accordingly.
 
 ## Documentation
 

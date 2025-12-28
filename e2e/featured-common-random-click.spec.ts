@@ -92,9 +92,7 @@ async function loadPackageThroughUI(page: any) {
   await page.waitForSelector('text=Library', { timeout: 10000 });
 
   // Click on the package card to edit it
-  const packageCard = page
-    .locator('.package-card')
-    .filter({ hasText: 'Featured Common Package' });
+  const packageCard = page.locator('.package-card').filter({ hasText: 'Featured Common Package' });
   await packageCard.waitFor({ state: 'visible', timeout: 10000 });
 
   // Click the Edit button on the package card

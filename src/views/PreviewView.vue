@@ -447,6 +447,8 @@ onMounted(() => {
 }
 
 .rulebook-item {
+  display: flex;
+  flex-direction: column;
   background: var(--color-surface-hover);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -505,6 +507,7 @@ onMounted(() => {
 }
 
 .entry-points-info {
+  display: block;
   font-size: 0.75rem;
   color: var(--color-text-tertiary);
   font-style: italic;

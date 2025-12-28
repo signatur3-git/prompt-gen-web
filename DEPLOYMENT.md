@@ -26,6 +26,29 @@ This is a static Vue.js single-page application (SPA) that can be hosted on any 
 - Configure your DNS provider to point to GitHub Pages
 - Update `vite.config.ts` base path if needed
 
+### Railway (Recommended for Root Path Deployment)
+
+**Pros:**
+
+- Fast deployment with automatic builds
+- Root path (`/`) instead of subpath (better for SEO and cleaner URLs)
+- Easy environment management
+- Free tier available
+
+**Setup:**
+
+See [RAILWAY_DEPLOYMENT_GUIDE.md](./RAILWAY_DEPLOYMENT_GUIDE.md) for complete instructions.
+
+Quick steps:
+
+1. Sign in to [railway.app](https://railway.app)
+2. Create new project from GitHub repo
+3. Railway auto-detects configuration from `railway.json`
+4. Add Railway URL to marketplace OAuth client redirect URIs
+5. Deploy!
+
+**Note:** Railway is pre-configured in this repository with `railway.json` and `nixpacks.toml`.
+
 ### Alternative Hosting Options
 
 #### Netlify
