@@ -79,58 +79,168 @@
             <p class="hint">Try a different search or be the first to publish!</p>
           </div>
 
-          <div v-else class="packages-grid">
-            <div v-for="pkg in packages" :key="pkg.id" class="package-card">
-              <div class="package-header">
-                <h3 class="package-name">{{ pkg.namespace }}/{{ pkg.name }}</h3>
-                <span class="package-version" v-if="pkg.latest_version || pkg.version">
-                  v{{ pkg.latest_version || pkg.version }}
-                </span>
+          <div v-else class="packages-layout">
+            <div class="packages-grid">
+              <div
+                v-for="pkg in packages"
+                :key="pkg.id"
+                class="package-card"
+                :class="{ selected: selectedPackage?.id === pkg.id }"
+                @click="selectPackage(pkg)"
+              >
+                <div class="package-header">
+                  <h3 class="package-name">{{ pkg.namespace }}/{{ pkg.name }}</h3>
+                  <span class="package-version" v-if="pkg.latest_version || pkg.version">
+                    v{{ pkg.latest_version || pkg.version }}
+                  </span>
+                </div>
+                <p class="package-description">
+                  {{ pkg.description || 'No description available' }}
+                </p>
+                <!-- Entity badges (M12 spec) -->
+                <div v-if="pkg.content_counts" class="entity-badges">
+                  <span
+                    v-if="pkg.content_counts.rulebooks > 0"
+                    class="entity-badge entity-badge-rb"
+                    title="Rulebooks"
+                    >RB:{{ pkg.content_counts.rulebooks }}</span
+                  >
+                  <span
+                    v-if="pkg.content_counts.rules > 0"
+                    class="entity-badge entity-badge-r"
+                    title="Rules"
+                    >R:{{ pkg.content_counts.rules }}</span
+                  >
+                  <span
+                    v-if="pkg.content_counts.prompt_sections > 0"
+                    class="entity-badge entity-badge-ps"
+                    title="Prompt Sections"
+                    >PS:{{ pkg.content_counts.prompt_sections }}</span
+                  >
+                  <span
+                    v-if="pkg.content_counts.datatypes > 0"
+                    class="entity-badge entity-badge-dt"
+                    title="Datatypes"
+                    >DT:{{ pkg.content_counts.datatypes }}</span
+                  >
+                </div>
+                <div class="package-footer">
+                  <span class="package-author"
+                    >by {{ pkg.author_persona?.name || pkg.author || 'Unknown' }}</span
+                  >
+                </div>
               </div>
-              <p class="package-description">
-                {{ pkg.description || 'No description available' }}
-              </p>
-              <!-- Entity badges (M12 spec) -->
-              <div v-if="pkg.content_counts" class="entity-badges">
-                <span
-                  v-if="pkg.content_counts.rulebooks > 0"
-                  class="entity-badge entity-badge-rb"
-                  title="Rulebooks"
-                  >RB:{{ pkg.content_counts.rulebooks }}</span
-                >
-                <span
-                  v-if="pkg.content_counts.rules > 0"
-                  class="entity-badge entity-badge-r"
-                  title="Rules"
-                  >R:{{ pkg.content_counts.rules }}</span
-                >
-                <span
-                  v-if="pkg.content_counts.prompt_sections > 0"
-                  class="entity-badge entity-badge-ps"
-                  title="Prompt Sections"
-                  >PS:{{ pkg.content_counts.prompt_sections }}</span
-                >
-                <span
-                  v-if="pkg.content_counts.datatypes > 0"
-                  class="entity-badge entity-badge-dt"
-                  title="Datatypes"
-                  >DT:{{ pkg.content_counts.datatypes }}</span
-                >
+            </div>
+
+            <!-- Package Details Sidebar -->
+            <div v-if="selectedPackage" class="package-details-sidebar">
+              <div class="sidebar-header">
+                <h3>{{ selectedPackage.namespace }}/{{ selectedPackage.name }}</h3>
+                <button class="btn-close" @click="selectedPackage = null" title="Close">✕</button>
               </div>
-              <!-- Debug: Show if content_counts is missing -->
-              <div v-else class="debug-notice">
-                ⚠️ API not returning content_counts (check console for details)
+
+              <div class="sidebar-content">
+                <div class="detail-section">
+                  <div class="version-badge">
+                    v{{ selectedPackage.latest_version || selectedPackage.version }}
+                  </div>
+                </div>
+
+                <div class="detail-section">
+                  <h4>Description</h4>
+                  <p>{{ selectedPackage.description || 'No description available' }}</p>
+                </div>
+
+                <div class="detail-section">
+                  <h4>Author</h4>
+                  <div class="author-info">
+                    <span class="author-name">{{
+                      selectedPackage.author_persona?.name || selectedPackage.author || 'Unknown'
+                    }}</span>
+                  </div>
+                </div>
+
+                <div v-if="selectedPackage?.content_counts" class="detail-section">
+                  <h4>Package Contents</h4>
+                  <div class="content-stats">
+                    <div
+                      v-if="selectedPackage?.content_counts?.rulebooks > 0"
+                      class="stat-item stat-rb"
+                    >
+                      <span class="stat-label">Rulebooks:</span>
+                      <span class="stat-value">{{ selectedPackage.content_counts.rulebooks }}</span>
+                    </div>
+                    <div v-if="selectedPackage?.content_counts?.rules > 0" class="stat-item stat-r">
+                      <span class="stat-label">Rules:</span>
+                      <span class="stat-value">{{ selectedPackage.content_counts.rules }}</span>
+                    </div>
+                    <div
+                      v-if="selectedPackage?.content_counts?.prompt_sections > 0"
+                      class="stat-item stat-ps"
+                    >
+                      <span class="stat-label">Prompt Sections:</span>
+                      <span class="stat-value">{{
+                        selectedPackage.content_counts.prompt_sections
+                      }}</span>
+                    </div>
+                    <div
+                      v-if="selectedPackage?.content_counts?.datatypes > 0"
+                      class="stat-item stat-dt"
+                    >
+                      <span class="stat-label">Datatypes:</span>
+                      <span class="stat-value">{{ selectedPackage.content_counts.datatypes }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="detail-section">
+                  <h4>Package Info</h4>
+                  <div class="info-list">
+                    <div class="info-item">
+                      <span class="info-label">Namespace:</span>
+                      <span class="info-value">{{ selectedPackage.namespace }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Package ID:</span>
+                      <span class="info-value">{{ selectedPackage.id }}</span>
+                    </div>
+                    <div v-if="selectedPackage?.version_count" class="info-item">
+                      <span class="info-label">Total Versions:</span>
+                      <span class="info-value">{{ selectedPackage.version_count }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Updated:</span>
+                      <span class="info-value">{{
+                        new Date(selectedPackage.updated_at).toLocaleDateString()
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="package-footer">
-                <span class="package-author"
-                  >by {{ pkg.author_persona?.name || pkg.author || 'Unknown' }}</span
-                >
+
+              <div class="sidebar-actions">
                 <button
-                  @click="downloadPackage(pkg)"
-                  class="btn-download"
-                  :disabled="downloading[pkg.id]"
+                  v-if="isPackageImported(selectedPackage)"
+                  class="btn-imported"
+                  disabled
+                  title="This package is already in your library"
                 >
-                  {{ downloading[pkg.id] ? 'Downloading...' : 'Download' }}
+                  ✓ Already Imported
+                </button>
+                <button
+                  v-else
+                  @click="importPackage(selectedPackage)"
+                  class="btn-import"
+                  :disabled="importing"
+                >
+                  {{ importing ? 'Importing...' : '📥 Import to Library' }}
+                </button>
+                <button
+                  @click="downloadPackage(selectedPackage)"
+                  class="btn-download-alt"
+                  :disabled="downloading[selectedPackage.id]"
+                >
+                  {{ downloading[selectedPackage.id] ? 'Downloading...' : '💾 Download YAML' }}
                 </button>
               </div>
             </div>
@@ -143,10 +253,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { oauthService } from '../services/oauth.service';
 import { marketplaceClient, type Package } from '../services/marketplace-client';
+import { usePackageStore } from '../stores/packageStore';
 import AppNav from '../components/AppNav.vue';
+
+const packageStore = usePackageStore();
 
 const isAuthenticated = ref(false);
 const connecting = ref(false);
@@ -155,13 +268,83 @@ const loadError = ref('');
 const searchQuery = ref('');
 const packages = ref<Package[]>([]);
 const downloading = ref<Record<string, boolean>>({});
+const selectedPackage = ref<Package | null>(null);
+const importing = ref(false);
 
-onMounted(() => {
+// Computed: Get list of imported marketplace package IDs
+const importedPackageIds = computed(() => {
+  return new Set(
+    packageStore.packages
+      .filter((pkg: any) => pkg.source === 'marketplace')
+      .map((pkg: any) => pkg.id)
+  );
+});
+
+onMounted(async () => {
   isAuthenticated.value = oauthService.isAuthenticated();
   if (isAuthenticated.value) {
-    loadPackages();
+    await loadPackages();
   }
+  // Load local packages to check what's already imported
+  await packageStore.loadPackageList();
 });
+
+function selectPackage(pkg: Package) {
+  selectedPackage.value = pkg;
+}
+
+function isPackageImported(pkg: Package): boolean {
+  return importedPackageIds.value.has(pkg.id);
+}
+
+async function importPackage(pkg: Package) {
+  if (isPackageImported(pkg)) {
+    alert('This package is already imported in your library.');
+    return;
+  }
+
+  importing.value = true;
+  try {
+    // Use latest_version if version is undefined
+    const version = pkg.latest_version || pkg.version;
+
+    if (!version) {
+      throw new Error('Package version is not available');
+    }
+
+    console.log(`[Marketplace] Importing package: ${pkg.namespace}/${pkg.name}@${version}`);
+
+    // Download the package YAML content
+    const content = await marketplaceClient.downloadPackage(pkg.namespace, pkg.name, version);
+
+    // Import it into the local store
+    await packageStore.importPackageFromString(content, 'yaml');
+
+    // Mark as marketplace source by re-loading and updating the package
+    const importedPkg = packageStore.currentPackage;
+    if (importedPkg) {
+      // Update the package metadata to mark it as from marketplace
+      (importedPkg as any).source = 'marketplace';
+      await packageStore.savePackage();
+    }
+
+    // Refresh the package list
+    await packageStore.loadPackageList();
+
+    console.log('[Marketplace] Package imported successfully');
+    alert(
+      `Package "${pkg.namespace}/${pkg.name}" imported successfully!\n\nYou can now find it in your Library under the Marketplace tab.`
+    );
+
+    // Close the sidebar
+    selectedPackage.value = null;
+  } catch (error) {
+    console.error('[Marketplace] Import failed:', error);
+    alert(`Failed to import package: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  } finally {
+    importing.value = false;
+  }
+}
 
 async function connect() {
   connecting.value = true;
@@ -218,14 +401,21 @@ async function search() {
 async function downloadPackage(pkg: Package) {
   downloading.value[pkg.id] = true;
   try {
-    const content = await marketplaceClient.downloadPackage(pkg.namespace, pkg.name, pkg.version);
+    // Use latest_version if version is undefined
+    const version = pkg.latest_version || pkg.version;
+
+    if (!version) {
+      throw new Error('Package version is not available');
+    }
+
+    const content = await marketplaceClient.downloadPackage(pkg.namespace, pkg.name, version);
 
     // Create download link
     const blob = new Blob([content], { type: 'text/yaml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${pkg.namespace}-${pkg.name}-${pkg.version}.yaml`;
+    a.download = `${pkg.namespace}-${pkg.name}-${version}.yaml`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -539,9 +729,34 @@ async function downloadPackage(pkg: Package) {
   margin-top: 0.5rem;
 }
 
+/* Two-column layout with sidebar */
+.packages-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .packages-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .package-details-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    max-width: 90vw;
+    z-index: 1000;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .packages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
@@ -552,12 +767,19 @@ async function downloadPackage(pkg: Package) {
   padding: 1.5rem;
   transition: all 0.2s;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .package-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
   border-color: var(--color-border-hover);
+}
+
+.package-card.selected {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  background: rgba(102, 126, 234, 0.05);
 }
 
 .package-header {
@@ -633,17 +855,6 @@ async function downloadPackage(pkg: Package) {
   color: white;
 }
 
-.debug-notice {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  color: #856404;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
 .package-footer {
   display: flex;
   justify-content: space-between;
@@ -657,25 +868,242 @@ async function downloadPackage(pkg: Package) {
   line-height: 1.5;
 }
 
-.btn-download {
-  padding: 0.6rem 1.25rem;
+/* Package Details Sidebar */
+.package-details-sidebar {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 0;
+  position: sticky;
+  top: 2rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 4rem);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  word-break: break-word;
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-close:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-tertiary);
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+}
+
+.detail-section p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.version-badge {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.author-name {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.content-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--color-surface-hover);
+}
+
+.stat-item.stat-rb {
+  border-left: 3px solid #667eea;
+}
+
+.stat-item.stat-r {
+  border-left: 3px solid #48bb78;
+}
+
+.stat-item.stat-ps {
+  border-left: 3px solid #ed8936;
+}
+
+.stat-item.stat-dt {
+  border-left: 3px solid #38b2ac;
+}
+
+.stat-label {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  color: var(--color-text-tertiary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.info-value {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.sidebar-actions {
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--color-surface);
+}
+
+.btn-import {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
   background: #48bb78;
   color: white;
   border: none;
   border-radius: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.btn-download:hover:not(:disabled) {
+.btn-import:hover:not(:disabled) {
   background: #38a169;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
 }
 
-.btn-download:disabled {
+.btn-import:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-imported {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: #e2e8f0;
+  color: #64748b;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+.btn-download-alt {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-download-alt:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-download-alt:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
