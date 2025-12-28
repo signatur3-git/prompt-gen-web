@@ -432,7 +432,16 @@ async function loadPackages() {
   loading.value = true;
   loadError.value = '';
   try {
+    console.log('[Marketplace] Loading packages...');
+    console.log('[Marketplace] Authenticated:', oauthService.isAuthenticated());
+    console.log('[Marketplace] Token exists:', !!oauthService.getToken());
+
     const result = await marketplaceClient.searchPackages(searchQuery.value);
+
+    console.log('[Marketplace] Search result:', result);
+    console.log('[Marketplace] Packages array:', result.packages);
+    console.log('[Marketplace] Total count:', result.total);
+
     packages.value = result.packages || [];
     console.log('[Marketplace] Loaded', packages.value.length, 'packages');
 
@@ -440,7 +449,12 @@ async function loadPackages() {
     const firstPkg = packages.value[0];
     if (firstPkg) {
       console.log('[Marketplace] First package structure:', JSON.stringify(firstPkg, null, 2));
+      console.log('[Marketplace] Has display_name?', !!firstPkg.display_name);
       console.log('[Marketplace] Has content_counts?', !!firstPkg.content_counts);
+    } else {
+      console.warn(
+        '[Marketplace] No packages returned - check if marketplace has data or if auth is required'
+      );
     }
   } catch (error) {
     console.error('[Marketplace] Failed to load packages:', error);

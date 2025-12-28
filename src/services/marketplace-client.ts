@@ -70,22 +70,37 @@ export class MarketplaceClient {
 
     const url = `${this.baseUrl}${path}`;
     console.log(`[Marketplace] ${options.method || 'GET'} ${url}`);
+    console.log(`[Marketplace] Has auth token:`, !!token);
 
     const response = await fetch(url, {
       ...options,
       headers,
     });
 
+    console.log(`[Marketplace] Response status: ${response.status} ${response.statusText}`);
+    console.log(`[Marketplace] Response content-type:`, response.headers.get('content-type'));
+
+    // Success responses (200-299)
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Unknown error');
       console.error(`[Marketplace] API error ${response.status}:`, errorText);
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
-    // Handle empty responses
+    // Handle 204 No Content
+    if (response.status === 204) {
+      console.warn('[Marketplace] Received 204 No Content - returning empty result');
+      console.warn(
+        '[Marketplace] This might indicate: authentication required, no data, or API issue'
+      );
+      return { packages: [], total: 0 } as T;
+    }
+
+    // Handle empty responses or non-JSON
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
-      return {} as T;
+      console.warn('[Marketplace] Non-JSON response, content-type:', contentType);
+      return { packages: [], total: 0 } as T;
     }
 
     return response.json();
