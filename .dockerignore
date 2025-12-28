@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Tests
+e2e/
+test-results/
+playwright-report/
+*.spec.ts
+*.test.ts
+
+# Documentation (not needed in image)
+*.md
+!README.md
+
+# Git files
+.git/
+.github/
+.gitignore
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor files
+*.iml
+prompt-gen.iml
+
+# Cache
+.cache/
+.npm/
+.eslintcache
+
+# Misc
+.prettierignore
+.prettierrc
+

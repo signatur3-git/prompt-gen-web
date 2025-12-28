@@ -125,42 +125,45 @@ railway up
 
 ## Configuration Files
 
-### 1. `railway.json` (Optional but Recommended)
+### 1. `railway.json` (Railway Configuration)
 
-This file helps Railway understand your project structure:
+This file is included in the repository and tells Railway how to deploy:
 
 ```json
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "buildCommand": "npm install && npm run build"
+    "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npx serve -s dist -l $PORT",
+    "startCommand": "npm run start:railway",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
 }
 ```
 
-### 2. `nixpacks.toml` (Alternative Configuration)
+> **Note:** The build process is handled by `nixpacks.toml` to avoid duplicate build steps.
 
-Railway uses Nixpacks by default. You can customize it:
+### 2. `nixpacks.toml` (Nixpacks Configuration)
+
+Railway uses Nixpacks by default. This configuration is included in the repository:
 
 ```toml
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm cache clean --force", "npm ci --prefer-offline --no-audit"]
 
 [phases.build]
 cmds = ["npm run build"]
 
 [start]
-cmd = "npx serve -s dist -l $PORT"
+cmd = "npm run start:railway"
 ```
+
+> **Note:** Node.js 22 is required because some dependencies (@oxc-project/runtime, @vitejs/plugin-vue, rolldown) require Node >=22.12.0 or ^20.19.0.
 
 ### 3. Update `vite.config.ts` for Railway
 
@@ -195,6 +198,23 @@ Add the `serve` package as a production dependency (Railway needs it):
   }
 }
 ```
+
+---
+
+## Important: Ensure Railway Uses Dockerfile (Not Nixpacks)
+
+If your Railway build logs show it using the `ghcr.io/railwayapp/nixpacks:...` image, Railway is still building with **Nixpacks**, even if this repo contains `railway.json`.
+
+To force Docker builds:
+
+1. Railway Dashboard → Project → **Settings**
+2. **Build** / **Builder**:
+   - Select **Dockerfile** (or "Use Dockerfile")
+   - Ensure Dockerfile path is `./Dockerfile`
+3. **Clear Build Cache** (important after switching builders)
+4. Redeploy
+
+This repo includes a `Dockerfile` that pins Node **20.19** and uses `npm ci --include=optional` for reliable installs.
 
 ---
 
@@ -343,6 +363,76 @@ Monitor Railway logs in real-time:
 - Railway variables must be prefixed with `VITE_` to be exposed to the frontend
 - Set them in Railway Dashboard → Variables
 - Rebuild after adding/changing variables
+
+### Build Fails with npm EBUSY Error
+
+**Issue:**
+
+```
+npm error EBUSY: resource busy or locked, rmdir '/app/node_modules/.cache'
+npm error errno -16
+Build Failed: build daemon returned an error
+```
+
+**Cause:** Railway's build environment sometimes has cache locking issues with npm.
+
+**Solution:**
+
+The fix is already implemented in this repository:
+
+- ✅ `railway.json` includes `npm cache clean --force` before install
+- ✅ `nixpacks.toml` clears cache in the install phase
+- ✅ `.railwayignore` excludes problematic cache directories
+
+If you still encounter this error:
+
+1. **Trigger a clean rebuild:**
+   - Railway Dashboard → Deployments → Three dots menu → "Redeploy"
+
+2. **Clear Railway's build cache:**
+   - Settings → Clear Build Cache
+   - Then deploy again
+
+3. **Check build logs:**
+   - Look for the cache clean command in the logs
+   - Verify it runs before `npm ci`
+
+4. **As a last resort, simplify the build command:**
+   - In Railway Dashboard → Settings → Build Command
+   - Try: `rm -rf node_modules/.cache && npm ci --prefer-offline && npm run build`
+
+### Node Version Mismatch
+
+**Issue:** Build fails with EBADENGINE warnings:
+
+```
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@oxc-project/runtime@0.97.0',
+npm warn EBADENGINE   required: { node: '^20.19.0 || >=22.12.0' },
+npm warn EBADENGINE   current: { node: 'v20.18.1', npm: '10.8.2' }
+npm warn EBADENGINE }
+```
+
+**Cause:** Some dependencies require Node.js 20.19.0 or higher, or Node.js 22.12.0 or higher.
+
+**Solution:**
+
+Railway is configured to use Node.js 22 in `nixpacks.toml`:
+
+- ✅ `nixPkgs = ["nodejs_22"]` ensures Node 22 is used
+- This satisfies the `>=22.12.0` requirement
+
+If you still see Node version issues:
+
+1. **Verify nixpacks.toml is committed** to your repository
+2. **Check Railway build logs** to confirm Node 22 is being used
+3. **Clear build cache** in Railway Dashboard → Settings
+4. **Redeploy** to pick up the Node 22 configuration
+
+For local development:
+
+- Use Node 22 or Node 20.19.0+: `nvm use 22` or `nvm install 22`
+- Or update to the latest Node 20.x: `nvm install 20 --latest-npm`
 
 ---
 

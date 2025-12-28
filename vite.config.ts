@@ -2,18 +2,20 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [vue()],
-  // Base path configuration for different deployment targets:
-  // - Railway: '/' (root path)
-  // - GitHub Pages: '/prompt-gen-web/' (repository name)
-  // - Local development: '/' (root path)
-  // Use RAILWAY_ENVIRONMENT to detect Railway, or VITE_BASE_PATH to override
-  base:
-    process.env.VITE_BASE_PATH ||
-    (process.env.RAILWAY_ENVIRONMENT
-      ? '/'
-      : process.env.NODE_ENV === 'production'
-        ? '/prompt-gen-web/'
-        : '/'),
+export default defineConfig(() => {
+  const envBase = process.env.VITE_BASE_PATH;
+  const isRailway = !!process.env.RAILWAY_ENVIRONMENT;
+  const isProd = process.env.NODE_ENV === 'production';
+
+  // Priority:
+  // 1) Explicit VITE_BASE_PATH (best for CI/CD)
+  // 2) Railway detected
+  // 3) Production (GitHub Pages subpath)
+  // 4) Default
+  const base = envBase || (isRailway ? '/' : isProd ? '/prompt-gen-web/' : '/');
+
+  return {
+    plugins: [vue()],
+    base,
+  };
 });
