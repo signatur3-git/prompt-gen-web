@@ -186,7 +186,32 @@ To prevent similar issues in the future:
 ---
 
 **Fixed**: 2025 M12 28  
-**Status**: ✅ Resolved  
+**Status**: ✅ Resolved (404 version issue)  
 **Severity**: High (blocking import/download)  
 **Impact**: All marketplace users  
 **Build**: ✅ Passing
+
+---
+
+## Update: Railway Production 500 Error
+
+After deploying this fix, a new issue was discovered on Railway production:
+
+```
+[Marketplace] Import failed: Error: Download failed: 500
+```
+
+This is a **server-side issue** (marketplace server error), not related to the version fix.
+
+**See**: [MARKETPLACE_500_ERROR_TROUBLESHOOTING.md](./MARKETPLACE_500_ERROR_TROUBLESHOOTING.md) for:
+
+- Detailed diagnostics
+- Server-side investigation steps
+- Enhanced error logging (now deployed)
+- Workarounds for users
+
+**Status of 500 Error:**
+
+- ✅ Enhanced client-side error handling deployed
+- ⏳ Server-side investigation needed
+- ✅ Workaround available (download YAML, import from Library)

@@ -89,7 +89,9 @@
                 @click="selectPackage(pkg)"
               >
                 <div class="package-header">
-                  <h3 class="package-name">{{ pkg.namespace }}/{{ pkg.name }}</h3>
+                  <h3 class="package-name">
+                    {{ pkg.display_name || `${pkg.namespace}.${pkg.name}` }}
+                  </h3>
                   <span class="package-version" v-if="pkg.latest_version || pkg.version">
                     v{{ pkg.latest_version || pkg.version }}
                   </span>
@@ -135,7 +137,12 @@
             <!-- Package Details Sidebar -->
             <div v-if="selectedPackage" class="package-details-sidebar">
               <div class="sidebar-header">
-                <h3>{{ selectedPackage.namespace }}/{{ selectedPackage.name }}</h3>
+                <h3>
+                  {{
+                    selectedPackage.display_name ||
+                    `${selectedPackage.namespace}.${selectedPackage.name}`
+                  }}
+                </h3>
                 <button class="btn-close" @click="selectedPackage = null" title="Close">✕</button>
               </div>
 
@@ -197,12 +204,10 @@
                   <h4>Package Info</h4>
                   <div class="info-list">
                     <div class="info-item">
-                      <span class="info-label">Namespace:</span>
-                      <span class="info-value">{{ selectedPackage.namespace }}</span>
-                    </div>
-                    <div class="info-item">
                       <span class="info-label">Package ID:</span>
-                      <span class="info-value">{{ selectedPackage.id }}</span>
+                      <span class="info-value"
+                        >{{ selectedPackage.namespace }}.{{ selectedPackage.name }}</span
+                      >
                     </div>
                     <div v-if="selectedPackage?.version_count" class="info-item">
                       <span class="info-label">Total Versions:</span>
@@ -271,13 +276,17 @@ const downloading = ref<Record<string, boolean>>({});
 const selectedPackage = ref<Package | null>(null);
 const importing = ref(false);
 
-// Computed: Get list of imported marketplace package IDs
+// Duplicate detection: Try using namespace as package ID
+// The marketplace might be storing the full package ID (e.g., "featured.base") in the namespace field
+// Let's test this hypothesis with logging
 const importedPackageIds = computed(() => {
-  return new Set(
+  const ids = new Set(
     packageStore.packages
       .filter((pkg: any) => pkg.source === 'marketplace')
-      .map((pkg: any) => pkg.id)
+      .map((pkg: any) => pkg.id) // Package YAML IDs like "featured.base"
   );
+  console.log('[Marketplace] Imported package YAML IDs:', Array.from(ids));
+  return ids;
 });
 
 onMounted(async () => {
@@ -291,10 +300,27 @@ onMounted(async () => {
 
 function selectPackage(pkg: Package) {
   selectedPackage.value = pkg;
+  const reconstructedId = `${pkg.namespace}.${pkg.name}`;
+  console.log('[Marketplace] Selected package:');
+  console.log('  - Display Name:', pkg.display_name || 'N/A');
+  console.log('  - Package ID:', reconstructedId);
+  console.log('  - Database UUID:', pkg.id);
 }
 
 function isPackageImported(pkg: Package): boolean {
-  return importedPackageIds.value.has(pkg.id);
+  // The marketplace splits package IDs into namespace and name
+  // e.g., package ID "featured.base" becomes namespace="featured", name="base"
+  // Reconstruct the package ID by concatenating with a dot
+  const reconstructedId = `${pkg.namespace}.${pkg.name}`;
+
+  const isImported = importedPackageIds.value.has(reconstructedId);
+
+  console.log(`[Marketplace] Checking package "${reconstructedId}":`, isImported);
+  if (!isImported && importedPackageIds.value.size > 0) {
+    console.log('[Marketplace] Available imported IDs:', Array.from(importedPackageIds.value));
+  }
+
+  return isImported;
 }
 
 async function importPackage(pkg: Package) {
@@ -313,12 +339,23 @@ async function importPackage(pkg: Package) {
     }
 
     console.log(`[Marketplace] Importing package: ${pkg.namespace}/${pkg.name}@${version}`);
+    console.log(`[Marketplace] Reconstructed package ID: ${pkg.namespace}.${pkg.name}`);
+    console.log(`[Marketplace] Package UUID:`, pkg.id);
+    console.log(`[Marketplace] Marketplace URL: ${marketplaceClient['baseUrl'] || 'unknown'}`);
 
     // Download the package YAML content
     const content = await marketplaceClient.downloadPackage(pkg.namespace, pkg.name, version);
 
+    console.log('[Marketplace] Downloaded YAML, first 200 chars:', content.substring(0, 200));
+
     // Import it into the local store
     await packageStore.importPackageFromString(content, 'yaml');
+
+    console.log('[Marketplace] Package imported, YAML ID:', packageStore.currentPackage?.id);
+    console.log(
+      '[Marketplace] Reconstructed ID should match YAML ID:',
+      `${pkg.namespace}.${pkg.name}` === packageStore.currentPackage?.id
+    );
 
     // Mark as marketplace source by re-loading and updating the package
     const importedPkg = packageStore.currentPackage;
@@ -332,15 +369,42 @@ async function importPackage(pkg: Package) {
     await packageStore.loadPackageList();
 
     console.log('[Marketplace] Package imported successfully');
+    const displayName = pkg.display_name || `${pkg.namespace}.${pkg.name}`;
     alert(
-      `Package "${pkg.namespace}/${pkg.name}" imported successfully!\n\nYou can now find it in your Library under the Marketplace tab.`
+      `Package "${displayName}" imported successfully!\n\nYou can now find it in your Library under the Marketplace tab.`
     );
 
     // Close the sidebar
     selectedPackage.value = null;
   } catch (error) {
     console.error('[Marketplace] Import failed:', error);
-    alert(`Failed to import package: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error('[Marketplace] Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      packageId: pkg.id,
+      namespace: pkg.namespace,
+      packageName: pkg.name,
+      version: pkg.latest_version || pkg.version,
+    });
+
+    let errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    // Provide more specific error messages
+    if (errorMessage.includes('500')) {
+      errorMessage +=
+        '\n\nThe marketplace server encountered an error. This could be due to:\n' +
+        '- Server maintenance or downtime\n' +
+        '- Missing package files\n' +
+        '- Database issues\n\n' +
+        'Please try again later or contact support if the issue persists.';
+    } else if (errorMessage.includes('404')) {
+      errorMessage += '\n\nThe package version could not be found on the marketplace server.';
+    } else if (errorMessage.includes('CORS') || errorMessage.includes('network')) {
+      errorMessage += '\n\nNetwork connectivity issue. Please check your internet connection.';
+    }
+
+    alert(`Failed to import package: ${errorMessage}`);
   } finally {
     importing.value = false;
   }

@@ -16,6 +16,7 @@ export interface Package {
   id: string;
   namespace: string;
   name: string;
+  display_name?: string; // NEW: Human-readable display name from API
   version: string;
   description?: string;
   author?: string; // Kept for backward compatibility, use author_persona.name
@@ -128,18 +129,57 @@ export class MarketplaceClient {
     const url = `${this.baseUrl}/api/v1/packages/${namespace}/${name}/${version}/download`;
 
     console.log(`[Marketplace] Downloading package: ${namespace}/${name}@${version}`);
+    console.log(`[Marketplace] Download URL: ${url}`);
+    console.log(`[Marketplace] Token present: ${!!token}`);
 
-    const response = await fetch(url, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
+    try {
+      const response = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
 
-    if (!response.ok) {
-      throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        // Try to get error details from response body
+        let errorDetails: string;
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const errorBody = await response.json();
+            errorDetails = errorBody.message || errorBody.error || JSON.stringify(errorBody);
+          } else {
+            errorDetails = await response.text();
+          }
+        } catch (e) {
+          errorDetails = 'Unable to read error details';
+        }
+
+        console.error(`[Marketplace] Download failed:`, {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          errorDetails,
+        });
+
+        throw new Error(
+          `Download failed: ${response.status} ${response.statusText}${errorDetails ? ` - ${errorDetails}` : ''}`
+        );
+      }
+
+      const content = await response.text();
+      console.log(`[Marketplace] Downloaded ${content.length} bytes`);
+      return content;
+    } catch (error) {
+      // Re-throw with additional context if it's a network error
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error(
+          `Network error downloading package. Please check:\n` +
+            `1. Internet connection\n` +
+            `2. Marketplace server is running (${this.baseUrl})\n` +
+            `3. CORS configuration\n\n` +
+            `Original error: ${error.message}`
+        );
+      }
+      throw error;
     }
-
-    const content = await response.text();
-    console.log(`[Marketplace] Downloaded ${content.length} bytes`);
-    return content;
   }
 
   /**
